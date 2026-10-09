@@ -90,6 +90,7 @@ def page(request, name):
         'upload': 'upload.html',
         'reports': 'reports.html',
         'methodology': 'methodology.html',
+        'datasets': 'datasets.html',
     }
     template_name = template_map.get(slug, 'server_page.html')
     context = {
@@ -435,3 +436,226 @@ def api_profile(request):
         'sensor': sensor.sensor_id if sensor else None,
         'available_profiles': {k: {'min_c': v[0], 'max_c': v[1]} for k, v in PROFILES.items()}
     })
+
+def datasets_page(request):
+    """Datasets inventory & scientific provenance catalog view."""
+    datasets = [
+        {
+            'name': 'simulated_cold_chain.csv',
+            'path': 'data/raw/simulated_cold_chain.csv',
+            'domain': 'Cold-Chain Logistics (0-5 °C)',
+            'source': 'Calibrated Thermodynamic Physical Model',
+            'provenance': 'SIMULATION',
+            'records': 12000,
+            'features': 10,
+            'role': 'Baseline Demonstration Ground Truth'
+        },
+        {
+            'name': 'iot_temperature_readings.csv',
+            'path': 'Datasets/02_iot_temperature_readings/',
+            'domain': 'Ambient Living Space (21-51 °C)',
+            'source': 'ESP8266 Sensor Node (Kaggle)',
+            'provenance': 'PUBLIC_DATASET',
+            'records': 97606,
+            'features': 5,
+            'role': 'External Physical Hardware Validation'
+        },
+        {
+            'name': 'energy_consumption_prediction.csv',
+            'path': 'Datasets/03_energy_consumption/',
+            'domain': 'Building HVAC Energy Demand',
+            'source': 'Residential/Commercial Buildings (Kaggle)',
+            'provenance': 'PUBLIC_DATASET',
+            'records': 1000,
+            'features': 5,
+            'role': 'Thermal-Environmental Energy Modeling'
+        },
+        {
+            'name': 'eviot_predictive_maintenance.csv',
+            'path': 'Datasets/04_eviot_predictive_maintenance/',
+            'domain': 'Electric Vehicle Battery Telemetry',
+            'source': 'High-Frequency Thermal Stress (Kaggle)',
+            'provenance': 'PUBLIC_DATASET',
+            'records': 175393,
+            'features': 5,
+            'role': 'Big Data Scalability & Throughput Benchmark'
+        },
+        {
+            'name': 'journey_to_zero_electricity.csv',
+            'path': 'Datasets/05_electricity_forecasting/',
+            'domain': 'Municipal Electrical Grid Demand',
+            'source': 'Weather-Dependent Power Load (Kaggle)',
+            'provenance': 'PUBLIC_DATASET',
+            'records': 8592,
+            'features': 4,
+            'role': 'Macro Electricity Consumption Correlation'
+        }
+    ]
+    return render(request, 'datasets.html', {
+        'datasets': datasets,
+        'sensor_count': Sensor.objects.count(),
+        'page_name': 'Datasets Catalog'
+    })
+
+@csrf_exempt
+def iot_telemetry_api(request):
+    """
+    Industrial IoT Telemetry Ingestion Endpoint.
+    Validates timestamps, range checks, units, and tags provenance:
+    SIMULATION | PUBLIC_DATASET | REAL_SENSOR.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed. Use POST.'}, status=405)
+
+    api_key = request.headers.get('X-IoT-API-Key') or request.headers.get('X-API-Key')
+    dev_keys = {'coldchain-iot-dev-key', 'secret-iot-telemetry-key', 'dev-key'}
+    if api_key and api_key not in dev_keys:
+        return JsonResponse({'success': False, 'error': 'Unauthorized: Invalid API key.'}, status=401)
+
+    try:
+        if request.content_type == 'application/json' or (request.body and request.body.startswith(b'{')):
+            payload = json.loads(request.body.decode('utf-8'))
+        else:
+            payload = request.POST.dict()
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'Malformed JSON: {e}'}, status=400)
+
+    records = payload if isinstance(payload, list) else [payload]
+    if not records:
+        return JsonResponse({'success': False, 'error': 'Empty payload received.'}, status=400)
+
+    from django.utils.dateparse import parse_datetime
+
+    valid_records = []
+    errors = []
+
+    for i, rec in enumerate(records):
+        sid = rec.get('sensor_id')
+        raw_ts = rec.get('timestamp')
+        raw_temp = rec.get('temperature')
+
+        if not sid or raw_ts is None or raw_temp is None:
+            errors.append(f"Record {i}: Missing required fields (sensor_id, timestamp, temperature).")
+            continue
+
+        ts = parse_datetime(str(raw_ts).replace('Z', '+00:00'))
+        if not ts:
+            errors.append(f"Record {i}: Invalid ISO timestamp: {raw_ts}")
+            continue
+
+        unit = str(rec.get('temperature_unit', 'C')).upper().strip()
+        try:
+            temp = float(raw_temp)
+            if unit in ('F', 'FAHRENHEIT'):
+                temp = (temp - 32.0) * 5.0 / 9.0
+        except (ValueError, TypeError):
+            errors.append(f"Record {i}: Invalid numeric temperature: {raw_temp}")
+            continue
+
+        # Physical range checks
+        if temp < -60.0 or temp > 70.0:
+            errors.append(f"Record {i}: Temperature {temp:.2f} °C out of physical range [-60, +70] °C.")
+            continue
+
+        raw_hum = rec.get('humidity')
+        hum = None
+        if raw_hum is not None:
+            try:
+                hum = float(raw_hum)
+                if hum < 0.0 or hum > 100.0:
+                    errors.append(f"Record {i}: Humidity {hum:.1f}% out of valid range [0, 100]%.")
+                    continue
+            except (ValueError, TypeError):
+                errors.append(f"Record {i}: Invalid numeric humidity: {raw_hum}")
+                continue
+
+        raw_amb = rec.get('ambient_temperature')
+        amb = None
+        if raw_amb is not None:
+            try:
+                amb = float(raw_amb)
+                if amb < -60.0 or amb > 75.0:
+                    errors.append(f"Record {i}: Ambient temperature {amb:.1f} °C out of physical range.")
+                    continue
+            except (ValueError, TypeError):
+                pass
+
+        raw_power = rec.get('power_kw', rec.get('power'))
+        power = None
+        if raw_power is not None:
+            try:
+                power = float(raw_power)
+                if power < 0.0 or power > 100.0:
+                    errors.append(f"Record {i}: Power {power:.2f} kW out of physical range [0, 100] kW.")
+                    continue
+            except (ValueError, TypeError):
+                pass
+
+        comp_state = bool(str(rec.get('compressor_state', False)).lower() in ('1', 'true', 'yes', 'on'))
+        door_state = bool(str(rec.get('door_open', False)).lower() in ('1', 'true', 'yes', 'open'))
+
+        src = str(rec.get('data_source', rec.get('source_type', 'REAL_SENSOR'))).upper()
+        if src not in ('REAL_SENSOR', 'SIMULATION', 'PUBLIC_DATASET'):
+            src = 'REAL_SENSOR'
+
+        valid_records.append({
+            'sensor_id': str(sid).strip(),
+            'timestamp': ts,
+            'temperature': round(temp, 4),
+            'humidity': hum,
+            'ambient_temperature': amb,
+            'power_kw': power,
+            'compressor_state': comp_state,
+            'door_open': door_state,
+            'data_source': src,
+            'location': rec.get('location', 'Real IoT Ingested Node'),
+            'product_type': rec.get('product_type', 'Food')
+        })
+
+    if errors and not valid_records:
+        return JsonResponse({'success': False, 'errors': errors, 'records_processed': 0}, status=400)
+
+    persisted_count = 0
+    duplicates_count = 0
+    saved_ids = []
+
+    for item in valid_records:
+        sensor, _ = Sensor.objects.get_or_create(
+            sensor_id=item['sensor_id'],
+            defaults={
+                'location': item['location'],
+                'product_type': item['product_type'],
+                'source_type': item['data_source']
+            }
+        )
+        reading, created = SensorReading.objects.get_or_create(
+            sensor=sensor,
+            timestamp=item['timestamp'],
+            defaults={
+                'temperature': item['temperature'],
+                'humidity': item['humidity'],
+                'ambient_temperature': item['ambient_temperature'],
+                'power_kw': item['power_kw'],
+                'compressor_state': item['compressor_state'],
+                'door_open': item['door_open'],
+                'data_source': item['data_source']
+            }
+        )
+        if created:
+            persisted_count += 1
+            saved_ids.append(reading.id)
+        else:
+            duplicates_count += 1
+
+    return JsonResponse({
+        'success': True,
+        'records_received': len(records),
+        'records_valid': len(valid_records),
+        'records_persisted': persisted_count,
+        'duplicates_ignored': duplicates_count,
+        'errors': errors,
+        'provenance': valid_records[0]['data_source'] if valid_records else 'REAL_SENSOR',
+        'status': 'INGESTED',
+        'latest_id': saved_ids[-1] if saved_ids else None
+    }, status=201 if persisted_count > 0 else 200)
+

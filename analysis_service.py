@@ -41,13 +41,15 @@ def decision_for_sensor(sensor, offset=None):
     pareto, recommendation = run_nsga2(
         float(readings[-1].temperature),
         float(readings[-1].ambient_temperature or 20),
-        assessment['risk_score']
+        assessment['risk_score'],
+        profile=sensor.product_type
     )
     recommendation = dict(recommendation)
-    recommendation['expected_temperature'] = float(
-        readings[-1].temperature - 3.2 * recommendation['cooling_intensity'] * recommendation['compressor_duty_cycle']
-    )
-    recommendation['explanation'] = 'Selected from pymoo NSGA-II using future risk calculated from the MAD-TCN forecast.'
+    if 'expected_temperature' not in recommendation:
+        ambient_gain = 0.18 * max(float(readings[-1].ambient_temperature or 20) - float(readings[-1].temperature), 0.0)
+        cooling = 3.2 * recommendation['cooling_intensity'] * recommendation['compressor_duty_cycle']
+        recommendation['expected_temperature'] = round(float(readings[-1].temperature + ambient_gain - cooling), 2)
+    recommendation['explanation'] = 'Selected from pymoo NSGA-II constrained optimization using future risk from MAD-TCN.'
     return {
         'sensor': sensor.sensor_id,
         'current_temperature': readings[-1].temperature,

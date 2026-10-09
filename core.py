@@ -32,6 +32,10 @@ def predict_future(temperatures, horizon=15):
     return (x[-1] + slope * np.arange(1, horizon + 1)).round(3).tolist()
 
 def risk(prediction, profile='Food'):
+    """
+    Evaluate temperature excursion risk over future horizon.
+    Accurately scales excursion magnitude and alerts on impending breaches.
+    """
     lo, hi = PROFILES.get(profile, PROFILES['Generic'])
     p = np.asarray(prediction, dtype=float)
     if len(p) == 0:
@@ -41,10 +45,30 @@ def risk(prediction, profile='Food'):
             'risk_reason': f'No forecast points available. Safe profile limits: {lo:.1f} to {hi:.1f} °C.',
             'predicted_breach_time': None
         }
-    violation = np.maximum(p - hi, 0) + np.maximum(lo - p, 0)
+    
+    upper_viol = np.maximum(p - hi, 0.0)
+    lower_viol = np.maximum(lo - p, 0.0)
+    total_viol = upper_viol + lower_viol
+    max_viol = float(np.max(total_viol))
+    mean_viol = float(np.mean(total_viol))
     diff_mean = float(np.diff(p).mean()) if len(p) > 1 else 0.0
-    score = float(np.clip(100 * (violation.mean() / (hi - lo + 1e-6) + max(0.0, diff_mean) * 0.08), 0, 100))
-    level = 'CRITICAL' if score >= 70 else 'HIGH' if score >= 40 else 'MEDIUM' if score >= 15 else 'LOW'
+    
+    # If any point exceeds safety limits, compute elevated risk
+    if max_viol > 0.0:
+        base_breach = 25.0
+        severity = (max_viol / (hi - lo + 1e-6)) * 50.0 + (mean_viol / (hi - lo + 1e-6)) * 25.0
+        trend_term = max(0.0, diff_mean) * 10.0
+        score = float(np.clip(base_breach + severity + trend_term, 0.0, 100.0))
+    else:
+        # Buffer proximity warning (within 0.5 °C of limit)
+        buffer = 0.5
+        near_hi = np.maximum(p - (hi - buffer), 0.0).mean() / buffer
+        near_lo = np.maximum((lo + buffer) - p, 0.0).mean() / buffer
+        near_risk = (near_hi + near_lo) * 15.0
+        trend_term = max(0.0, diff_mean) * 8.0
+        score = float(np.clip(near_risk + trend_term, 0.0, 100.0))
+        
+    level = 'CRITICAL' if score >= 70.0 else 'HIGH' if score >= 40.0 else 'MEDIUM' if score >= 15.0 else 'LOW'
     breach = next((i + 1 for i, v in enumerate(p) if v < lo or v > hi), None)
     return {
         'risk_score': round(score, 2),
@@ -54,22 +78,33 @@ def risk(prediction, profile='Food'):
     }
 
 def energy(current, ambient, intensity, duty):
+    """Estimated refrigeration energy in kWh over 15-minute interval."""
     return round(max(0.05, 0.25 + 0.035 * max(ambient - current, 0)) * (0.35 + 0.65 * intensity) * duty, 3)
 
-def optimize(current, ambient, future_risk):
+def optimize(current, ambient, future_risk, profile='Food'):
+    """Grid-search optimization baseline with thermal infiltration and dual safety limits."""
+    lo, hi = PROFILES.get(profile, PROFILES['Generic'])
+    ambient_gain = 0.18 * max(ambient - current, 0.0)
     candidates = []
+    
     for intensity in np.linspace(0.2, 1.0, 17):
         for duty in np.linspace(0.3, 1.0, 15):
             cooling = 3.2 * intensity * duty
-            residual = max(0.0, future_risk - cooling * 18)
+            t_exp = round(current + ambient_gain - cooling, 2)
+            upper_viol = max(0.0, t_exp - hi)
+            lower_viol = max(0.0, lo - t_exp)
+            residual = max(0.0, future_risk - cooling * 8.0) + (upper_viol + lower_viol) * 20.0
             e = energy(current, ambient, intensity, duty)
+            is_feasible = (t_exp <= hi) and (t_exp >= lo)
             candidates.append({
                 'cooling_intensity': round(float(intensity), 2),
                 'compressor_duty_cycle': round(float(duty), 2),
                 'safety_risk': round(residual, 2),
                 'estimated_energy_kwh': e,
-                'expected_temperature': round(current - cooling, 2)
+                'expected_temperature': t_exp,
+                'feasible': is_feasible
             })
+            
     pareto = [
         a for a in candidates
         if not any(
@@ -79,15 +114,23 @@ def optimize(current, ambient, future_risk):
             for b in candidates
         )
     ]
-    max_e = max(y['estimated_energy_kwh'] for y in pareto) if pareto else 1.0
-    rec = min(pareto, key=lambda x: 0.65 * x['safety_risk'] / 100 + 0.35 * x['estimated_energy_kwh'] / max_e)
-    rec['explanation'] = 'Selected from a non-dominated energy/safety trade-off using predicted future risk, not current temperature alone.'
-    return pareto, rec
+    feasible_pareto = [p for p in pareto if p['feasible']]
+    pool = feasible_pareto if feasible_pareto else pareto
+    max_e = max(y['estimated_energy_kwh'] for y in pool) if pool else 1.0
+    rec = min(pool, key=lambda x: 0.70 * x['safety_risk'] / 100.0 + 0.30 * x['estimated_energy_kwh'] / max_e)
+    rec_copy = dict(rec)
+    rec_copy['explanation'] = 'Selected from non-dominated energy/safety trade-off with thermal dynamics and safety constraints.'
+    return pareto, rec_copy
 
 def prediction_guided_optimization(state, profile='Food'):
     forecast = predict_future(state['temperatures'])
     assessment = risk(forecast, profile)
-    pareto, recommendation = optimize(state['temperatures'][-1], state.get('ambient_temperature', 20), assessment['risk_score'])
+    pareto, recommendation = optimize(
+        state['temperatures'][-1],
+        state.get('ambient_temperature', 20),
+        assessment['risk_score'],
+        profile=profile
+    )
     return {
         'forecast': forecast,
         'risk': assessment,

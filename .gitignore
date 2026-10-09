@@ -1,0 +1,29 @@
+# Virtual Environment
+.venv/
+env/
+venv/
+ENV/
+
+# Python cache & artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local configuration & secrets
+.env
+.env.local
+*.local
+
+# Database & logs
+*.log
+*.sqlite3-journal
+dependency-repair.*
+
+# Temporary / OS files
+.DS_Store
+Thumbs.db
+*.tmp

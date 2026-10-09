@@ -1,0 +1,35 @@
+{
+  "num_scenarios": 50,
+  "method_a": {
+    "mean_energy_kwh": 0.5625012105342567,
+    "total_violations_min": 583,
+    "max_temp_c": 10.719281690912766,
+    "avg_duty_pct": 77.6
+  },
+  "method_b_legacy": {
+    "mean_energy_kwh": 0.6574266149674648,
+    "total_violations_min": 565,
+    "max_temp_c": 9.36406614695157,
+    "avg_duty_pct": 77.31585563565247,
+    "energy_change_pct": 16.87559113749268,
+    "violation_change_pct": -3.0874785591713767
+  },
+  "method_c_audited": {
+    "mean_energy_kwh": 0.6447620000000001,
+    "total_violations_min": 479,
+    "max_temp_c": 11.358275576362747,
+    "avg_duty_pct": 82.912,
+    "energy_change_pct": 14.624108877492557,
+    "violation_change_pct": -17.83876500854573
+  },
+  "risk_detection": {
+    "precision": 0.6326530612244898,
+    "recall": 1.0,
+    "f1": 0.775,
+    "forecast_mae": 0.8523618671766772
+  },
+  "runtime_ms": {
+    "legacy": 239.98772199998257,
+    "audited": 246.68791599999167
+  }
+}

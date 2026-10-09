@@ -373,7 +373,70 @@ class ApiWorkflowTests(TestCase):
             '/reports/',
             '/upload/',
             '/methodology/',
+            '/datasets/',
         ]
         for url in routes:
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200, f"Route {url} failed with status {response.status_code}")
+
+    # 29. IoT Telemetry Ingestion API (Single Reading)
+    def test_29_iot_telemetry_single(self):
+        payload = {
+            'sensor_id': 'IOT-TEST-01',
+            'timestamp': timezone.now().isoformat(),
+            'temperature': 3.72,
+            'humidity': 65.0,
+            'ambient_temperature': 21.5,
+            'data_source': 'REAL_SENSOR'
+        }
+        res = self.client.post('/api/iot/telemetry/', data=json.dumps(payload),
+                               content_type='application/json')
+        self.assertEqual(res.status_code, 201)
+        data = res.json()
+        self.assertTrue(data['success'])
+        self.assertEqual(data['records_persisted'], 1)
+        self.assertEqual(data['provenance'], 'REAL_SENSOR')
+
+    # 30. IoT Telemetry Ingestion (Duplicate & Fahrenheit Unit Conversion)
+    def test_30_iot_telemetry_unit_and_duplicate(self):
+        ts = timezone.now().isoformat()
+        payload = {
+            'sensor_id': 'IOT-TEST-02',
+            'timestamp': ts,
+            'temperature': 39.2,  # 39.2 °F = 4.0 °C
+            'temperature_unit': 'F',
+            'data_source': 'REAL_SENSOR'
+        }
+        res1 = self.client.post('/api/iot/telemetry/', data=json.dumps(payload),
+                                content_type='application/json')
+        self.assertEqual(res1.status_code, 201)
+        reading = SensorReading.objects.filter(sensor__sensor_id='IOT-TEST-02').first()
+        self.assertAlmostEqual(reading.temperature, 4.0, places=1)
+
+        # Duplicate should be ignored
+        res2 = self.client.post('/api/iot/telemetry/', data=json.dumps(payload),
+                                content_type='application/json')
+        self.assertEqual(res2.status_code, 200)
+        self.assertEqual(res2.json()['duplicates_ignored'], 1)
+
+    # 31. IoT Telemetry Rejection of Corrupted Spikes
+    def test_31_iot_telemetry_range_rejection(self):
+        payload = {
+            'sensor_id': 'IOT-TEST-03',
+            'timestamp': timezone.now().isoformat(),
+            'temperature': -95.0,  # Below -60 °C physical boundary
+        }
+        res = self.client.post('/api/iot/telemetry/', data=json.dumps(payload),
+                               content_type='application/json')
+        self.assertEqual(res.status_code, 400)
+        self.assertFalse(res.json()['success'])
+
+    # 32. Constrained NSGA-II Feasibility Check
+    def test_32_nsga2_constrained_feasibility(self):
+        pareto, rec = run_nsga2(current=3.8, ambient=22.0, future_risk=20.0, profile='Food')
+        self.assertTrue(len(pareto) >= 1)
+        self.assertTrue(rec['feasible'])
+        self.assertIn('expected_temperature', rec)
+        self.assertTrue(0.0 <= rec['expected_temperature'] <= 5.0)
+        self.assertTrue(rec['cooling_intensity'] >= 0.1)
+        self.assertTrue(rec['compressor_duty_cycle'] >= 0.2)

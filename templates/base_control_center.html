@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
 <title>{% block title %}{{ page_name|default:"Control Center" }} | COLDCHAIN AI{% endblock %}</title>
 <style>
 :root {
@@ -298,6 +299,9 @@ button { font-family: inherit; cursor: pointer; }
     </a>
     <a href="/reports/" class="{% if request.path == '/reports/' %}active{% endif %}">
       <span>📋</span> Reports
+    </a>
+    <a href="/datasets/" class="{% if request.path == '/datasets/' %}active{% endif %}">
+      <span>🗄️</span> Datasets Catalog
     </a>
     <a href="/methodology/" class="{% if request.path == '/methodology/' %}active{% endif %}">
       <span>🔬</span> Methodology

@@ -1,0 +1,32 @@
+{
+  "dataset": "simulated_cold_chain.csv (CC-01)",
+  "test_sequences": 785,
+  "horizon_steps": 15,
+  "chronological_split": "80% Train, 20% Test",
+  "metrics": {
+    "persistence": {
+      "mae": 0.1144,
+      "rmse": 0.1541,
+      "r2": 0.9927
+    },
+    "moving_average_5": {
+      "mae": 0.1276,
+      "rmse": 0.1695,
+      "r2": 0.9911
+    },
+    "linear_extrapolation": {
+      "mae": 0.1471,
+      "rmse": 0.2018,
+      "r2": 0.9874
+    },
+    "mad_tcn": {
+      "mae": 1.0812,
+      "rmse": 1.2893,
+      "r2": 0.4858
+    }
+  },
+  "improvement_vs_persistence": {
+    "mae_pct": -845.1,
+    "rmse_pct": -736.66
+  }
+}

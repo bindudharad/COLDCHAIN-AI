@@ -1,0 +1,60 @@
+{
+  "status": "ESTIMATED / SIMULATED",
+  "classification": "Empirical thermodynamic thermal-lift model",
+  "hardware_wattmeter_connected": false,
+  "formula": "E = max(0.05, 0.25 + 0.035 * max(T_amb - T_cur, 0)) * (0.35 + 0.65 * intensity) * duty",
+  "units": {
+    "power": "kW",
+    "energy": "kWh per 15-minute control interval",
+    "temperature": "Degrees Celsius (\u00b0C)"
+  },
+  "validation_against_simulated_ground_truth": {
+    "cycles_evaluated": 133,
+    "mae_kwh": 0.4474,
+    "rmse_kwh": 0.4504,
+    "r2_score": -2084.4073
+  },
+  "scenario_evaluations": [
+    {
+      "name": "Mild Ambient (15 \u00b0C), Low Cooling",
+      "t_cur": 3.5,
+      "t_amb": 15.0,
+      "intensity": 0.3,
+      "duty": 0.4,
+      "estimated_energy_kwh": 0.142,
+      "estimated_power_kw": 0.568
+    },
+    {
+      "name": "Nominal Ambient (22 \u00b0C), Balanced Setpoint",
+      "t_cur": 3.8,
+      "t_amb": 22.0,
+      "intensity": 0.6,
+      "duty": 0.6,
+      "estimated_energy_kwh": 0.394,
+      "estimated_power_kw": 1.576
+    },
+    {
+      "name": "Extreme Summer Heat (32 \u00b0C), Max Cooling",
+      "t_cur": 4.5,
+      "t_amb": 32.0,
+      "intensity": 1.0,
+      "duty": 1.0,
+      "estimated_energy_kwh": 1.213,
+      "estimated_power_kw": 4.852
+    },
+    {
+      "name": "Low Ambient Cold Snap (5 \u00b0C), Minimal Duty",
+      "t_cur": 3.0,
+      "t_amb": 5.0,
+      "intensity": 0.2,
+      "duty": 0.2,
+      "estimated_energy_kwh": 0.031,
+      "estimated_power_kw": 0.124
+    }
+  ],
+  "limitations": [
+    "Energy values are derived from thermodynamic equations, not physical wattmeter hardware.",
+    "External Kaggle HVAC dataset represents residential buildings, not cold-chain walk-in coolers.",
+    "No physical compressor PWM controller was modulated."
+  ]
+}

@@ -1,0 +1,192 @@
+{% extends 'base_control_center.html' %}
+
+{% block title %}Datasets Catalog · Provenance & Inventory{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="badge-row">
+    <span class="badge">PROVENANCE GOVERNANCE</span>
+    <span class="badge">5 PUBLIC BENCHMARKS</span>
+    <span class="badge">1 CALIBRATED SIMULATION</span>
+    <span class="badge">ZERO HARDWARE ACTUATION</span>
+  </div>
+  <h1 class="page-title" style="margin-top: 10px;">Datasets Inventory & Scientific Provenance</h1>
+  <p style="color: var(--text-secondary); font-size: 0.88rem; max-width: 820px; line-height: 1.5; margin-top: 6px;">
+    Comprehensive data catalog detailing sources, provenance classifications, domain boundaries, schema attributes, and task suitabilities. All original downloads are strictly preserved without modification.
+  </p>
+</div>
+
+<div class="notice-box">
+  <span style="color: var(--accent); font-weight: 800;">DATA INTEGRITY DISCLOSURE:</span>
+  <span>Public datasets originate from external ambient IoT nodes, commercial HVAC buildings, and EV telemetry. Cold-chain storage ground truth is provided by the calibrated thermodynamic simulation baseline. Public datasets are never conflated with live cold-room telemetry.</span>
+</div>
+
+<!-- Summary KPI Grid -->
+<div class="grid-4" style="margin-bottom: 24px;">
+  <div class="card">
+    <div class="card-title">TOTAL REGISTERED DATASETS</div>
+    <div class="kpi-value">6</div>
+    <div class="kpi-sub">1 Simulation + 5 Public Benchmarks</div>
+  </div>
+  <div class="card">
+    <div class="card-title">TOTAL DATA RECORDS</div>
+    <div class="kpi-value">306,591+</div>
+    <div class="kpi-sub">Across 6 discrete telemetry domains</div>
+  </div>
+  <div class="card">
+    <div class="card-title">PUBLIC EXTERNAL RECORDS</div>
+    <div class="kpi-value">294,591</div>
+    <div class="kpi-sub">Classified as PUBLIC_DATASET</div>
+  </div>
+  <div class="card">
+    <div class="card-title">COLD-CHAIN SIMULATION</div>
+    <div class="kpi-value">12,000</div>
+    <div class="kpi-sub">Classified as SIMULATION</div>
+  </div>
+</div>
+
+<!-- Main Inventory Table Card -->
+<div class="card" style="margin-bottom: 24px;">
+  <div class="card-header">
+    <h3 class="card-title">DATASET INVENTORY & SCIENTIFIC CLASSIFICATION</h3>
+    <span class="badge" style="background: rgba(85,223,255,0.06);">CANONICAL REGISTRY</span>
+  </div>
+  <div style="overflow-x: auto;">
+    <table class="data-table" style="width: 100%;">
+      <thead>
+        <tr>
+          <th>Dataset Identifier</th>
+          <th>Domain / Origin</th>
+          <th>Source / License</th>
+          <th>Provenance Tag</th>
+          <th>Records</th>
+          <th>Features</th>
+          <th>Role in Research</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong style="color: var(--accent);">simulated_cold_chain.csv</strong><br>
+            <span style="font-size: 0.68rem; color: var(--text-muted);">data/raw/simulated_cold_chain.csv</span>
+          </td>
+          <td>Cold-Chain Logistics<br><span style="font-size: 0.68rem; color: var(--text-muted);">Food (0–5 °C) Chamber</span></td>
+          <td>Calibrated Thermodynamic Model<br><span style="font-size: 0.68rem; color: var(--text-muted);">MIT / Academic License</span></td>
+          <td><span class="badge" style="background: rgba(85,223,255,0.15); color: var(--accent);">SIMULATION</span></td>
+          <td>12,000</td>
+          <td>10 columns (12 engineered)</td>
+          <td>Primary ground-truth baseline for MAD-TCN training and NSGA-II comparison</td>
+        </tr>
+        <tr>
+          <td>
+            <strong style="color: var(--accent);">iot_temperature_readings.csv</strong><br>
+            <span style="font-size: 0.68rem; color: var(--text-muted);">Datasets/02_iot_temperature_readings/</span>
+          </td>
+          <td>Room Ambient IoT<br><span style="font-size: 0.68rem; color: var(--text-muted);">ESP8266 Sensor Node</span></td>
+          <td>Kaggle (Manikanta Kumar)<br><span style="font-size: 0.68rem; color: var(--text-muted);">Open Database License (ODbL)</span></td>
+          <td><span class="badge" style="background: rgba(52,211,153,0.15); color: var(--success);">PUBLIC_DATASET</span></td>
+          <td>97,606</td>
+          <td>id, room_id/id, noted_date, temp, out/in</td>
+          <td>External physical hardware telemetry validation (MAE = 0.7576 °C)</td>
+        </tr>
+        <tr>
+          <td>
+            <strong style="color: var(--accent);">energy_consumption_prediction.csv</strong><br>
+            <span style="font-size: 0.68rem; color: var(--text-muted);">Datasets/03_energy_consumption/</span>
+          </td>
+          <td>Building HVAC Energy<br><span style="font-size: 0.68rem; color: var(--text-muted);">Residential / Commercial</span></td>
+          <td>Kaggle Open Datasets<br><span style="font-size: 0.68rem; color: var(--text-muted);">CC BY-SA 4.0</span></td>
+          <td><span class="badge" style="background: rgba(52,211,153,0.15); color: var(--success);">PUBLIC_DATASET</span></td>
+          <td>1,000</td>
+          <td>Temperature, Humidity, SquareFootage, Occupancy, EnergyConsumption</td>
+          <td>Thermal-environmental energy model validation (R² = 0.5866, MAE = 4.10 kWh)</td>
+        </tr>
+        <tr>
+          <td>
+            <strong style="color: var(--accent);">eviot_predictive_maintenance.csv</strong><br>
+            <span style="font-size: 0.68rem; color: var(--text-muted);">Datasets/04_eviot_predictive_maintenance/</span>
+          </td>
+          <td>EV Battery Telemetry<br><span style="font-size: 0.68rem; color: var(--text-muted);">Thermal Stress Testing</span></td>
+          <td>Kaggle Research Benchmark<br><span style="font-size: 0.68rem; color: var(--text-muted);">Research Use Only</span></td>
+          <td><span class="badge" style="background: rgba(52,211,153,0.15); color: var(--success);">PUBLIC_DATASET</span></td>
+          <td>175,393</td>
+          <td>timestamp, battery_temp, voltage, current, state_of_charge</td>
+          <td>High-frequency Big Data ingestion & memory throughput stress benchmarking</td>
+        </tr>
+        <tr>
+          <td>
+            <strong style="color: var(--accent);">journey_to_zero_electricity.csv</strong><br>
+            <span style="font-size: 0.68rem; color: var(--text-muted);">Datasets/05_electricity_forecasting/</span>
+          </td>
+          <td>Municipal Grid Demand<br><span style="font-size: 0.68rem; color: var(--text-muted);">Weather-Dependent Load</span></td>
+          <td>Kaggle (Journey to Zero)<br><span style="font-size: 0.68rem; color: var(--text-muted);">Open Academic</span></td>
+          <td><span class="badge" style="background: rgba(52,211,153,0.15); color: var(--success);">PUBLIC_DATASET</span></td>
+          <td>8,592</td>
+          <td>Datetime, Consumption_kWh, Outdoor_Temp, Dew_Point</td>
+          <td>Macro-grid electricity demand correlation against environmental temperature</td>
+        </tr>
+        <tr>
+          <td>
+            <strong style="color: var(--accent);">iot_temperature_forecasting.ipynb</strong><br>
+            <span style="font-size: 0.68rem; color: var(--text-muted);">Datasets/01_temperature_forecasting/</span>
+          </td>
+          <td>Ambient Sequence Modeling<br><span style="font-size: 0.68rem; color: var(--text-muted);">Methodology Baseline</span></td>
+          <td>Kaggle Benchmark Notebook<br><span style="font-size: 0.68rem; color: var(--text-muted);">Apache 2.0</span></td>
+          <td><span class="badge" style="background: rgba(52,211,153,0.15); color: var(--success);">PUBLIC_DATASET</span></td>
+          <td>97,606</td>
+          <td>Time-series window sequences</td>
+          <td>Comparative baseline sequence formulation methodology</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Domain Segregation & Boundaries -->
+<div class="grid-2" style="margin-bottom: 24px;">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">DOMAIN BOUNDARY DEFINITIONS</h3>
+    </div>
+    <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6;">
+      <p style="margin-bottom: 10px;">
+        <strong style="color: var(--accent);">1. Cold-Chain Logistics Domain (SIMULATION):</strong><br>
+        Involves strict Food (0.0 to 5.0 °C) and Vaccine (2.0 to 8.0 °C) thresholds. Thermal inertia, compressor cycling, infiltration, and door events are physically modeled in <code>simulated_cold_chain.csv</code>.
+      </p>
+      <p style="margin-bottom: 10px;">
+        <strong style="color: var(--accent);">2. Ambient Room IoT Domain (PUBLIC_DATASET):</strong><br>
+        ESP8266 telemetry captures room temperature variations (21 to 51 °C) in non-refrigerated living spaces. Used exclusively to validate temporal convolutional sequence learning on real hardware noise.
+      </p>
+      <p>
+        <strong style="color: var(--accent);">3. Building Energy Demand Domain (PUBLIC_DATASET):</strong><br>
+        Captures residential HVAC electricity demand based on occupancy and ambient temperature. Validates empirical thermal-lift equations, but is never confused with refrigeration compressor wattage.
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">REST INGESTION & PROVENANCE TAGGING</h3>
+    </div>
+    <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6;">
+      <p style="margin-bottom: 8px;">
+        All telemetry entering through the industrial ingestion endpoint is automatically tagged:
+      </p>
+      <div style="background: var(--bg-deep); padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.72rem; margin-bottom: 10px; border: 1px solid var(--border-subtle);">
+        POST /api/iot/telemetry/<br>
+        Header: Content-Type: application/json<br>
+        Body: {<br>
+        &nbsp;&nbsp;"sensor_id": "EDGE-ESP32-01",<br>
+        &nbsp;&nbsp;"timestamp": "2026-10-09T14:30:00Z",<br>
+        &nbsp;&nbsp;"temperature": 3.42,<br>
+        &nbsp;&nbsp;"humidity": 72.0,<br>
+        &nbsp;&nbsp;"data_source": "REAL_SENSOR"<br>
+        }
+      </div>
+      <p>
+        Persisted records enforce provenance isolation to guarantee research integrity across reports and dashboards.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
