@@ -1,5 +1,5 @@
 {
-  "benchmark_timestamp": "2026-10-15T19:04:19.336861+00:00",
+  "benchmark_timestamp": "2026-10-15T19:12:34.324469+00:00",
   "dataset_metadata": {
     "source_file": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR03_preprocessed.csv",
     "raw_observations": 84444,
@@ -52,9 +52,9 @@
       "r2_score": 0.419
     },
     "real_tcn_neural": {
-      "mae_deg_c": 0.2714,
-      "rmse_deg_c": 0.369,
-      "r2_score": 0.3703
+      "mae_deg_c": 0.2707,
+      "rmse_deg_c": 0.3711,
+      "r2_score": 0.3634
     }
   },
   "breach_detection_metrics": {
@@ -126,14 +126,14 @@
       "real_tcn": {
         "threshold_deg_c": 5.5,
         "ground_truth_breaches": 1038,
-        "predicted_breaches": 989,
-        "true_positives": 987,
+        "predicted_breaches": 1003,
+        "true_positives": 1001,
         "false_positives": 2,
-        "false_negatives": 51,
+        "false_negatives": 37,
         "true_negatives": 5,
         "precision": 0.998,
-        "recall": 0.9509,
-        "f1_score": 0.9739
+        "recall": 0.9644,
+        "f1_score": 0.9809
       }
     },
     "threshold_6_0_deg_c": {
@@ -165,14 +165,14 @@
       "real_tcn": {
         "threshold_deg_c": 6.0,
         "ground_truth_breaches": 704,
-        "predicted_breaches": 409,
-        "true_positives": 378,
-        "false_positives": 31,
-        "false_negatives": 326,
-        "true_negatives": 310,
-        "precision": 0.9242,
-        "recall": 0.5369,
-        "f1_score": 0.6792
+        "predicted_breaches": 447,
+        "true_positives": 411,
+        "false_positives": 36,
+        "false_negatives": 293,
+        "true_negatives": 305,
+        "precision": 0.9195,
+        "recall": 0.5838,
+        "f1_score": 0.7142
       }
     },
     "threshold_6_5_deg_c": {
@@ -204,14 +204,14 @@
       "real_tcn": {
         "threshold_deg_c": 6.5,
         "ground_truth_breaches": 226,
-        "predicted_breaches": 120,
-        "true_positives": 105,
-        "false_positives": 15,
-        "false_negatives": 121,
-        "true_negatives": 804,
-        "precision": 0.875,
-        "recall": 0.4646,
-        "f1_score": 0.6069
+        "predicted_breaches": 124,
+        "true_positives": 111,
+        "false_positives": 13,
+        "false_negatives": 115,
+        "true_negatives": 806,
+        "precision": 0.8952,
+        "recall": 0.4912,
+        "f1_score": 0.6343
       }
     }
   },
@@ -284,13 +284,13 @@
         "threshold_deg_c": 5.5,
         "safe_forecast_origins_evaluated": 167,
         "true_transitions_occurred": 161,
-        "true_positives": 110,
+        "true_positives": 124,
         "false_positives": 1,
-        "false_negatives": 51,
+        "false_negatives": 37,
         "true_negatives": 5,
-        "precision": 0.991,
-        "recall": 0.6832,
-        "f1_score": 0.8088
+        "precision": 0.992,
+        "recall": 0.7702,
+        "f1_score": 0.8671
       }
     },
     "threshold_6_0_deg_c": {
@@ -323,13 +323,13 @@
         "threshold_deg_c": 6.0,
         "safe_forecast_origins_evaluated": 706,
         "true_transitions_occurred": 383,
-        "true_positives": 59,
-        "false_positives": 14,
-        "false_negatives": 324,
-        "true_negatives": 309,
-        "precision": 0.8082,
-        "recall": 0.154,
-        "f1_score": 0.2588
+        "true_positives": 90,
+        "false_positives": 18,
+        "false_negatives": 293,
+        "true_negatives": 305,
+        "precision": 0.8333,
+        "recall": 0.235,
+        "f1_score": 0.3666
       }
     },
     "threshold_6_5_deg_c": {
@@ -361,13 +361,13 @@
         "threshold_deg_c": 6.5,
         "safe_forecast_origins_evaluated": 943,
         "true_transitions_occurred": 130,
-        "true_positives": 13,
-        "false_positives": 10,
-        "false_negatives": 117,
-        "true_negatives": 803,
-        "precision": 0.5652,
-        "recall": 0.1,
-        "f1_score": 0.1699
+        "true_positives": 15,
+        "false_positives": 7,
+        "false_negatives": 115,
+        "true_negatives": 806,
+        "precision": 0.6818,
+        "recall": 0.1154,
+        "f1_score": 0.1974
       }
     }
   }

@@ -233,6 +233,10 @@ def run_benchmark(
     m_ridge = compute_metrics(y_test, pred_ridge)
 
     # 5. Model 5: Real-TCN Neural Network (Trained on Real Telemetry)
+    # Set explicit seeds for strict scientific reproducibility
+    torch.manual_seed(42)
+    np.random.seed(42)
+
     scaler = StandardScaler()
     X_train_s = scaler.fit_transform(X_train)
     X_test_s = scaler.transform(X_test)

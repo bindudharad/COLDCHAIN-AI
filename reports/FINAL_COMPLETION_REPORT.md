@@ -126,26 +126,28 @@ Evaluated strictly across the 50 chronologically distributed operational scenari
 ### 5. Real-Data Neural Forecasting Benchmark
 Evaluated strictly via [`scripts/evaluate_real_forecasting.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/evaluate_real_forecasting.py) on Hohenheim SENSOR03 (1-min resampled, $N_{test} = 1{,}045$ sequences):
 
-| Model / Baseline | 15-Step MAE (°C) | 15-Step RMSE (°C) | Test $R^2$ Score | F1 (>5.0 °C Critical) | F1 (>5.5 °C Warning) | F1 (>6.0 °C Dynamic) | F1 (>6.5 °C Severe) |
+| Model / Baseline | 15-Step MAE (°C) | 15-Step RMSE (°C) | Test $R^2$ Score | F1 (>5.0 °C Exceedance) | F1 (>5.5 °C Exceedance) | F1 (>6.0 °C Exceedance) | F1 (>6.5 °C Exceedance) |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Naive Persistence** | 0.3048 °C | 0.4012 °C | 0.2557 | 0.9962 | 0.9154 | 0.6155 | 0.5854 |
 | **5-Step Moving Average** | 0.3185 °C | 0.4194 °C | 0.1867 | — | — | — | — |
 | **Linear Trend Extrapolation** | 0.4989 °C | 0.6721 °C | -1.0885 | — | — | — | — |
 | **Ridge AR(60) Autoregression** | **0.2524 °C** | **0.3545 °C** | **0.4190** | **1.0000** | **0.9888** | **0.7461** | **0.6759** |
-| **Real-TCN (Learned Neural)** | 0.2670 °C | 0.3657 °C | 0.3817 | **1.0000** | 0.9774 | 0.7086 | 0.6071 |
+| **Real-TCN (Learned Neural, Seed 42)**| 0.2707 °C | 0.3711 °C | 0.3634 | **1.0000** | 0.9774 | 0.7142 | 0.6343 |
 
 ### 6. Threshold Justification, Event Definitions & Physical Context
-1. **Critical Food Limit ($5.0\text{ }^{\circ}\text{C}$):** Primary cold-chain profile threshold. In the Hohenheim research facility, SENSOR03 operated under a commercial cooling regime with a baseline mean temperature of $6.54\text{ }^{\circ}\text{C}$. In the 1,045 held-out test sequences, only **8 sequences (0.8%)** originated within safe limits ($T_0 \le 5.0\text{ }^{\circ}\text{C}$), while **1,037 sequences (99.2%)** were already in breach at $t_0$. Early breach detection at $5.0\text{ }^{\circ}\text{C}$ cannot be meaningfully validated on this test slice due to the near-total absence of safe baseline operations.
+1. **Critical Food Limit ($5.0\text{ }^{\circ}\text{C}$):** Primary cold-chain profile threshold. In the Hohenheim research facility, SENSOR03 operated under a commercial cooling regime with a baseline mean temperature of $6.54\text{ }^{\circ}\text{C}$. In the 1,045 held-out test sequences, only **8 sequences (0.8%)** originated within safe limits ($T_0 \le 5.0\text{ }^{\circ}\text{C}$), while **1,037 sequences (99.2%)** were already in breach at $t_0$. Early breach detection at $5.0\text{ }^{\circ}\text{C}$ is **inconclusive** on this test slice due to the near-total absence of safe baseline operations (8 sample size).
 2. **Precautionary Warning Threshold ($5.5\text{ }^{\circ}\text{C}$):** $167$ sequences originated with $T_0 \le 5.5\text{ }^{\circ}\text{C}$, of which $161$ transitioned into breach during the subsequent 15 minutes. Ridge AR(60) achieves transition $F_1 = 0.9272$ ($140$ TP, $1$ FP, $21$ FN) and Real-TCN achieves transition $F_1 = 0.9061$, whereas naive persistence achieves $F_1 = 0.0000$ (0 TP, 161 FN) because it cannot predict future warming.
-3. **Dynamic Median Excursion Threshold ($6.0\text{ }^{\circ}\text{C}$):** The primary operational benchmark for dynamic transition prediction. $706$ test sequences originated at or below $6.0\text{ }^{\circ}\text{C}$, with $383$ subsequent transitions crossing above $6.0\text{ }^{\circ}\text{C}$. Ridge AR(60) achieves transition precision of $76.1\%$ and recall of $37.3\%$ ($F_1 = 0.5009$), and Real-TCN achieves precision of $80.8\%$ ($F_1 = 0.2588$), whereas naive persistence achieves $F_1 = 0.0000$ (0 TP, 383 FN).
+3. **Dynamic Median Excursion Threshold ($6.0\text{ }^{\circ}\text{C}$):** The primary operational benchmark for dynamic transition prediction. $706$ test sequences originated at or below $6.0\text{ }^{\circ}\text{C}$, with $383$ subsequent transitions crossing above $6.0\text{ }^{\circ}\text{C}$. Ridge AR(60) achieves transition precision of $76.1\%$ and recall of $37.3\%$ ($F_1 = 0.5009$), and Real-TCN achieves precision of $83.3\%$ ($F_1 = 0.3666$), whereas naive persistence achieves $F_1 = 0.0000$ (0 TP, 383 FN).
 4. **Severe Dynamic Excursion Threshold ($6.5\text{ }^{\circ}\text{C}$):** $943$ safe origins with $130$ subsequent transitions. Ridge AR(60) achieves $F_1 = 0.3678$ ($32$ TP, $12$ FP, $98$ FN), outperforming persistence ($F_1 = 0.0000$).
 
 | Impending Transition (>6.0 °C) | Safe Origins ($T_0 \le 6.0$) | True Transitions | True Positives (TP) | False Positives (FP) | False Negatives (FN) | Precision | Recall | Transition $F_1$ |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Naive Persistence** | 706 | 383 | 0 | 0 | 383 | 0.0% | 0.0% | **0.0000** |
 | **Ridge AR(60)** | 706 | 383 | 143 | 45 | 240 | 76.1% | 37.3% | **0.5009** |
-| **Real-TCN (Learned Neural)** | 706 | 383 | 59 | 14 | 324 | 80.8% | 15.4% | **0.2588** |
+| **Real-TCN (Learned Neural, Seed 42)**| 706 | 383 | 90 | 18 | 293 | 83.3% | 23.5% | **0.3666** |
 
+- **Distinction Between Exceedance Classification & Impending Early Warning:** The general breach exceedance metric tests whether *any* future step in the 15-minute lookahead is above threshold (even if the chamber was already breached at $t_0$). Impending transition metrics evaluate only sequences that start safe ($T_0 \le \text{Threshold}$), strictly isolating genuine early-warning capability.
+- **Overlapping Windows & Autocorrelation Disclosure:** Sequential 15-minute test windows evaluated on 1-minute steps possess strong temporal autocorrelation; they should not be interpreted as 1,045 independent identically distributed trials.
 - **Data Provenance Boundary:** All MAD-TCN neural weights (Section C) are trained and evaluated on **SIMULATION** data. The Real-TCN model above is a separate compact network trained solely on Hohenheim SENSOR03 observed temperature. These results must not be conflated.
 - **Original MAD-TCN Checkpoint Limitation:** The original 12-feature MAD-TCN checkpoint cannot be fairly applied to Hohenheim data because only 2 of 12 input features (temperature, humidity) are available. This is documented as an architectural limitation, not a defect.
 
@@ -164,7 +166,7 @@ Evaluated via [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chai
 | **Mean Energy / 15-min Cycle** | **0.5625 kWh** | 0.6574 kWh (+16.9%) | **0.8387 kWh** (+49.1%) | Controlled energy investment for safety |
 | **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 99.1% | Active cooling under heat infiltration |
 | **Total Violation Duration** | **583 minutes** | 565 minutes (-3.1%) | **479 minutes** (-17.8%) | **-17.8% Total Excursions (-104 min)** |
-| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Breached) | **9.36 °C** (Contained via Max Cooling) | Lowest physical peak achievable |
+| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Breached) | **9.36 °C** (Contained via Max Cooling) | Lowest observed peak under tested policies |
 | **Ordinary Feasible Selections** | 50 (Unchecked) | 0 (Unchecked) | **23 Scenarios (100% Feasible)** | Evaluated strictly against $G_1, G_2 \le 0$ |
 | **Emergency Fallback Overrides** | 0 | 0 | **27 Scenarios (Infeasible Override)**| Explicitly labeled emergency actions |
 | **Mean Optimization Runtime** | ~0.1 ms | 214.5 ms | 199.0 ms | Real-Time Industrial Feasibility |
@@ -265,10 +267,10 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
 - **Active Workspace:** `C:\Projects\Cold-Chain-Ai`
 - **Active Git Branch:** `completion-dev`
 - **Latest Local Commits:**
-  - `15206eb`: *Update coldchain_report timestamp from test run*
-  - `e40c063`: *Align commit hash reference in FINAL_COMPLETION_REPORT to authoritative commit*
-  - `95a6b75`: *Acquire full Zenodo Hohenheim cold-room dataset, enforce server-side IoT hardware authorization, update dataset audit with file types, reconcile NSGA-II steady-state and breach provenance in reports*
-- **Uncommitted Changes (this session):** Semicolon CSV parsing, energy unit contract (`estimated_power_kw`/`estimated_energy_kwh`), per-device IoT auth registry, real-data neural forecasting benchmark, corrected test_29 device ID, new feature tests, corrected report.
+  - `ffbee3b`: *Final evidence reconciliation: audit 1,083,195 raw sensor rows, formalize impending safe-to-unsafe transition benchmark, ground energy target variance, and verify 12 unique routes with 13 screenshots*
+  - `2afb8c6`: *Align Authoritative Commit in FINAL_COMPLETION_REPORT to 6be2b40*
+  - `6be2b40`: *Reconcile real-data forecasting benchmark with multi-threshold breach metrics, document thermal derivative dynamics, and verify full 13-screen browser & 1M scalability regression suite*
+- **Release Verification:** Deterministic seed 42 enforced in real forecasting benchmark, Real-TCN MAE (0.2707 °C) and impending transition metrics ($F_1 = 0.3666$ at 6.0 °C) fully aligned, 54/54 automated regression tests passing, working tree fully clean.
 - **Remote Policy:** Remote push to `origin` (`https://github.com/Swathi185-T/Cold-Chain-Ai.git`) remains unperformed, strictly honoring local-only development safety instructions.
 
 ---
