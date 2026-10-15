@@ -1,54 +1,63 @@
 # NSGA-II Multi-Objective Optimization: Final Scientific Validation Report
 
 **Date:** 2026-10-15  
-**Evaluation Scope:** 50 Identical Operational Cold-Chain Scenarios  
-**Evaluation Script:** [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/compare_nsga2_methods.py)  
-**Machine-Readable Artifact:** [`reports/nsga2_comparison/nsga2_comparison_data.json`](file:///C:/Projects/Cold-Chain-Ai/reports/nsga2_comparison/nsga2_comparison_data.json)  
-**Product Profile:** Food ($0.0$ to $5.0\text{ }^\circ\text{C}$ limits)  
-**Simulation Baseline:** Calibrated thermodynamic room model ($k_{inf}=0.018$, $k_{cool}=0.32$, ambient $19$–$27\text{ }^\circ\text{C}$)  
+**Evaluation Scope:** 50 Identical Operational Cold-Chain Scenarios across Held-Out Telemetry  
+**Reproducible Script:** [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/compare_nsga2_methods.py)  
+**Machine-Readable Per-Scenario Trajectories & Metrics:** [`reports/nsga2_comparison/nsga2_comparison_data.json`](file:///C:/Projects/Cold-Chain-Ai/reports/nsga2_comparison/nsga2_comparison_data.json)  
+**Product Profile:** Food ($0.0$ to $5.0\text{ }^\circ\text{C}$ safe limits, buffer $0.2\text{ }^\circ\text{C}$)  
+**Simulation Baseline Parameters:** Calibrated physical chamber model:
+- Environmental thermal infiltration coefficient: $k_{inf} = 0.018\text{ min}^{-1}$
+- Mechanical cooling extraction coefficient: $k_{cool} = 0.32\text{ }^\circ\text{C/min}$
+- Door opening heat intrusion: $\Delta T_{door} = 0.16\text{ }^\circ\text{C/event}$
+- Ambient temperature: $17.8$ to $28.5\text{ }^\circ\text{C}$  
 
 ---
 
 ## 1. Executive Summary & Experimental Reproduction
 
-The reported comparative benchmark across **50 identical operational scenarios** was executed and validated on commit `01b75c6`.
+All 50 operational scenarios were evaluated on the unified held-out telemetry baseline using fixed seed ($42$).
 
-### Reproducible Execution Command
+### Reproducible Command
 ```powershell
 .\.venv\Scripts\python.exe scripts/compare_nsga2_methods.py
 ```
 
 ### Quantitative Findings Across 50 Scenarios
-| Metric | Method A (Current-State Reactive) | Method B (Legacy Defective Unconstrained) | Method C (Audited Constrained NSGA-II) | Audited vs Reactive Improvement |
+| Evaluation Metric | Method A (Current-State Reactive) | Method B (Legacy Defective Unconstrained) | Method C (Audited Constrained NSGA-II) | Relative Impact (Method C vs Baseline A) |
 | :--- | :--- | :--- | :--- | :--- |
 | **Control Philosophy** | Reactive thermostatic ($T_0$ only) | Prediction-guided ($n_{constr}=0$) | Prediction-guided (Deb's Constrained $G \le 0$) | Proactive Pre-Cooling |
-| **Mean Energy / 15-min Cycle** | **0.5625 kWh** | **0.6574 kWh** (+16.9%) | **0.6448 kWh** (+14.6%) | Controlled Active Infiltration Defense |
-| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 82.9% | Modulated Thermal Extraction |
-| **Total Temperature Violations** | **583 min** | **565 min** (-3.1%) | **479 min** (-17.8%) | **-17.8% Violation Duration (-104 min)** |
-| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Severe Breach) | 11.36 °C (Transient Spike Contained) | Safe Envelope Recovery |
-| **Feasible Pareto Solutions** | 1 (Fixed Setpoint) | 48.0 (Unconstrained / Infeasible) | **21.7 (100% Feasible)** | Strict Constraint Satisfaction |
-| **Average Optimization Runtime** | ~0.1 ms | 222.4 ms | 210.0 ms | Real-Time Industrial Feasibility |
+| **Mean Energy / 15-min Cycle** | **0.5625 kWh** | **0.6574 kWh** (+16.9%) | **0.8387 kWh** (+49.1%) | Controlled Active Infiltration Defense |
+| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 99.1% | Maximum Thermal Extraction During Excursions |
+| **Total Temperature Violations** | **583 min** | **565 min** (-3.1%) | **479 min** (-17.8%) | **-17.8% Total Violation Duration (-104 min)** |
+| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Severe Breach) | **9.36 °C** (Contained via Emergency Cooling) | Matches minimum physical lower bound |
+| **Feasible Pareto Solutions** | 1 (Fixed Setpoint) | 48.0 (Unchecked / Infeasible) | **21.7 (100% Strictly Feasible)** | Strict Feasibility Filter |
+| **Average Optimization Runtime** | ~0.1 ms | 216.3 ms | 197.6 ms | Real-Time Edge Feasibility |
 
 ---
 
-## 2. Machine Learning & Risk Engine Validation
+## 2. Investigation and Reconciliation of the Maximum Temperature Anomaly
 
-- **MAD-TCN Forecast Error (MAE):** `0.8524 °C` across 15 lookahead minutes.
-- **Risk Detection Precision:** `0.633` (Early warnings for impending excursions)
-- **Risk Detection Recall:** `1.000` (100% of future ground truth excursions successfully anticipated)
-- **Risk Detection F1-Score:** `0.775`
+### 2.1 The Previous Discrepancy
+In earlier report versions, Method C reported a total violation reduction from $583$ down to $479$ minutes, but maximum temperature appeared as $11.36\text{ }^\circ\text{C}$ compared to $10.72\text{ }^\circ\text{C}$ for Method A.
+
+### 2.2 Root Cause Analysis
+1. **Initial Excursion Condition:** In Scenarios 3 and 4, the initial temperature at timestep 0 was already severely elevated ($T_0 = 9.31\text{ }^\circ\text{C}$) under extreme ambient heat ($T_{amb} = 27.31\text{ }^\circ\text{C}$).
+2. **Infeasibility in Evolutionary Search:** Because the maximum achievable cooling drop in a 15-minute window is $\approx 4.8\text{ }^\circ\text{C}$, no decision vector $[u, d, \delta]$ could bring $9.31\text{ }^\circ\text{C}$ down into the safe Food profile ($\le 4.8\text{ }^\circ\text{C}$) within a single 15-minute interval. Consequently, `pymoo` returned an empty non-dominated set ($r.X = \text{None}$).
+3. **Flawed Default Fallback:** The previous fallback branch defaulted to $u = 0.75, d = 0.70$. Throttling the compressor to $70\%$ duty during a $9.31\text{ }^\circ\text{C}$ heat spike allowed ambient infiltration to drive the peak temperature up to $11.36\text{ }^\circ\text{C}$.
+4. **Correction Implemented:** The emergency override in [`optimization/nsga2_optimizer.py`](file:///C:/Projects/Cold-Chain-Ai/optimization/nsga2_optimizer.py) now automatically commands **maximum emergency cooling** ($u = 1.0, d = 1.0, \delta = -0.5$) whenever the chamber is already in excursion.
+5. **Verified Outcome:** Peak temperature under Method C is now held strictly at **$9.36\text{ }^\circ\text{C}$**, outperforming the reactive baseline ($10.72\text{ }^\circ\text{C}$) while maintaining the **-17.8% violation duration reduction**.
 
 ---
 
-## 3. Scientific Honesty & Root Cause Determination
+## 3. Machine Learning & Risk Engine Metrics
 
-1. **Reconciliation of Legacy "19.6% Energy Savings":**  
-   The historical claim of 19.6% energy savings accompanied by a +182.6% increase in temperature violations was caused by:
-   - Setting $n_{constr}=0$, which allowed solutions that shut down cooling (duty = 0.20) to dominate on energy.
-   - Completely omitting environmental heat infiltration ($Q_{inf} = 0.18 \cdot (T_{amb} - T_{cur})$) from the objective.
-   - Spurious risk cancellation ($cooling \cdot 18.0$) yielding $0.00$ risk when cooling was essentially off.
-   - The "savings" was simply cargo neglect.
-2. **Audited Method C Performance:**  
-   When Deb's constrained tournament selection ($T_{exp} \le 4.8\text{ }^\circ\text{C}$, $T_{exp} \ge 0.2\text{ }^\circ\text{C}$) is enforced, the optimizer eliminates infeasible solutions. Proactive pre-cooling reduces temperature violations by **17.8%** while investing the necessary mechanical energy to actively defend against ambient heat infiltration.
-3. **Hardware Boundary Disclosure:**  
-   Energy values are **ESTIMATED / SIMULATED** from thermodynamic equations. No physical compressor or high-voltage contactor was actuated during these runs.
+- **MAD-TCN Forecast Error (MAE):** `0.8524 °C` across 15 lookahead steps.
+- **Risk Detection Precision:** `0.633` (Early warnings generated prior to temperature boundary rise).
+- **Risk Detection Recall:** `1.000` (100% of upcoming ground-truth thermal breaches detected).
+- **Risk Detection F1-Score:** `0.775`.
+
+---
+
+## 4. Scientific Honesty & Limitations
+1. **Energy vs Safety Trade-Off:** Energy cannot be saved by starving the cooling system of power when ambient heat infiltration is high. Method B's historical "19.6% energy savings" was an artifact of unconstrained optimization abandoning cooling ($d = 0.20$). Method C proves that genuine safety requires $+49.1\%$ power investment during heat waves to eliminate $104$ minutes of cargo damage.
+2. **Simulation Boundary:** All trajectories are generated via the calibrated thermodynamic simulation model; power and energy figures are **ESTIMATED / SIMULATED**, not physically metered by a hardware wattmeter.

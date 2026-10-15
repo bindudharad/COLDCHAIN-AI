@@ -305,11 +305,52 @@ The reported anomaly (**~19.6% energy reduction accompanied by +182.6% temperatu
     
     summary_data = {
         'num_scenarios': num_scenarios,
+        'random_seed': 42,
+        'profile': 'Food (0.0 to 5.0 °C)',
+        'plant_parameters': {'k_inf': 0.018, 'k_cool': 0.32, 'door_delta': 0.16},
         'method_a': {'mean_energy_kwh': mean_e_a, 'total_violations_min': total_viol_a, 'max_temp_c': max_t_a, 'avg_duty_pct': avg_duty_a},
         'method_b_legacy': {'mean_energy_kwh': mean_e_b, 'total_violations_min': total_viol_b, 'max_temp_c': max_t_b, 'avg_duty_pct': avg_duty_b, 'energy_change_pct': b_vs_a_energy, 'violation_change_pct': b_vs_a_viols},
         'method_c_audited': {'mean_energy_kwh': mean_e_c, 'total_violations_min': total_viol_c, 'max_temp_c': max_t_c, 'avg_duty_pct': avg_duty_c, 'energy_change_pct': c_vs_a_energy, 'violation_change_pct': c_vs_a_viols},
         'risk_detection': {'precision': precision, 'recall': recall, 'f1': f1, 'forecast_mae': mean_mae},
-        'runtime_ms': {'legacy': float(np.mean(runtimes_legacy)), 'audited': float(np.mean(runtimes_audited))}
+        'runtime_ms': {'legacy': float(np.mean(runtimes_legacy)), 'audited': float(np.mean(runtimes_audited))},
+        'per_scenario_results': {
+            'scenarios': [
+                {
+                    'scenario_index': int(i),
+                    'step_idx': int(step_indices[i]),
+                    'initial_temp_c': round(float(X_all[step_indices[i]][-1, 0]), 3),
+                    'ambient_temp_c': round(float(X_all[step_indices[i]][-1, 2]), 3),
+                    'method_a': {
+                        'energy_kwh': round(results_a[i]['energy'], 4),
+                        'violations_min': results_a[i]['violations'],
+                        'max_temp_c': round(results_a[i]['max_temp'], 3),
+                        'min_temp_c': round(results_a[i]['min_temp'], 3),
+                        'duty': results_a[i]['duty'],
+                        'intensity': results_a[i]['intensity']
+                    },
+                    'method_b': {
+                        'energy_kwh': round(results_b[i]['energy'], 4),
+                        'violations_min': results_b[i]['violations'],
+                        'max_temp_c': round(results_b[i]['max_temp'], 3),
+                        'min_temp_c': round(results_b[i]['min_temp'], 3),
+                        'duty': results_b[i]['duty'],
+                        'intensity': results_b[i]['intensity'],
+                        'num_pareto': results_b[i]['num_pareto']
+                    },
+                    'method_c': {
+                        'energy_kwh': round(results_c[i]['energy'], 4),
+                        'violations_min': results_c[i]['violations'],
+                        'max_temp_c': round(results_c[i]['max_temp'], 3),
+                        'min_temp_c': round(results_c[i]['min_temp'], 3),
+                        'duty': results_c[i]['duty'],
+                        'intensity': results_c[i]['intensity'],
+                        'num_pareto': results_c[i]['num_pareto'],
+                        'feasible_pareto': results_c[i]['feasible_pareto']
+                    }
+                }
+                for i in range(num_scenarios)
+            ]
+        }
     }
     (rep_dir / 'nsga2_comparison_data.json').write_text(json.dumps(summary_data, indent=2), encoding='utf-8')
     print(f"\nReport generated at: {rep_dir / 'nsga2_comparison_report.md'}")

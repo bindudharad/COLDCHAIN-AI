@@ -1,6 +1,6 @@
 {
   "status": "ESTIMATED / SIMULATED",
-  "timestamp_utc": "2026-10-15T13:52:45.217449+00:00",
+  "timestamp_utc": "2026-10-15T14:21:20.944495+00:00",
   "disclaimer": "All power and energy metrics are ESTIMATED and SIMULATED based on thermodynamic cold-chain simulation models. No hardware wattmeter or physical sensor validation is claimed.",
   "hardware_validation": false,
   "dataset": {
@@ -68,9 +68,16 @@
       "formula": "E = max(0.05, 0.25 + 0.035 * max(T_amb - T_cur, 0)) * (0.35 + 0.65 * intensity) * duty",
       "source": "core.energy",
       "test": {
-        "mae_kw": 0.1666,
-        "rmse_kw": 0.1743,
-        "r2_score": -4.1991
+        "surrogate_vs_power_kw": {
+          "mae_kw": 0.1666,
+          "rmse_kw": 0.1743,
+          "r2_score": -4.1991
+        },
+        "interval_energy_kwh": {
+          "mae_kwh": 0.5893,
+          "rmse_kwh": 0.5902,
+          "r2_score": -14454.692
+        }
       }
     }
   },

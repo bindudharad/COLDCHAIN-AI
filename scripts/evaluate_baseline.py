@@ -40,14 +40,26 @@ def main():
     # Chronological sequence generation
     X_all, y_all = sequences(df_prep, window=60, horizon=15)
     
-    # Strict chronological split: 80% train, 20% held-out test
-    split_idx = int(len(X_all) * 0.8)
-    X_test = X_all[split_idx:]
-    y_test = y_all[split_idx:]
+    # Unified chronological split: 70% train (2747), 15% val (588), 15% held-out test (590)
+    total_sequences = len(X_all)
+    train_size = int(total_sequences * 0.70)
+    val_size = int(total_sequences * 0.15)
+    test_size = total_sequences - train_size - val_size
+    test_start = train_size + val_size
     
-    print(f"Total sequences: {len(X_all)}")
-    print(f"Train sequences: {split_idx} (First 80%, Chronological)")
-    print(f"Test sequences:  {len(X_test)} (Final 20%, Chronological Held-Out)")
+    X_test = X_all[test_start:]
+    y_test = y_all[test_start:]
+    
+    # Retrieve test timestamps
+    test_timestamps = df_prep['timestamp'].iloc[test_start + 60 : test_start + 60 + test_size].tolist()
+    start_ts = str(df_prep['timestamp'].iloc[test_start + 60])
+    end_ts = str(df_prep['timestamp'].iloc[-1])
+    
+    print(f"Total sequences: {total_sequences}")
+    print(f"Train sequences: {train_size} (First 70.0%, Chronological)")
+    print(f"Val sequences:   {val_size} (Next 15.0%, Chronological)")
+    print(f"Test sequences:  {len(X_test)} (Final 15.0%, Chronological Held-Out)")
+    print(f"Test timeline:   {start_ts} to {end_ts}")
     print(f"Horizon:         15 timesteps (15 minutes lookahead)")
     print(f"Features:        {len(FEATURES)} channels\n")
     
@@ -77,54 +89,75 @@ def main():
     metrics_linear = evaluate_metrics(y_test, pred_linear)
     
     # ---------------------------------------------------------
-    # Model: MAD-TCN (Pre-trained Checkpoint)
+    # Model A: Original Pre-trained Checkpoint (Raw Features)
     # ---------------------------------------------------------
-    ckpt_path = Path('models/mad_tcn_best.pt')
-    if not ckpt_path.exists():
-        print(f"Error: {ckpt_path} not found.")
+    orig_ckpt_path = Path('models/mad_tcn_best.pt')
+    if not orig_ckpt_path.exists():
+        print(f"Error: {orig_ckpt_path} not found.")
         sys.exit(1)
         
-    model = MADTCN(features=len(FEATURES), hidden=32, horizon=15)
-    model.load_state_dict(torch.load(ckpt_path, map_location='cpu', weights_only=True))
-    model.eval()
+    model_orig = MADTCN(features=len(FEATURES), hidden=32, horizon=15)
+    model_orig.load_state_dict(torch.load(orig_ckpt_path, map_location='cpu', weights_only=True))
+    model_orig.eval()
     
     with torch.no_grad():
-        x_tensor = torch.tensor(X_test, dtype=torch.float32)
-        pred_mad_tcn = model(x_tensor).numpy()
-    metrics_mad_tcn = evaluate_metrics(y_test, pred_mad_tcn)
+        pred_mad_tcn_orig = model_orig(torch.tensor(X_test, dtype=torch.float32)).numpy()
+    metrics_mad_tcn_orig = evaluate_metrics(y_test, pred_mad_tcn_orig)
     
+    # ---------------------------------------------------------
+    # Model B: Retrained Checkpoint (with StandardScaler)
+    # ---------------------------------------------------------
+    retrained_ckpt_path = Path('models/mad_tcn_retrained.pt')
+    scaler_path = Path('models/scaler_retrained.pkl')
+    
+    if retrained_ckpt_path.exists() and scaler_path.exists():
+        import pickle
+        with open(scaler_path, 'rb') as f:
+            scaler = pickle.load(f)
+        X_test_scaled = scaler.transform(X_test.reshape(-1, len(FEATURES))).reshape(X_test.shape)
+        
+        model_retrained = MADTCN(features=len(FEATURES), hidden=32, horizon=15)
+        model_retrained.load_state_dict(torch.load(retrained_ckpt_path, map_location='cpu', weights_only=True))
+        model_retrained.eval()
+        
+        with torch.no_grad():
+            pred_mad_tcn_retrained = model_retrained(torch.tensor(X_test_scaled, dtype=torch.float32)).numpy()
+        metrics_mad_tcn_retrained = evaluate_metrics(y_test, pred_mad_tcn_retrained)
+    else:
+        metrics_mad_tcn_retrained = None
+
     # Print formatted comparison table
-    print(f"{'Method / Model':<32} {'MAE (°C)':<12} {'RMSE (°C)':<12} {'R² Score':<10}")
-    print("-" * 68)
-    print(f"{'1. Naive Persistence (Last Value)':<32} {metrics_persistence['mae']:<12.4f} {metrics_persistence['rmse']:<12.4f} {metrics_persistence['r2']:<10.4f}")
-    print(f"{'2. 5-Step Moving Average':<32} {metrics_ma5['mae']:<12.4f} {metrics_ma5['rmse']:<12.4f} {metrics_ma5['r2']:<10.4f}")
-    print(f"{'3. Linear Trend Extrapolation':<32} {metrics_linear['mae']:<12.4f} {metrics_linear['rmse']:<12.4f} {metrics_linear['r2']:<10.4f}")
-    print(f"{'4. MAD-TCN (Multi-Scale Dilated)':<32} {metrics_mad_tcn['mae']:<12.4f} {metrics_mad_tcn['rmse']:<12.4f} {metrics_mad_tcn['r2']:<10.4f}")
-    print("-" * 68)
+    print(f"{'Method / Model':<35} {'MAE (°C)':<12} {'RMSE (°C)':<12} {'R² Score':<10}")
+    print("-" * 72)
+    print(f"{'1. Naive Persistence (Last Value)':<35} {metrics_persistence['mae']:<12.4f} {metrics_persistence['rmse']:<12.4f} {metrics_persistence['r2']:<10.4f}")
+    print(f"{'2. 5-Step Moving Average':<35} {metrics_ma5['mae']:<12.4f} {metrics_ma5['rmse']:<12.4f} {metrics_ma5['r2']:<10.4f}")
+    print(f"{'3. Linear Trend Extrapolation':<35} {metrics_linear['mae']:<12.4f} {metrics_linear['rmse']:<12.4f} {metrics_linear['r2']:<10.4f}")
+    print(f"{'4. MAD-TCN Original (Raw Inputs)':<35} {metrics_mad_tcn_orig['mae']:<12.4f} {metrics_mad_tcn_orig['rmse']:<12.4f} {metrics_mad_tcn_orig['r2']:<10.4f}")
+    if metrics_mad_tcn_retrained:
+        print(f"{'5. MAD-TCN Retrained (StandardScaler)':<35} {metrics_mad_tcn_retrained['mae']:<12.4f} {metrics_mad_tcn_retrained['rmse']:<12.4f} {metrics_mad_tcn_retrained['r2']:<10.4f}")
+    print("-" * 72)
     
-    mae_improvement = ((metrics_persistence['mae'] - metrics_mad_tcn['mae']) / metrics_persistence['mae']) * 100
-    rmse_improvement = ((metrics_persistence['rmse'] - metrics_mad_tcn['rmse']) / metrics_persistence['rmse']) * 100
-    print(f"\nMAD-TCN Error Reduction vs Naive Persistence:")
-    print(f"  MAE Reduction:  {mae_improvement:+.2f}%")
-    print(f"  RMSE Reduction: {rmse_improvement:+.2f}%")
-    
-    # Save results to reports directory
+    # Save unified results to reports directory
     rep_dir = Path('reports')
     rep_dir.mkdir(exist_ok=True)
     summary = {
         'dataset': 'simulated_cold_chain.csv (CC-01)',
-        'test_sequences': len(X_test),
+        'target_column': 'temperature (°C)',
         'horizon_steps': 15,
-        'chronological_split': '80% Train, 20% Test',
+        'chronological_split': '70% Train, 15% Val, 15% Held-Out Test',
+        'train_samples': train_size,
+        'val_samples': val_size,
+        'test_samples': len(X_test),
+        'test_timeline': {
+            'start': start_ts,
+            'end': end_ts
+        },
         'metrics': {
             'persistence': metrics_persistence,
             'moving_average_5': metrics_ma5,
             'linear_extrapolation': metrics_linear,
-            'mad_tcn': metrics_mad_tcn
-        },
-        'improvement_vs_persistence': {
-            'mae_pct': round(mae_improvement, 2),
-            'rmse_pct': round(rmse_improvement, 2)
+            'mad_tcn_original': metrics_mad_tcn_orig,
+            'mad_tcn_retrained': metrics_mad_tcn_retrained
         }
     }
     (rep_dir / 'model_baseline_comparison.json').write_text(json.dumps(summary, indent=2))

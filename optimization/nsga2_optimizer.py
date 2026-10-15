@@ -89,10 +89,20 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
     ambient_gain = 0.18 * max(ambient - current, 0.0)
     
     if r.X is None or len(r.X) == 0:
-        # Fallback candidate maintaining safe cooling
-        default_intensity = 0.75
-        default_duty = 0.70
-        default_offset = 0.0
+        # Emergency override: when current temperature is already in severe breach
+        # or heat gain makes compliance impossible within 15 min, engage maximum cooling
+        if current > hi:
+            default_intensity = 1.0
+            default_duty = 1.0
+            default_offset = -0.5
+        elif current < lo:
+            default_intensity = 0.1
+            default_duty = 0.2
+            default_offset = 0.5
+        else:
+            default_intensity = 0.85
+            default_duty = 0.80
+            default_offset = 0.0
         cooling = 3.2 * default_intensity * default_duty
         t_exp = current + ambient_gain - cooling + default_offset
         def_upper = max(0.0, t_exp - hi)

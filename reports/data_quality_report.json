@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-15T11:05:00.000000",
+  "generated_at": "2026-10-15T19:51:40.497996",
   "project_root": "C:\\Projects\\Cold-Chain-Ai",
   "summary": {
     "datasets_scanned": 1,
     "total_telemetry_rows": 12000,
-    "overall_status": "PASS",
-    "passed_datasets": 1,
-    "warning_datasets": 0,
+    "overall_status": "WARN",
+    "passed_datasets": 0,
+    "warning_datasets": 1,
     "failed_datasets": 0
   },
   "datasets": [
@@ -40,20 +40,20 @@
               "status": "PASS",
               "min_allowed": -60.0,
               "max_allowed": 70.0,
-              "min_observed": 2.8415,
-              "max_observed": 6.4821,
+              "min_observed": 3.5,
+              "max_observed": 9.9219,
               "violations_below": 0,
               "violations_above": 0,
               "total_violations": 0,
               "violation_rate_pct": 0.0,
-              "unit": "°C"
+              "unit": "\u00b0C"
             },
             "humidity": {
               "status": "PASS",
               "min_allowed": 0.0,
               "max_allowed": 100.0,
-              "min_observed": 57.8214,
-              "max_observed": 84.6192,
+              "min_observed": 57.229,
+              "max_observed": 82.2563,
               "violations_below": 0,
               "violations_above": 0,
               "total_violations": 0,
@@ -64,13 +64,13 @@
               "status": "PASS",
               "min_allowed": -40.0,
               "max_allowed": 60.0,
-              "min_observed": 17.6102,
-              "max_observed": 26.3914,
+              "min_observed": 17.7855,
+              "max_observed": 28.5461,
               "violations_below": 0,
               "violations_above": 0,
               "total_violations": 0,
               "violation_rate_pct": 0.0,
-              "unit": "°C"
+              "unit": "\u00b0C"
             },
             "power_kw": {
               "status": "PASS",
@@ -189,144 +189,144 @@
           "per_sensor": {
             "CC-01": {
               "temperature": {
-                "mean": 4.1482,
-                "std": 0.4187,
-                "lower_3sigma": 2.8921,
-                "upper_3sigma": 5.4043,
-                "outlier_count": 14,
-                "outlier_pct": 0.35,
-                "min_observed": 2.8415,
-                "max_observed": 5.9038,
+                "mean": 6.2331,
+                "std": 2.0419,
+                "lower_3sigma": 0.1076,
+                "upper_3sigma": 12.3587,
+                "outlier_count": 0,
+                "outlier_pct": 0.0,
+                "min_observed": 3.5,
+                "max_observed": 9.381,
                 "status": "PASS"
               },
               "humidity": {
-                "mean": 70.0812,
-                "std": 3.7914,
-                "lower_3sigma": 58.707,
-                "upper_3sigma": 81.4554,
-                "outlier_count": 11,
-                "outlier_pct": 0.275,
-                "min_observed": 58.1214,
-                "max_observed": 83.2105,
+                "mean": 69.9935,
+                "std": 2.9868,
+                "lower_3sigma": 61.0332,
+                "upper_3sigma": 78.9538,
+                "outlier_count": 8,
+                "outlier_pct": 0.2,
+                "min_observed": 58.3366,
+                "max_observed": 79.3019,
                 "status": "PASS"
               },
               "ambient_temperature": {
-                "mean": 21.9842,
-                "std": 2.1158,
-                "lower_3sigma": 15.6368,
-                "upper_3sigma": 28.3316,
+                "mean": 23.3695,
+                "std": 2.7907,
+                "lower_3sigma": 14.9975,
+                "upper_3sigma": 31.7415,
                 "outlier_count": 0,
                 "outlier_pct": 0.0,
-                "min_observed": 18.214,
-                "max_observed": 25.871,
+                "min_observed": 17.8721,
+                "max_observed": 28.233,
                 "status": "PASS"
               },
               "power_kw": {
-                "mean": 0.7185,
-                "std": 0.3541,
-                "lower_3sigma": -0.3438,
-                "upper_3sigma": 1.7808,
-                "outlier_count": 0,
-                "outlier_pct": 0.0,
+                "mean": 0.9804,
+                "std": 0.1273,
+                "lower_3sigma": 0.5986,
+                "upper_3sigma": 1.3622,
+                "outlier_count": 116,
+                "outlier_pct": 2.9,
                 "min_observed": 0.25,
                 "max_observed": 1.12,
-                "status": "PASS"
+                "status": "WARN"
               }
             },
             "CC-02": {
               "temperature": {
-                "mean": 4.1612,
-                "std": 0.4215,
-                "lower_3sigma": 2.8967,
-                "upper_3sigma": 5.4257,
-                "outlier_count": 16,
-                "outlier_pct": 0.4,
-                "min_observed": 2.8512,
-                "max_observed": 5.9214,
+                "mean": 6.3558,
+                "std": 2.1012,
+                "lower_3sigma": 0.0521,
+                "upper_3sigma": 12.6595,
+                "outlier_count": 0,
+                "outlier_pct": 0.0,
+                "min_observed": 3.6922,
+                "max_observed": 9.9219,
                 "status": "PASS"
               },
               "humidity": {
-                "mean": 69.9415,
-                "std": 3.8112,
-                "lower_3sigma": 58.5079,
-                "upper_3sigma": 81.3751,
-                "outlier_count": 13,
-                "outlier_pct": 0.325,
-                "min_observed": 57.8214,
-                "max_observed": 83.9142,
+                "mean": 69.9797,
+                "std": 3.0178,
+                "lower_3sigma": 60.9261,
+                "upper_3sigma": 79.0332,
+                "outlier_count": 9,
+                "outlier_pct": 0.225,
+                "min_observed": 57.229,
+                "max_observed": 79.9165,
                 "status": "PASS"
               },
               "ambient_temperature": {
-                "mean": 22.0114,
-                "std": 2.1084,
-                "lower_3sigma": 15.6862,
-                "upper_3sigma": 28.3366,
+                "mean": 23.4024,
+                "std": 2.7963,
+                "lower_3sigma": 15.0136,
+                "upper_3sigma": 31.7913,
                 "outlier_count": 0,
                 "outlier_pct": 0.0,
-                "min_observed": 18.114,
-                "max_observed": 25.912,
+                "min_observed": 17.7855,
+                "max_observed": 28.3278,
                 "status": "PASS"
               },
               "power_kw": {
-                "mean": 0.7214,
-                "std": 0.3512,
-                "lower_3sigma": -0.3322,
-                "upper_3sigma": 1.775,
-                "outlier_count": 0,
-                "outlier_pct": 0.0,
+                "mean": 0.9813,
+                "std": 0.1252,
+                "lower_3sigma": 0.6056,
+                "upper_3sigma": 1.357,
+                "outlier_count": 112,
+                "outlier_pct": 2.8,
                 "min_observed": 0.25,
                 "max_observed": 1.12,
-                "status": "PASS"
+                "status": "WARN"
               }
             },
             "CC-03": {
               "temperature": {
-                "mean": 4.1554,
-                "std": 0.4198,
-                "lower_3sigma": 2.896,
-                "upper_3sigma": 5.4148,
-                "outlier_count": 12,
-                "outlier_pct": 0.3,
-                "min_observed": 2.8614,
-                "max_observed": 5.8912,
+                "mean": 6.2173,
+                "std": 2.0187,
+                "lower_3sigma": 0.1613,
+                "upper_3sigma": 12.2733,
+                "outlier_count": 0,
+                "outlier_pct": 0.0,
+                "min_observed": 3.6636,
+                "max_observed": 9.5933,
                 "status": "PASS"
               },
               "humidity": {
-                "mean": 70.0124,
-                "std": 3.7845,
-                "lower_3sigma": 58.6589,
-                "upper_3sigma": 81.3659,
-                "outlier_count": 9,
-                "outlier_pct": 0.225,
-                "min_observed": 58.312,
-                "max_observed": 82.914,
+                "mean": 69.9696,
+                "std": 2.9775,
+                "lower_3sigma": 61.037,
+                "upper_3sigma": 78.9023,
+                "outlier_count": 15,
+                "outlier_pct": 0.375,
+                "min_observed": 58.5699,
+                "max_observed": 82.2563,
                 "status": "PASS"
               },
               "ambient_temperature": {
-                "mean": 21.9951,
-                "std": 2.1124,
-                "lower_3sigma": 15.6579,
-                "upper_3sigma": 28.3323,
+                "mean": 23.3768,
+                "std": 2.7922,
+                "lower_3sigma": 15.0002,
+                "upper_3sigma": 31.7535,
                 "outlier_count": 0,
                 "outlier_pct": 0.0,
-                "min_observed": 18.195,
-                "max_observed": 25.894,
+                "min_observed": 17.9706,
+                "max_observed": 28.5461,
                 "status": "PASS"
               },
               "power_kw": {
-                "mean": 0.7198,
-                "std": 0.3524,
-                "lower_3sigma": -0.3374,
-                "upper_3sigma": 1.777,
-                "outlier_count": 0,
-                "outlier_pct": 0.0,
+                "mean": 0.9815,
+                "std": 0.1247,
+                "lower_3sigma": 0.6074,
+                "upper_3sigma": 1.3556,
+                "outlier_count": 111,
+                "outlier_pct": 2.775,
                 "min_observed": 0.25,
                 "max_observed": 1.12,
-                "status": "PASS"
+                "status": "WARN"
               }
             }
           },
-          "status": "PASS"
+          "status": "WARN"
         }
       },
       "duplicate_checks": {
@@ -345,12 +345,12 @@
           "threshold_consecutive": 10,
           "episodes_detected": 0,
           "total_stuck_rows": 0,
-          "max_streak_length": 1,
+          "max_streak_length": 0,
           "status": "PASS",
           "episodes": []
         }
       },
-      "overall_status": "PASS"
+      "overall_status": "WARN"
     }
   ]
 }

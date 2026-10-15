@@ -1,19 +1,20 @@
 # End-to-End System Pipeline & Browser Verification Report
 
 **Date:** 2026-10-15  
-**Verification Scope:** Full Stack Pipeline (`Telemetry -> Preprocessing -> MAD-TCN -> Risk Engine -> NSGA-II -> Django ORM/API -> Browser UI`)  
+**Code Revision Evaluated:** Commit `completion-dev`  
+**Verification Scope:** Full Stack Pipeline (`Telemetry Ingestion -> Vectorized Preprocessing -> MAD-TCN Inference -> Risk Engine -> Constrained NSGA-II -> Django ORM/API -> Playwright Browser UI`)  
 **Scripts Executed:**  
 - Automated Pipeline: [`scripts/end_to_end.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/end_to_end.py)  
 - Browser Automation: [`scripts/verify_browser_pages.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/verify_browser_pages.py)  
 - Test Suite: `manage.py test` (39 tests)  
 **Machine-Readable Report:** [`reports/browser_verification_report.json`](file:///C:/Projects/Cold-Chain-Ai/reports/browser_verification_report.json)  
-**Captured Screenshots:** 13 files in [`docs/screenshots/`](file:///C:/Projects/Cold-Chain-Ai/docs/screenshots/)  
+**Captured Screenshots:** 13 full-resolution PNG captures in [`docs/screenshots/`](file:///C:/Projects/Cold-Chain-Ai/docs/screenshots/)  
 
 ---
 
 ## 1. End-to-End Pipeline Verification Results
 
-### Pipeline Execution Output (`scripts/end_to_end.py`)
+### Reproducible Pipeline Execution (`scripts/end_to_end.py`)
 ```json
 {
   "sensor": "CC-01",
@@ -48,7 +49,7 @@ Executed command:
 .\.venv\Scripts\python.exe manage.py test
 ```
 
-### Test Count & Status: **39/39 Tests PASSED (0 Failures, 0 Errors)**
+### Test Count & Status: **39/39 Tests PASSED in 8.62s (0 Failures, 0 Errors)**
 - `test_01` to `test_16`: Core Django views, simulations, alert resolution, uploads, and reports.
 - `test_17` to `test_21`: MAD-TCN inference, future-risk calculation, NSGA-II optimization, recommendation generation, and end-to-end pipeline.
 - `test_22` to `test_28`: Sensor histories, query parameter filters, sensor aggregates, report generation, and profile thresholds.
@@ -66,22 +67,22 @@ Executed command:
 
 ## 3. Playwright Headless Browser Verification (Microsoft Edge)
 
-All 12 pages rendered successfully with **0 console errors** and verified text content:
+All 12 application pages rendered successfully with **0 console errors** and verified text content:
 
 | Route | Page Name | HTTP Status | Content Verified | Latency (ms) | Screenshot Captured |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `/` | `home` | 200 | COLDCHAIN AI | 1692.0 | `home.png` |
-| `/dashboard/` | `dashboard` | 200 | Cold-Chain | 1965.9 | `dashboard.png` |
-| `/datasets/` | `datasets` | 200 | Datasets Inventory | 1473.5 | `datasets.png` |
-| `/live-monitoring/` | `live_monitoring` | 200 | Live Monitoring | 1687.7 | `live_monitoring.png` |
-| `/predictions/` | `predictions` | 200 | Predictions | 1638.9 | `predictions.png` |
-| `/optimization/` | `optimization` | 200 | Optimization | 1652.6 | `optimization.png` |
-| `/alerts/` | `alerts` | 200 | Alert Center | 1483.7 | `alerts.png` |
-| `/model/` | `model` | 200 | Model | 1627.9 | `model.png` |
-| `/sensors/` | `sensors` | 200 | Sensors | 1646.3 | `sensors.png` |
-| `/reports/` | `reports` | 200 | Reports | 1532.3 | `reports.png` |
-| `/upload/` | `upload` | 200 | Upload Data | 1468.8 | `upload.png` |
-| `/methodology/` | `methodology` | 200 | Methodology | 1722.2 | `methodology.png` |
+| `/` | `home` | 200 | COLDCHAIN AI | 1890.7 | `home.png` |
+| `/dashboard/` | `dashboard` | 200 | Cold-Chain | 2017.9 | `dashboard.png` |
+| `/datasets/` | `datasets` | 200 | Datasets Inventory | 1357.2 | `datasets.png` |
+| `/live-monitoring/` | `live_monitoring` | 200 | Live Monitoring | 1514.1 | `live_monitoring.png` |
+| `/predictions/` | `predictions` | 200 | Predictions | 1661.1 | `predictions.png` |
+| `/optimization/` | `optimization` | 200 | Optimization | 1624.2 | `optimization.png` |
+| `/alerts/` | `alerts` | 200 | Alert Center | 1627.7 | `alerts.png` |
+| `/model/` | `model` | 200 | Model | 1724.3 | `model.png` |
+| `/sensors/` | `sensors` | 200 | Sensors | 1458.8 | `sensors.png` |
+| `/reports/` | `reports` | 200 | Reports | 1643.0 | `reports.png` |
+| `/upload/` | `upload` | 200 | Upload Data | 1478.7 | `upload.png` |
+| `/methodology/` | `methodology` | 200 | Methodology | 1668.7 | `methodology.png` |
 
 ### Interactive Control Verification
 - Successfully selected sensor `CC-02` on `/dashboard/`, triggering dynamic chart updates and capturing `dashboard_cc02_selected.png`.

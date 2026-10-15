@@ -1,5 +1,12 @@
 {
   "num_scenarios": 50,
+  "random_seed": 42,
+  "profile": "Food (0.0 to 5.0 \u00b0C)",
+  "plant_parameters": {
+    "k_inf": 0.018,
+    "k_cool": 0.32,
+    "door_delta": 0.16
+  },
   "method_a": {
     "mean_energy_kwh": 0.5625012105342567,
     "total_violations_min": 583,
@@ -15,11 +22,11 @@
     "violation_change_pct": -3.0874785591713767
   },
   "method_c_audited": {
-    "mean_energy_kwh": 0.6447620000000001,
+    "mean_energy_kwh": 0.8386959999999999,
     "total_violations_min": 479,
-    "max_temp_c": 11.358275576362747,
-    "avg_duty_pct": 82.912,
-    "energy_change_pct": 14.624108877492557,
+    "max_temp_c": 9.363904710392847,
+    "avg_duty_pct": 99.11200000000001,
+    "energy_change_pct": 49.10119023626932,
     "violation_change_pct": -17.83876500854573
   },
   "risk_detection": {
@@ -29,7 +36,1661 @@
     "forecast_mae": 0.8523618671766772
   },
   "runtime_ms": {
-    "legacy": 222.44698400001198,
-    "audited": 210.01653199999964
+    "legacy": 216.31914199997482,
+    "audited": 197.6243500000237
+  },
+  "per_scenario_results": {
+    "scenarios": [
+      {
+        "scenario_index": 0,
+        "step_idx": 60,
+        "initial_temp_c": 6.214,
+        "ambient_temp_c": 24.795,
+        "method_a": {
+          "energy_kwh": 0.6658,
+          "violations_min": 16,
+          "max_temp_c": 7.761,
+          "min_temp_c": 6.214,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.778,
+          "violations_min": 16,
+          "max_temp_c": 6.748,
+          "min_temp_c": 6.214,
+          "duty": 0.8673149644476446,
+          "intensity": 0.9944016106828503,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.9003,
+          "violations_min": 16,
+          "max_temp_c": 6.406,
+          "min_temp_c": 6.214,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 1,
+        "step_idx": 138,
+        "initial_temp_c": 7.98,
+        "ambient_temp_c": 25.749,
+        "method_a": {
+          "energy_kwh": 0.6448,
+          "violations_min": 16,
+          "max_temp_c": 9.334,
+          "min_temp_c": 7.98,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8717,
+          "violations_min": 16,
+          "max_temp_c": 7.98,
+          "min_temp_c": 7.979,
+          "duty": 0.9999606379517187,
+          "intensity": 0.9997295106194181,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8719,
+          "violations_min": 16,
+          "max_temp_c": 7.98,
+          "min_temp_c": 7.978,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 2,
+        "step_idx": 217,
+        "initial_temp_c": 8.514,
+        "ambient_temp_c": 26.308,
+        "method_a": {
+          "energy_kwh": 0.6454,
+          "violations_min": 16,
+          "max_temp_c": 9.873,
+          "min_temp_c": 8.514,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8725,
+          "violations_min": 16,
+          "max_temp_c": 8.518,
+          "min_temp_c": 8.514,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8728,
+          "violations_min": 16,
+          "max_temp_c": 8.518,
+          "min_temp_c": 8.514,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 3,
+        "step_idx": 296,
+        "initial_temp_c": 9.112,
+        "ambient_temp_c": 27.088,
+        "method_a": {
+          "energy_kwh": 0.6501,
+          "violations_min": 16,
+          "max_temp_c": 10.515,
+          "min_temp_c": 9.112,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8788,
+          "violations_min": 16,
+          "max_temp_c": 9.159,
+          "min_temp_c": 9.112,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8792,
+          "violations_min": 16,
+          "max_temp_c": 9.159,
+          "min_temp_c": 9.112,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 4,
+        "step_idx": 375,
+        "initial_temp_c": 9.313,
+        "ambient_temp_c": 27.305,
+        "method_a": {
+          "energy_kwh": 0.6506,
+          "violations_min": 16,
+          "max_temp_c": 10.719,
+          "min_temp_c": 9.313,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8794,
+          "violations_min": 16,
+          "max_temp_c": 9.364,
+          "min_temp_c": 9.313,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8797,
+          "violations_min": 16,
+          "max_temp_c": 9.364,
+          "min_temp_c": 9.313,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 5,
+        "step_idx": 454,
+        "initial_temp_c": 8.962,
+        "ambient_temp_c": 26.336,
+        "method_a": {
+          "energy_kwh": 0.6346,
+          "violations_min": 16,
+          "max_temp_c": 10.221,
+          "min_temp_c": 8.962,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8578,
+          "violations_min": 16,
+          "max_temp_c": 8.962,
+          "min_temp_c": 8.866,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8581,
+          "violations_min": 16,
+          "max_temp_c": 8.962,
+          "min_temp_c": 8.866,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 6,
+        "step_idx": 533,
+        "initial_temp_c": 8.566,
+        "ambient_temp_c": 26.319,
+        "method_a": {
+          "energy_kwh": 0.6444,
+          "violations_min": 16,
+          "max_temp_c": 9.916,
+          "min_temp_c": 8.566,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.871,
+          "violations_min": 16,
+          "max_temp_c": 8.566,
+          "min_temp_c": 8.56,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8713,
+          "violations_min": 16,
+          "max_temp_c": 8.566,
+          "min_temp_c": 8.56,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 7,
+        "step_idx": 612,
+        "initial_temp_c": 7.449,
+        "ambient_temp_c": 24.478,
+        "method_a": {
+          "energy_kwh": 0.6256,
+          "violations_min": 16,
+          "max_temp_c": 8.626,
+          "min_temp_c": 7.449,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8452,
+          "violations_min": 16,
+          "max_temp_c": 7.449,
+          "min_temp_c": 7.271,
+          "duty": 0.999088886804151,
+          "intensity": 0.9998670399368017,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.846,
+          "violations_min": 16,
+          "max_temp_c": 7.449,
+          "min_temp_c": 7.27,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 8,
+        "step_idx": 690,
+        "initial_temp_c": 6.491,
+        "ambient_temp_c": 22.681,
+        "method_a": {
+          "energy_kwh": 0.6039,
+          "violations_min": 16,
+          "max_temp_c": 7.468,
+          "min_temp_c": 6.491,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.726,
+          "violations_min": 16,
+          "max_temp_c": 6.491,
+          "min_temp_c": 6.145,
+          "duty": 0.8904627164737586,
+          "intensity": 0.9973622243117616,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8167,
+          "violations_min": 16,
+          "max_temp_c": 6.491,
+          "min_temp_c": 6.112,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 9,
+        "step_idx": 769,
+        "initial_temp_c": 5.054,
+        "ambient_temp_c": 22.332,
+        "method_a": {
+          "energy_kwh": 0.6321,
+          "violations_min": 16,
+          "max_temp_c": 6.29,
+          "min_temp_c": 5.054,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.5834,
+          "violations_min": 16,
+          "max_temp_c": 6.217,
+          "min_temp_c": 5.002,
+          "duty": 0.6879533272014433,
+          "intensity": 0.9879369474161791,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8547,
+          "violations_min": 7,
+          "max_temp_c": 5.054,
+          "min_temp_c": 4.935,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 10,
+        "step_idx": 848,
+        "initial_temp_c": 4.249,
+        "ambient_temp_c": 20.044,
+        "method_a": {
+          "energy_kwh": 0.5937,
+          "violations_min": 1,
+          "max_temp_c": 5.132,
+          "min_temp_c": 4.249,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.3986,
+          "violations_min": 4,
+          "max_temp_c": 5.919,
+          "min_temp_c": 4.004,
+          "duty": 0.4995657490657117,
+          "intensity": 0.9904065106269918,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8021,
+          "violations_min": 0,
+          "max_temp_c": 4.249,
+          "min_temp_c": 3.777,
+          "duty": 0.999,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 11,
+        "step_idx": 927,
+        "initial_temp_c": 3.955,
+        "ambient_temp_c": 19.076,
+        "method_a": {
+          "energy_kwh": 0.4077,
+          "violations_min": 3,
+          "max_temp_c": 5.674,
+          "min_temp_c": 3.955,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.3706,
+          "violations_min": 2,
+          "max_temp_c": 5.458,
+          "min_temp_c": 3.612,
+          "duty": 0.47766190774522177,
+          "intensity": 0.9933436902526944,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.7789,
+          "violations_min": 0,
+          "max_temp_c": 3.955,
+          "min_temp_c": 3.326,
+          "duty": 1.0,
+          "intensity": 0.999,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 12,
+        "step_idx": 1006,
+        "initial_temp_c": 4.089,
+        "ambient_temp_c": 19.123,
+        "method_a": {
+          "energy_kwh": 0.4061,
+          "violations_min": 4,
+          "max_temp_c": 5.787,
+          "min_temp_c": 4.089,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.3528,
+          "violations_min": 4,
+          "max_temp_c": 5.87,
+          "min_temp_c": 3.798,
+          "duty": 0.4596251163315612,
+          "intensity": 0.9828707010486785,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.7761,
+          "violations_min": 0,
+          "max_temp_c": 4.089,
+          "min_temp_c": 3.435,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 13,
+        "step_idx": 1085,
+        "initial_temp_c": 3.906,
+        "ambient_temp_c": 19.012,
+        "method_a": {
+          "energy_kwh": 0.4075,
+          "violations_min": 3,
+          "max_temp_c": 5.621,
+          "min_temp_c": 3.906,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.3682,
+          "violations_min": 2,
+          "max_temp_c": 5.399,
+          "min_temp_c": 3.553,
+          "duty": 0.47397479642891327,
+          "intensity": 0.9964739893659474,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.7781,
+          "violations_min": 0,
+          "max_temp_c": 3.906,
+          "min_temp_c": 3.269,
+          "duty": 0.999,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 14,
+        "step_idx": 1164,
+        "initial_temp_c": 3.813,
+        "ambient_temp_c": 19.643,
+        "method_a": {
+          "energy_kwh": 0.4207,
+          "violations_min": 3,
+          "max_temp_c": 5.701,
+          "min_temp_c": 3.813,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.0722,
+          "violations_min": 11,
+          "max_temp_c": 7.433,
+          "min_temp_c": 3.813,
+          "duty": 0.20000089576684177,
+          "intensity": 0.15196620446692644,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.385,
+          "violations_min": 3,
+          "max_temp_c": 5.711,
+          "min_temp_c": 3.813,
+          "duty": 0.558,
+          "intensity": 0.781,
+          "num_pareto": 1,
+          "feasible_pareto": 1
+        }
+      },
+      {
+        "scenario_index": 15,
+        "step_idx": 1242,
+        "initial_temp_c": 3.785,
+        "ambient_temp_c": 19.025,
+        "method_a": {
+          "energy_kwh": 0.2115,
+          "violations_min": 7,
+          "max_temp_c": 6.64,
+          "min_temp_c": 3.785,
+          "duty": 0.4,
+          "intensity": 0.5
+        },
+        "method_b": {
+          "energy_kwh": 0.3529,
+          "violations_min": 3,
+          "max_temp_c": 5.587,
+          "min_temp_c": 3.485,
+          "duty": 0.4508395703938116,
+          "intensity": 0.9987409891756587,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.7832,
+          "violations_min": 0,
+          "max_temp_c": 3.785,
+          "min_temp_c": 3.18,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 16,
+        "step_idx": 1321,
+        "initial_temp_c": 3.878,
+        "ambient_temp_c": 21.519,
+        "method_a": {
+          "energy_kwh": 0.4539,
+          "violations_min": 5,
+          "max_temp_c": 6.198,
+          "min_temp_c": 3.878,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.4844,
+          "violations_min": 3,
+          "max_temp_c": 5.757,
+          "min_temp_c": 3.878,
+          "duty": 0.5702256090770279,
+          "intensity": 0.9683217959133537,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8673,
+          "violations_min": 0,
+          "max_temp_c": 3.878,
+          "min_temp_c": 3.846,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 17,
+        "step_idx": 1400,
+        "initial_temp_c": 4.127,
+        "ambient_temp_c": 22.35,
+        "method_a": {
+          "energy_kwh": 0.4645,
+          "violations_min": 6,
+          "max_temp_c": 6.586,
+          "min_temp_c": 4.127,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.5041,
+          "violations_min": 4,
+          "max_temp_c": 6.096,
+          "min_temp_c": 4.127,
+          "duty": 0.5719586476526608,
+          "intensity": 0.988850062582356,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8878,
+          "violations_min": 0,
+          "max_temp_c": 4.234,
+          "min_temp_c": 4.127,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 18,
+        "step_idx": 1479,
+        "initial_temp_c": 4.871,
+        "ambient_temp_c": 23.081,
+        "method_a": {
+          "energy_kwh": 0.6562,
+          "violations_min": 14,
+          "max_temp_c": 6.33,
+          "min_temp_c": 4.871,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.5975,
+          "violations_min": 4,
+          "max_temp_c": 6.224,
+          "min_temp_c": 4.871,
+          "duty": 0.6739211274442295,
+          "intensity": 0.9988289768122877,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8873,
+          "violations_min": 0,
+          "max_temp_c": 4.974,
+          "min_temp_c": 4.871,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 19,
+        "step_idx": 1558,
+        "initial_temp_c": 6.136,
+        "ambient_temp_c": 23.956,
+        "method_a": {
+          "energy_kwh": 0.6461,
+          "violations_min": 16,
+          "max_temp_c": 7.502,
+          "min_temp_c": 6.136,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.7464,
+          "violations_min": 16,
+          "max_temp_c": 6.557,
+          "min_temp_c": 6.136,
+          "duty": 0.8674477613503795,
+          "intensity": 0.9767555291811487,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8737,
+          "violations_min": 16,
+          "max_temp_c": 6.146,
+          "min_temp_c": 6.136,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 20,
+        "step_idx": 1637,
+        "initial_temp_c": 7.138,
+        "ambient_temp_c": 25.613,
+        "method_a": {
+          "energy_kwh": 0.6631,
+          "violations_min": 16,
+          "max_temp_c": 8.659,
+          "min_temp_c": 7.138,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8963,
+          "violations_min": 16,
+          "max_temp_c": 7.307,
+          "min_temp_c": 7.138,
+          "duty": 0.9999995389661535,
+          "intensity": 0.9994260993330216,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8967,
+          "violations_min": 16,
+          "max_temp_c": 7.304,
+          "min_temp_c": 7.138,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 21,
+        "step_idx": 1716,
+        "initial_temp_c": 8.533,
+        "ambient_temp_c": 26.721,
+        "method_a": {
+          "energy_kwh": 0.6556,
+          "violations_min": 16,
+          "max_temp_c": 9.986,
+          "min_temp_c": 8.533,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8863,
+          "violations_min": 16,
+          "max_temp_c": 8.631,
+          "min_temp_c": 8.533,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8866,
+          "violations_min": 16,
+          "max_temp_c": 8.631,
+          "min_temp_c": 8.533,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 22,
+        "step_idx": 1794,
+        "initial_temp_c": 9.046,
+        "ambient_temp_c": 27.267,
+        "method_a": {
+          "energy_kwh": 0.6565,
+          "violations_min": 16,
+          "max_temp_c": 10.507,
+          "min_temp_c": 9.046,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8874,
+          "violations_min": 16,
+          "max_temp_c": 9.152,
+          "min_temp_c": 9.046,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8877,
+          "violations_min": 16,
+          "max_temp_c": 9.151,
+          "min_temp_c": 9.046,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 23,
+        "step_idx": 1873,
+        "initial_temp_c": 8.922,
+        "ambient_temp_c": 26.535,
+        "method_a": {
+          "energy_kwh": 0.6407,
+          "violations_min": 16,
+          "max_temp_c": 10.238,
+          "min_temp_c": 8.922,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8662,
+          "violations_min": 16,
+          "max_temp_c": 8.922,
+          "min_temp_c": 8.883,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8665,
+          "violations_min": 16,
+          "max_temp_c": 8.922,
+          "min_temp_c": 8.883,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 24,
+        "step_idx": 1952,
+        "initial_temp_c": 8.859,
+        "ambient_temp_c": 27.261,
+        "method_a": {
+          "energy_kwh": 0.6612,
+          "violations_min": 16,
+          "max_temp_c": 10.363,
+          "min_temp_c": 8.859,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8937,
+          "violations_min": 16,
+          "max_temp_c": 9.008,
+          "min_temp_c": 8.859,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8941,
+          "violations_min": 16,
+          "max_temp_c": 9.008,
+          "min_temp_c": 8.859,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 25,
+        "step_idx": 2031,
+        "initial_temp_c": 8.645,
+        "ambient_temp_c": 25.715,
+        "method_a": {
+          "energy_kwh": 0.6267,
+          "violations_min": 16,
+          "max_temp_c": 9.831,
+          "min_temp_c": 8.645,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8471,
+          "violations_min": 16,
+          "max_temp_c": 8.645,
+          "min_temp_c": 8.476,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8474,
+          "violations_min": 16,
+          "max_temp_c": 8.645,
+          "min_temp_c": 8.476,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 26,
+        "step_idx": 2110,
+        "initial_temp_c": 7.344,
+        "ambient_temp_c": 24.233,
+        "method_a": {
+          "energy_kwh": 0.622,
+          "violations_min": 16,
+          "max_temp_c": 8.488,
+          "min_temp_c": 7.344,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8409,
+          "violations_min": 16,
+          "max_temp_c": 7.344,
+          "min_temp_c": 7.133,
+          "duty": 0.9998991012036327,
+          "intensity": 0.9998218511205627,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8411,
+          "violations_min": 16,
+          "max_temp_c": 7.344,
+          "min_temp_c": 7.132,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 27,
+        "step_idx": 2189,
+        "initial_temp_c": 6.208,
+        "ambient_temp_c": 23.208,
+        "method_a": {
+          "energy_kwh": 0.6249,
+          "violations_min": 16,
+          "max_temp_c": 7.378,
+          "min_temp_c": 6.208,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.7262,
+          "violations_min": 16,
+          "max_temp_c": 6.703,
+          "min_temp_c": 6.092,
+          "duty": 0.8665549953006771,
+          "intensity": 0.987321855755159,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.845,
+          "violations_min": 16,
+          "max_temp_c": 6.208,
+          "min_temp_c": 6.023,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 28,
+        "step_idx": 2268,
+        "initial_temp_c": 5.037,
+        "ambient_temp_c": 22.59,
+        "method_a": {
+          "energy_kwh": 0.6392,
+          "violations_min": 16,
+          "max_temp_c": 6.339,
+          "min_temp_c": 5.037,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.6403,
+          "violations_min": 16,
+          "max_temp_c": 5.942,
+          "min_temp_c": 5.01,
+          "duty": 0.7431390949594214,
+          "intensity": 0.9952128914520123,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8643,
+          "violations_min": 10,
+          "max_temp_c": 5.037,
+          "min_temp_c": 4.984,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 29,
+        "step_idx": 2346,
+        "initial_temp_c": 3.955,
+        "ambient_temp_c": 20.013,
+        "method_a": {
+          "energy_kwh": 0.4249,
+          "violations_min": 4,
+          "max_temp_c": 5.897,
+          "min_temp_c": 3.955,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.3903,
+          "violations_min": 3,
+          "max_temp_c": 5.726,
+          "min_temp_c": 3.789,
+          "duty": 0.48940140539601784,
+          "intensity": 0.9724634652049566,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.812,
+          "violations_min": 0,
+          "max_temp_c": 3.955,
+          "min_temp_c": 3.545,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 30,
+        "step_idx": 2425,
+        "initial_temp_c": 4.168,
+        "ambient_temp_c": 19.76,
+        "method_a": {
+          "energy_kwh": 0.4164,
+          "violations_min": 4,
+          "max_temp_c": 5.999,
+          "min_temp_c": 4.168,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.429,
+          "violations_min": 2,
+          "max_temp_c": 5.511,
+          "min_temp_c": 3.87,
+          "duty": 0.5433158418426333,
+          "intensity": 0.9880568537694371,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.7957,
+          "violations_min": 0,
+          "max_temp_c": 4.168,
+          "min_temp_c": 3.647,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 31,
+        "step_idx": 2504,
+        "initial_temp_c": 3.951,
+        "ambient_temp_c": 19.956,
+        "method_a": {
+          "energy_kwh": 0.4239,
+          "violations_min": 4,
+          "max_temp_c": 5.881,
+          "min_temp_c": 3.951,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.3723,
+          "violations_min": 4,
+          "max_temp_c": 5.94,
+          "min_temp_c": 3.748,
+          "duty": 0.46072937731276586,
+          "intensity": 0.9960866729438774,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8098,
+          "violations_min": 0,
+          "max_temp_c": 3.951,
+          "min_temp_c": 3.528,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 32,
+        "step_idx": 2583,
+        "initial_temp_c": 4.148,
+        "ambient_temp_c": 18.564,
+        "method_a": {
+          "energy_kwh": 0.3948,
+          "violations_min": 3,
+          "max_temp_c": 5.699,
+          "min_temp_c": 4.148,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.3689,
+          "violations_min": 2,
+          "max_temp_c": 5.48,
+          "min_temp_c": 3.706,
+          "duty": 0.4906082825572847,
+          "intensity": 0.9948321210115436,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.7545,
+          "violations_min": 0,
+          "max_temp_c": 4.148,
+          "min_temp_c": 3.347,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 33,
+        "step_idx": 2662,
+        "initial_temp_c": 3.926,
+        "ambient_temp_c": 19.812,
+        "method_a": {
+          "energy_kwh": 0.4217,
+          "violations_min": 4,
+          "max_temp_c": 5.827,
+          "min_temp_c": 3.926,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.3634,
+          "violations_min": 4,
+          "max_temp_c": 5.884,
+          "min_temp_c": 3.706,
+          "duty": 0.4517215822273928,
+          "intensity": 0.9972694358196952,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.806,
+          "violations_min": 0,
+          "max_temp_c": 3.926,
+          "min_temp_c": 3.475,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 34,
+        "step_idx": 2741,
+        "initial_temp_c": 3.99,
+        "ambient_temp_c": 19.751,
+        "method_a": {
+          "energy_kwh": 0.4194,
+          "violations_min": 4,
+          "max_temp_c": 5.862,
+          "min_temp_c": 3.99,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.3863,
+          "violations_min": 3,
+          "max_temp_c": 5.68,
+          "min_temp_c": 3.773,
+          "duty": 0.4892299205639622,
+          "intensity": 0.9769898060848783,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8013,
+          "violations_min": 0,
+          "max_temp_c": 3.99,
+          "min_temp_c": 3.513,
+          "duty": 1.0,
+          "intensity": 0.999,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 35,
+        "step_idx": 2820,
+        "initial_temp_c": 4.104,
+        "ambient_temp_c": 21.018,
+        "method_a": {
+          "energy_kwh": 0.4406,
+          "violations_min": 5,
+          "max_temp_c": 6.25,
+          "min_temp_c": 4.104,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.4171,
+          "violations_min": 4,
+          "max_temp_c": 6.021,
+          "min_temp_c": 3.988,
+          "duty": 0.49549328085429967,
+          "intensity": 0.9996000865000749,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8419,
+          "violations_min": 0,
+          "max_temp_c": 4.104,
+          "min_temp_c": 3.898,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 36,
+        "step_idx": 2898,
+        "initial_temp_c": 4.204,
+        "ambient_temp_c": 22.079,
+        "method_a": {
+          "energy_kwh": 0.6475,
+          "violations_min": 2,
+          "max_temp_c": 5.583,
+          "min_temp_c": 4.204,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.4868,
+          "violations_min": 4,
+          "max_temp_c": 6.122,
+          "min_temp_c": 4.204,
+          "duty": 0.5648901984206873,
+          "intensity": 0.9755858595204104,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8756,
+          "violations_min": 0,
+          "max_temp_c": 4.228,
+          "min_temp_c": 4.204,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 37,
+        "step_idx": 2977,
+        "initial_temp_c": 5.143,
+        "ambient_temp_c": 23.397,
+        "method_a": {
+          "energy_kwh": 0.6573,
+          "violations_min": 16,
+          "max_temp_c": 6.612,
+          "min_temp_c": 5.143,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.5907,
+          "violations_min": 16,
+          "max_temp_c": 6.544,
+          "min_temp_c": 5.143,
+          "duty": 0.6706382273214813,
+          "intensity": 0.9860822734372925,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8889,
+          "violations_min": 16,
+          "max_temp_c": 5.257,
+          "min_temp_c": 5.143,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 38,
+        "step_idx": 3056,
+        "initial_temp_c": 6.605,
+        "ambient_temp_c": 24.942,
+        "method_a": {
+          "energy_kwh": 0.6595,
+          "violations_min": 16,
+          "max_temp_c": 8.094,
+          "min_temp_c": 6.605,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8001,
+          "violations_min": 16,
+          "max_temp_c": 7.106,
+          "min_temp_c": 6.605,
+          "duty": 0.9043830445666285,
+          "intensity": 0.9877247524577559,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8918,
+          "violations_min": 16,
+          "max_temp_c": 6.738,
+          "min_temp_c": 6.605,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 39,
+        "step_idx": 3135,
+        "initial_temp_c": 7.514,
+        "ambient_temp_c": 25.651,
+        "method_a": {
+          "energy_kwh": 0.6543,
+          "violations_min": 16,
+          "max_temp_c": 8.955,
+          "min_temp_c": 7.514,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8841,
+          "violations_min": 16,
+          "max_temp_c": 7.603,
+          "min_temp_c": 7.514,
+          "duty": 0.9997820766490635,
+          "intensity": 0.9991259854476383,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8848,
+          "violations_min": 16,
+          "max_temp_c": 7.599,
+          "min_temp_c": 7.514,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 40,
+        "step_idx": 3214,
+        "initial_temp_c": 8.178,
+        "ambient_temp_c": 26.341,
+        "method_a": {
+          "energy_kwh": 0.655,
+          "violations_min": 16,
+          "max_temp_c": 9.625,
+          "min_temp_c": 8.178,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8852,
+          "violations_min": 16,
+          "max_temp_c": 8.274,
+          "min_temp_c": 8.178,
+          "duty": 0.9999949174669471,
+          "intensity": 0.9990687151275464,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8857,
+          "violations_min": 16,
+          "max_temp_c": 8.27,
+          "min_temp_c": 8.178,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 41,
+        "step_idx": 3293,
+        "initial_temp_c": 8.693,
+        "ambient_temp_c": 27.314,
+        "method_a": {
+          "energy_kwh": 0.6668,
+          "violations_min": 16,
+          "max_temp_c": 10.249,
+          "min_temp_c": 8.693,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.9014,
+          "violations_min": 16,
+          "max_temp_c": 8.894,
+          "min_temp_c": 8.693,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.9017,
+          "violations_min": 16,
+          "max_temp_c": 8.894,
+          "min_temp_c": 8.693,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 42,
+        "step_idx": 3372,
+        "initial_temp_c": 8.969,
+        "ambient_temp_c": 27.581,
+        "method_a": {
+          "energy_kwh": 0.6666,
+          "violations_min": 16,
+          "max_temp_c": 10.523,
+          "min_temp_c": 8.969,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.9011,
+          "violations_min": 16,
+          "max_temp_c": 9.168,
+          "min_temp_c": 8.969,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.9014,
+          "violations_min": 16,
+          "max_temp_c": 9.168,
+          "min_temp_c": 8.969,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 43,
+        "step_idx": 3450,
+        "initial_temp_c": 8.8,
+        "ambient_temp_c": 26.075,
+        "method_a": {
+          "energy_kwh": 0.632,
+          "violations_min": 16,
+          "max_temp_c": 10.036,
+          "min_temp_c": 8.8,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8543,
+          "violations_min": 16,
+          "max_temp_c": 8.8,
+          "min_temp_c": 8.68,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8546,
+          "violations_min": 16,
+          "max_temp_c": 8.8,
+          "min_temp_c": 8.68,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 44,
+        "step_idx": 3529,
+        "initial_temp_c": 8.296,
+        "ambient_temp_c": 25.39,
+        "method_a": {
+          "energy_kwh": 0.6273,
+          "violations_min": 16,
+          "max_temp_c": 9.489,
+          "min_temp_c": 8.296,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.848,
+          "violations_min": 16,
+          "max_temp_c": 8.296,
+          "min_temp_c": 8.133,
+          "duty": 0.9996664159106117,
+          "intensity": 0.999961924665547,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8483,
+          "violations_min": 16,
+          "max_temp_c": 8.296,
+          "min_temp_c": 8.133,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 45,
+        "step_idx": 3608,
+        "initial_temp_c": 7.994,
+        "ambient_temp_c": 24.168,
+        "method_a": {
+          "energy_kwh": 0.6035,
+          "violations_min": 16,
+          "max_temp_c": 8.967,
+          "min_temp_c": 7.994,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.8159,
+          "violations_min": 16,
+          "max_temp_c": 7.994,
+          "min_temp_c": 7.613,
+          "duty": 0.9999246543248518,
+          "intensity": 0.9997380915960662,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8161,
+          "violations_min": 16,
+          "max_temp_c": 7.994,
+          "min_temp_c": 7.612,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 46,
+        "step_idx": 3687,
+        "initial_temp_c": 6.437,
+        "ambient_temp_c": 22.648,
+        "method_a": {
+          "energy_kwh": 0.6045,
+          "violations_min": 16,
+          "max_temp_c": 7.419,
+          "min_temp_c": 6.437,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.7995,
+          "violations_min": 16,
+          "max_temp_c": 6.437,
+          "min_temp_c": 6.068,
+          "duty": 0.9787916183250347,
+          "intensity": 0.998898976619504,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8174,
+          "violations_min": 16,
+          "max_temp_c": 6.437,
+          "min_temp_c": 6.063,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 1,
+          "feasible_pareto": 0
+        }
+      },
+      {
+        "scenario_index": 47,
+        "step_idx": 3766,
+        "initial_temp_c": 5.162,
+        "ambient_temp_c": 21.975,
+        "method_a": {
+          "energy_kwh": 0.62,
+          "violations_min": 16,
+          "max_temp_c": 6.287,
+          "min_temp_c": 5.162,
+          "duty": 0.85,
+          "intensity": 0.8
+        },
+        "method_b": {
+          "energy_kwh": 0.6497,
+          "violations_min": 16,
+          "max_temp_c": 5.962,
+          "min_temp_c": 5.066,
+          "duty": 0.7885518298742409,
+          "intensity": 0.9734058113621663,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8384,
+          "violations_min": 11,
+          "max_temp_c": 5.162,
+          "min_temp_c": 4.932,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 48,
+        "step_idx": 3845,
+        "initial_temp_c": 3.775,
+        "ambient_temp_c": 20.151,
+        "method_a": {
+          "energy_kwh": 0.2223,
+          "violations_min": 8,
+          "max_temp_c": 6.901,
+          "min_temp_c": 3.775,
+          "duty": 0.4,
+          "intensity": 0.5
+        },
+        "method_b": {
+          "energy_kwh": 0.4724,
+          "violations_min": 2,
+          "max_temp_c": 5.287,
+          "min_temp_c": 3.576,
+          "duty": 0.5755238533433109,
+          "intensity": 0.9954880562753154,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.8231,
+          "violations_min": 0,
+          "max_temp_c": 3.775,
+          "min_temp_c": 3.441,
+          "duty": 1.0,
+          "intensity": 1.0,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      },
+      {
+        "scenario_index": 49,
+        "step_idx": 3924,
+        "initial_temp_c": 3.942,
+        "ambient_temp_c": 19.282,
+        "method_a": {
+          "energy_kwh": 0.4117,
+          "violations_min": 3,
+          "max_temp_c": 5.713,
+          "min_temp_c": 3.942,
+          "duty": 0.65,
+          "intensity": 0.7
+        },
+        "method_b": {
+          "energy_kwh": 0.3588,
+          "violations_min": 4,
+          "max_temp_c": 5.79,
+          "min_temp_c": 3.68,
+          "duty": 0.4600234394661098,
+          "intensity": 0.9863849078018154,
+          "num_pareto": 48
+        },
+        "method_c": {
+          "energy_kwh": 0.7862,
+          "violations_min": 0,
+          "max_temp_c": 3.942,
+          "min_temp_c": 3.365,
+          "duty": 1.0,
+          "intensity": 0.999,
+          "num_pareto": 48,
+          "feasible_pareto": 48
+        }
+      }
+    ]
   }
 }

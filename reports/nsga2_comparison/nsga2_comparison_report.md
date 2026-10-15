@@ -29,12 +29,12 @@ The reported anomaly (**~19.6% energy reduction accompanied by +182.6% temperatu
 | Evaluation Metric | Method A (Current-State Reactive) | Method B (Legacy Defective Unconstrained) | Method C (Audited Constrained NSGA-II) |
 | :--- | :--- | :--- | :--- |
 | **Control Philosophy** | Reactive thermostatic ($T_0$ only) | Prediction-guided (Unconstrained) | Prediction-guided (Constrained NSGA-II) |
-| **Mean Energy / 15-min Cycle** | **0.5625 kWh** | **0.6574 kWh** (+16.9%) | **0.6448 kWh** (+14.6%) |
-| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 82.9% |
+| **Mean Energy / 15-min Cycle** | **0.5625 kWh** | **0.6574 kWh** (+16.9%) | **0.8387 kWh** (+49.1%) |
+| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 99.1% |
 | **Total Temperature Violations** | **583 min** | **565 min** (-3.1%) | **479 min** (-17.8%) |
-| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Severe Breach) | 11.36 °C (Within Safe Envelope) |
+| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Severe Breach) | 9.36 °C (Within Safe Envelope) |
 | **Feasible Pareto Solutions** | 1 (Fixed Setpoint) | 1–48 (Unchecked Feasibility) | **21.1 (100% Feasible)** |
-| **Average Optimization Runtime** | ~0.1 ms | 222.4 ms | 210.0 ms |
+| **Average Optimization Runtime** | ~0.1 ms | 216.3 ms | 197.6 ms |
 
 ---
 

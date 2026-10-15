@@ -1,32 +1,40 @@
 {
   "dataset": "simulated_cold_chain.csv (CC-01)",
-  "test_sequences": 785,
+  "target_column": "temperature (\u00b0C)",
   "horizon_steps": 15,
-  "chronological_split": "80% Train, 20% Test",
+  "chronological_split": "70% Train, 15% Val, 15% Held-Out Test",
+  "train_samples": 2747,
+  "val_samples": 588,
+  "test_samples": 590,
+  "test_timeline": {
+    "start": "2026-01-03 08:35:00+00:00",
+    "end": "2026-01-03 18:39:00+00:00"
+  },
   "metrics": {
     "persistence": {
-      "mae": 0.1144,
-      "rmse": 0.1541,
-      "r2": 0.9927
+      "mae": 0.1219,
+      "rmse": 0.1624,
+      "r2": 0.9928
     },
     "moving_average_5": {
-      "mae": 0.1276,
-      "rmse": 0.1695,
-      "r2": 0.9911
+      "mae": 0.1353,
+      "rmse": 0.1785,
+      "r2": 0.9912
     },
     "linear_extrapolation": {
-      "mae": 0.1471,
-      "rmse": 0.2018,
-      "r2": 0.9874
+      "mae": 0.1535,
+      "rmse": 0.2107,
+      "r2": 0.9878
     },
-    "mad_tcn": {
-      "mae": 1.0812,
-      "rmse": 1.2893,
-      "r2": 0.4858
+    "mad_tcn_original": {
+      "mae": 1.0142,
+      "rmse": 1.2236,
+      "r2": 0.5887
+    },
+    "mad_tcn_retrained": {
+      "mae": 0.1672,
+      "rmse": 0.2131,
+      "r2": 0.9875
     }
-  },
-  "improvement_vs_persistence": {
-    "mae_pct": -845.1,
-    "rmse_pct": -736.66
   }
 }
