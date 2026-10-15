@@ -73,7 +73,7 @@ In earlier drafts, Method C reported both that an emergency override activated a
 | **Mean Energy / 15-min Cycle** | **0.5625 kWh** | 0.6574 kWh (+16.9%) | **0.8387 kWh** (+49.1%) | Controlled Active Infiltration Defense |
 | **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 99.1% | Active Thermal Extraction During Heat Spikes |
 | **Total Temperature Violations** | **583 min** | 565 min (-3.1%) | **479 min** (-17.8%) | **-17.8% Total Violation Duration (-104 min)** |
-| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Severe Breach) | **9.36 °C** (Contained via Max Cooling) | Lowest physical peak achievable |
+| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Severe Breach) | **9.36 °C** (Contained via Max Cooling) | Lowest observed peak under tested policies |
 | **Ordinary Feasible Selections** | 50 (Unconstrained Fixed Band) | 0 (Unchecked Feasibility) | **23 Scenarios (100% Feasible)** | Evaluated strictly against $G \le 0$ |
 | **Emergency Fallback Overrides** | 0 | 0 | **27 Scenarios (Infeasible Override)** | Explicitly tagged as emergency actions |
 | **Average Optimization Runtime** | ~0.1 ms | 214.5 ms | 199.0 ms | Real-Time Industrial Feasibility |
@@ -82,7 +82,19 @@ In earlier drafts, Method C reported both that an emergency override activated a
 
 ## 4. Trajectory Safety & Scientific Disclosures
 
-1. **Food Profile Breaches:** When starting from an already-exceeded temperature ($T_0 = 7.5\text{--}9.3\text{ }^\circ\text{C}$), complete physical trajectories require multi-interval cooling to recover to $\le 5.0\text{ }^\circ\text{C}$. Food safety is **not maintained** during these initial transient breach periods.
-2. **Proactive Pre-Cooling Benefit:** In scenarios initiating within the safe envelope, Method C's proactive lookahead prevents temperature drift, eliminating **104 cumulative minutes of violations** (-17.8%) compared to reactive thermostatic control.
-3. **Trade-Off Realism:** Reducing thermal excursions by 104 minutes requires active cooling during ambient heat spikes, increasing estimated electrical consumption by **+49.1% (0.8387 kWh vs 0.5625 kWh)**. This is a legitimate thermodynamic trade-off between perishable product safety and energy cost.
-4. **Simulation Boundary:** Trajectories are derived from the calibrated physical chamber simulation model; energy values are **`ESTIMATED / SIMULATED`**.
+1. **Physical Meaning of the 9.36 °C Peak Temperature:**
+   - The reported peak temperature of **$9.36\text{ }^\circ\text{C}$** ($9.3639\text{ }^\circ\text{C}$) occurs in **Scenario 4** ($t_0 = 9.313\text{ }^\circ\text{C}$, $T_{amb} = 27.305\text{ }^\circ\text{C}$).
+   - **Net Derivative Calculation:** Under maximum emergency cooling ($u=1.0, d=1.0$), active cooling rate is $-k_{cool} = -0.3200\text{ }^\circ\text{C/min}$, while ambient heat infiltration is $+k_{inf}(T_{amb} - T_0) = 0.018 \times (27.305 - 9.313) = +0.32386\text{ }^\circ\text{C/min}$. The net temperature rate of change at $t_0$ is **positive**:
+     $$\left.\frac{dT}{dt}\right|_{t=0} = +0.32386 - 0.32000 = \mathbf{+0.00386\text{ }^\circ\text{C/min}}$$
+   - **Asymptotic Equilibrium:** Under continuous maximum cooling at $T_{amb} = 27.305\text{ }^\circ\text{C}$, the chamber asymptotically approaches steady-state equilibrium:
+     $$T_{ss} = T_{amb} - \frac{k_{cool}}{k_{inf}} = 27.305 - \frac{0.32}{0.018} = \mathbf{9.527\text{ }^\circ\text{C}}$$
+   - **Trajectory Interpretation:** Because $T_0 = 9.313\text{ }^\circ\text{C} < 9.527\text{ }^\circ\text{C}$, the chamber was **still warming** toward $9.53\text{ }^\circ\text{C}$. At the end of the 15-minute simulation horizon ($t = 15\text{ min}$), the temperature reaches $9.364\text{ }^\circ\text{C}$ with a remaining positive slope ($\frac{dT}{dt} = +0.00294\text{ }^\circ\text{C/min}$). Thus, **9.36 °C is the final observation of a truncated 15-minute simulation horizon that is still actively warming**, NOT an enclosed peak or turnaround. Maximum cooling substantially mitigated the warming rate ($9.36\text{ }^\circ\text{C}$ at $t=15$ min vs. $10.72\text{ }^\circ\text{C}$ under reactive baseline Method A).
+2. **Empirical Policy Comparison vs Global Optimality:**
+   - The total violation duration of **479 minutes** under Method C represents an empirical **-17.8% reduction in excursion exposure** (-104 min relative to Method A's 583 min) across the 50 tested scenarios.
+   - This reduction is **not claimed as a mathematically proven global optimum**; finding a true global optimum across continuous multi-horizon control spaces would require Pontryagin minimum principle or dynamic programming bounds.
+3. **Safety Status Categories Across Scenarios:**
+   - **Genuine Compliance (23 Scenarios):** In scenarios initializing within the safe envelope ($T_0 \le 5.0\text{ }^\circ\text{C}$), proactive pre-cooling keeps the chamber continuously within the Food limit ($0.0\text{--}5.0\text{ }^\circ\text{C}$).
+   - **Reduced Warming (Scenario 4 & Severe Heatwaves):** When ambient infiltration exceeds cooling capacity ($T_{amb} > 22.78\text{ }^\circ\text{C}$), maximum cooling limits the rate of temperature rise without achieving containment below $5.0\text{ }^\circ\text{C}$.
+   - **Recovery / Mitigation:** When starting in pre-existing breach ($T_0 > 5.0\text{ }^\circ\text{C}$), cooling drives the trajectory downward where ambient permits, or minimizes severity where heat dominates. Food safety compliance is **not maintained** during these transient breach intervals.
+4. **Trade-Off Realism:** Reducing thermal excursions by 104 minutes requires active cooling during ambient heat spikes, increasing estimated electrical consumption by **+49.1% (0.8387 kWh vs 0.5625 kWh)**. This is a legitimate thermodynamic trade-off between perishable product safety and energy cost.
+5. **Simulation Boundary:** Trajectories are derived from the calibrated physical chamber simulation model; energy values are **`ESTIMATED / SIMULATED`**.

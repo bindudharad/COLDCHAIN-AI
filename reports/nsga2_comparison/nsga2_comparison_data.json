@@ -45,8 +45,8 @@
     "forecast_mae": 0.8523618671766772
   },
   "runtime_ms": {
-    "legacy": 212.6727459999529,
-    "audited": 200.28068800034816
+    "legacy": 229.19154600029287,
+    "audited": 283.18021000035515
   },
   "per_scenario_results": {
     "scenarios": [

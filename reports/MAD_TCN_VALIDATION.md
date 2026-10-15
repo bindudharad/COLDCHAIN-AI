@@ -101,13 +101,13 @@ To establish external empirical validity across genuine physical deployments, ba
 
 ### 5.2 High-Frequency Physical Cold-Room Telemetry (University of Hohenheim, Zenodo 15130001)
 - **Dataset:** SENSOR03 from the 9-sensor refrigerated room monitoring campaign (DOI: `10.5281/zenodo.15130001`).
-- **Cadence & Resolution:** Downsampled to 1-minute sampling interval ($N = 7,037$ continuous readings over 9 days; temperature range $4.8^\circ\text{C}$ to $12.3^\circ\text{C}$, mean $6.54^\circ\text{C}$, std $1.44^\circ\text{C}$).
-- **Held-Out Test Set:** Chronological final 15% ($N = 1,041$ sequences of 15-minute horizons).
-- **15-Step Average Persistence MAE:** **0.3089 °C** (higher error than 0.1219 °C in simulation, reflecting real-world air draft turbulence and loading dynamics).
-- **15th-Step Endpoint Persistence MAE ($t+15$):** **0.4049 °C**.
-- **5-Step Moving Average MAE:** **0.3226 °C**.
+- **Cadence & Resolution:** Natively recorded at **5-second sampling** ($84{,}450$ clean physical readings after a 4.19-day sensor offline gap). Downsampled to 1-minute intervals ($N = 7{,}037$ continuous readings over 4.88 days; temperature range $4.8^\circ\text{C}$ to $12.3^\circ\text{C}$, mean $6.54^\circ\text{C}$, std $1.44^\circ\text{C}$).
+- **Held-Out Test Set:** Chronological final 15% ($N = 1{,}045$ sequences of 15-minute horizons evaluated in `scripts/evaluate_real_forecasting.py`).
+- **Seeded Neural & Baseline Metrics:** Real-TCN (Seed 42) achieves $\text{MAE} = \mathbf{0.2707^\circ\text{C}}$ ($R^2 = 0.3634$), Ridge AR(60) achieves $\text{MAE} = \mathbf{0.2524^\circ\text{C}}$ ($R^2 = 0.4190$), and Naive Persistence yields $\text{MAE} = 0.3048^\circ\text{C}$ ($R^2 = 0.2557$).
+- **Early-Warning Dynamic Transition Detection (>6.0 °C):** On safe origins ($T_0 \le 6.0^\circ\text{C}$, $N=706$), Ridge AR(60) achieves $F_1 = 0.5009$ (Recall 37.3%, Precision 76.1%, Missed Event Rate 62.7%) and Real-TCN achieves $F_1 = 0.3666$ (Recall 23.5%, Precision 83.3%, Missed Event Rate 76.5%) vs Persistence $F_1 = 0.0000$ (Missed Event Rate 100.0%).
+- **Product Limits Context:** The Hohenheim dataset logs operational events ("Products in", "Products out", "Door opened") without documenting specific stored commodity temperature requirements. The 5.0 °C limit is the project's chosen evaluation threshold; recorded conditions ($T_{mean} = 6.54^\circ\text{C}$) do not constitute a proven food-safety failure of that public research facility.
 
 **Summary Conclusion:**  
-1. All MAD-TCN neural weights and breach metrics are evaluated on **`SIMULATION`** data (`data/raw/simulated_cold_chain.csv`).
-2. External public datasets (**`PUBLIC_DATASET`**) confirm that physical cold storage environments exhibit higher thermal variability (0.31–0.44 °C baseline MAE) than calibrated simulations.
-3. Daily datasets are suited for macro tracking, while 1-minute downsampled physical sensor streams validate high-frequency thermal lag dynamics.
+1. All MAD-TCN neural weights and breach metrics in Section 2–4 are evaluated on **`SIMULATION`** data (`data/raw/simulated_cold_chain.csv`).
+2. External public datasets (**`PUBLIC_DATASET`**) confirm that physical cold storage environments exhibit higher thermal variability (0.27–0.44 °C baseline MAE) than calibrated simulations.
+3. Daily datasets are suited for macro tracking, while 1-minute downsampled physical sensor streams validate high-frequency thermal lag and early-warning transition dynamics.
