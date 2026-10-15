@@ -57,7 +57,7 @@ $$\text{Sensor Telemetry Ingestion} \longrightarrow \text{MAD-TCN Forecasting} \
    - Pareto Frontier scatter plot displaying non-dominated trade-off points between Safety Risk and Estimated Energy (kWh).
    - Recommended Setpoint: Pre-emptive cooling intensity ($0.999$), compressor duty ($1.00$), and setpoint offset ($-0.42\text{ }^\circ\text{C}$).
    - Expected stabilized temperature: $3.06\text{ }^\circ\text{C}$ — safely mitigating the forecasted breach!
-   - Table of feasible Pareto solutions ($100\%$ satisfying Deb's constrained dominance).
+   - Table of feasible Pareto solutions when within/near envelope, or explicit red emergency override banner when severe starting breach requires maximum cooling ($u=1.0, d=1.0$).
 
 ### Step 7: Inspect Multi-Format Audit Reports
 1. Click **Reports** (`/reports/`).
