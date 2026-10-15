@@ -250,3 +250,43 @@ class PerDeviceIoTAuthTests(TestCase):
         self.assertTrue(data['success'])
         self.assertEqual(data['records_persisted'], 1)
         self.assertEqual(data['provenance'], 'SIMULATION')
+
+
+class PhysicalEventMetricsTests(TestCase):
+    """Group 4: Tests for physical breach event detection metrics."""
+
+    def test_compute_event_metrics_synthetic(self):
+        """Test compute_event_metrics on synthetic sequences."""
+        import numpy as np
+        from scripts.evaluate_real_forecasting import compute_event_metrics
+
+        # Create 100 timesteps of synthetic temperature
+        # Event 1: at step 20-25 (crosses > 6.0)
+        # Event 2: at step 60-70 (crosses > 6.0)
+        series = np.full(100, 5.0)
+        series[20:26] = 6.5
+        series[60:71] = 6.8
+
+        window = 10
+        horizon = 5
+        X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
+        y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
+        t_origin = X[:, -1]
+
+        # Persistence prediction (flatline at origin)
+        pred_pers = np.tile(t_origin[:, np.newaxis], (1, horizon))
+        res_pers = compute_event_metrics(y, pred_pers, t_origin, horizon=horizon, threshold=6.0)
+
+        self.assertEqual(res_pers['total_unique_physical_events'], 2)
+        self.assertEqual(res_pers['unique_events_detected'], 0)
+        self.assertEqual(res_pers['event_detection_rate_pct'], 0.0)
+        self.assertEqual(res_pers['event_missed_rate_pct'], 100.0)
+
+        # Oracle/Perfect prediction
+        res_oracle = compute_event_metrics(y, y, t_origin, horizon=horizon, threshold=6.0)
+        self.assertEqual(res_oracle['total_unique_physical_events'], 2)
+        self.assertEqual(res_oracle['unique_events_detected'], 2)
+        self.assertEqual(res_oracle['event_detection_rate_pct'], 100.0)
+        self.assertEqual(res_oracle['unique_events_missed'], 0)
+        self.assertGreater(res_oracle['mean_warning_lead_time_min'], 0.0)
+

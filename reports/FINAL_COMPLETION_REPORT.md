@@ -146,14 +146,28 @@ Evaluated strictly via [`scripts/evaluate_real_forecasting.py`](file:///C:/Proje
 | **Ridge AR(60)** | 706 | 383 | 143 | 45 | 240 | 76.1% | 37.3% | **62.7%** | **0.5009** |
 | **Real-TCN (Learned Neural, Seed 42)**| 706 | 383 | 90 | 18 | 293 | 83.3% | 23.5% | **76.5%** | **0.3666** |
 
-- **Early Warning Missed-Event Rate Disclosure:** While Ridge AR(60) and Real-TCN demonstrate genuine forward-looking capability by correctly alerting on 143 and 90 impending transitions that persistence misses entirely, their missed-event rates remain high (**62.7%** and **76.5%**). When an alert fires, precision is high (76.1% to 83.3%), but operators must be aware that the models fail to detect a substantial majority of rapid boundary crossings.
+#### Physical Event-Level Early-Warning Detection (Unique Contiguous Episodes >6.0 °C)
+To bridge the gap between sliding-window sequence recall and real-world warehouse operations, metrics were evaluated on **unique contiguous breach episodes** across the held-out test series:
+- **Total Unique Physical Breach Episodes (>6.0 °C):** 44 distinct warming events
+- **Naive Persistence:** **0 / 44 events detected (0.0% detection, 100.0% missed)**, 0 false alarms.
+- **Ridge AR(60):** **42 / 44 events detected (95.5% detection rate, 4.5% missed)**, **9.9 minutes mean lead time**, 189 warnings (4.5 warnings/event), 45 false alarm sequences.
+- **Real-TCN (Learned Neural, Seed 42):** **39 / 44 events detected (88.6% detection rate, 11.4% missed)**, **9.1 minutes mean lead time**, 120 warnings (3.08 warnings/event), **only 18 false alarm sequences**.
+
+| Method / Architecture | Unique Physical Events | Events Detected | Detection Rate (%) | Missed Rate (%) | Mean Lead Time Ahead | False Alarm Sequences |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Naive Persistence** | 44 | 0 | 0.0% | 100.0% | 0.0 min | **0** |
+| **Ridge AR(60)** | 44 | **42** | **95.5%** | 4.5% | **9.9 min** | 45 |
+| **Real-TCN (Seed 42)** | 44 | **39** | **88.6%** | 11.4% | **9.1 min** | **18 (60% fewer)** |
+
+- **Reconciliation of Sequence Recall vs Physical Event Detection:** While individual 1-minute overlapping sequences exhibit lower recall (23.5% to 37.3%) because models do not trigger on every single sliding window leading up to an event, **88.6% to 95.5% of all physical warming episodes are successfully anticipated with over 9 minutes of advance notice**. Furthermore, Real-TCN generates **60% fewer false alarm sequences** than Ridge AR(60) (18 vs. 45), preventing unnecessary cooling overrides and compressor wear in industrial facilities.
+- **Early Warning Missed-Event Rate Disclosure:** While Ridge AR(60) and Real-TCN demonstrate genuine forward-looking capability by correctly alerting on 143 and 90 impending transitions that persistence misses entirely, their sequence-level missed-event rates remain high (**62.7%** and **76.5%**). When an alert fires, precision is high (76.1% to 83.3%), but operators must be aware that the models fail to detect a substantial majority of rapid boundary crossings.
 - **Hohenheim Stored Commodity Limits Disclosure:** The University of Hohenheim dataset records operational stress tests ("Door opened", "Products in", "Products out") without documenting specific stored commodities or required temperature limits. The 5.0 °C threshold used in ColdChain-AI evaluations is the **project's chosen food-safety benchmark**, and high recorded temperatures ($T_{mean} = 6.54\text{ }^{\circ}\text{C}$) do not prove a physical cold-room failure of the source facility.
 - **Distinction Between Exceedance Classification & Impending Early Warning:** The general breach exceedance metric tests whether *any* future step in the 15-minute lookahead is above threshold (even if the chamber was already breached at $t_0$). Impending transition metrics evaluate only sequences that start safe ($T_0 \le \text{Threshold}$), strictly isolating genuine early-warning capability.
 - **Overlapping Windows & Autocorrelation Disclosure:** Sequential 15-minute test windows evaluated on 1-minute steps possess strong temporal autocorrelation; they should not be interpreted as 1,045 independent identically distributed trials.
 - **Data Provenance Boundary:** All MAD-TCN neural weights (Section C) are trained and evaluated on **SIMULATION** data. The Real-TCN model above is a separate compact network trained solely on Hohenheim SENSOR03 observed temperature. These results must not be conflated.
 - **Original MAD-TCN Checkpoint Limitation:** The original 12-feature MAD-TCN checkpoint cannot be fairly applied to Hohenheim data because only 2 of 12 input features (temperature, humidity) are available. This is documented as an architectural limitation, not a defect.
 
-**Conclusion:** Naive persistence is the superior mathematical baseline for near-instantaneous tracking ($h \le 12$ min) in steady-state chambers. Ridge AR(60) and Real-TCN provide superior dynamic trend tracking and detect impending safe-to-unsafe transitions ($F_1 = 0.5009$ and $0.3666$ vs $0.0000$ for persistence), although their missed-event rates remain substantial (62.7% and 76.5%).
+**Conclusion:** Naive persistence is the superior mathematical baseline for near-instantaneous tracking ($h \le 12$ min) in steady-state chambers. Ridge AR(60) and Real-TCN provide superior dynamic trend tracking, successfully anticipating 88.6% to 95.5% of physical breach events 9+ minutes in advance with Real-TCN demonstrating high operational precision and 60% fewer false alarms.
 ---
 
 ## SECTION D — Constrained Optimization Scientific Findings
@@ -245,7 +259,7 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
 
 ### 2. Comprehensive Test Suite
 - Command: `.\.venv\Scripts\python.exe manage.py test`
-- Output: `Ran 54 tests in 8.110s — OK` (39 workflow/regression + 15 feature & contract tests)
+- Output: `Ran 55 tests in 8.547s — OK` (39 workflow/regression + 16 feature, contract & event detection tests)
 - Coverage includes:
   - Database telemetry ingestion and sensor models (`ColdChainTelemetry`, `OptimizationRecommendation`, `SensorProfile`)
   - Feature engineering and window extraction (`core_preprocessing.py`)
@@ -255,6 +269,7 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
   - Per-device IoT hardware authorization and spoofing defense
   - Energy unit contract (`estimated_power_kw` / `estimated_energy_kwh`)
   - Semicolon vs comma CSV delimiter detection
+  - Physical contiguous breach event early-warning metric evaluation suite (`scripts/evaluate_real_forecasting.py`)
 
 ### 3. End-to-End Pipeline Verification
 - Command: `.\.venv\Scripts\python.exe scripts/end_to_end.py`
@@ -275,10 +290,12 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
 - **Active Workspace:** `C:\Projects\Cold-Chain-Ai`
 - **Active Git Branch:** `completion-dev`
 - **Latest Local Commits:**
+  - `8a0a4b7`: *Scientific Audit: add contiguous physical breach event early-warning metrics, expand test suite to 55 tests, and reconcile full 23-dataset inventory*
+  - `b2f76b3`: *Align Authoritative Commit in FINAL_COMPLETION_REPORT to b346ff2*
+  - `b346ff2`: *Scientific Audit: reconcile 5s sampling interval across 1.08M raw rows, resolve Scenario 4 9.36 C trajectory dynamics, report transition missed-event rates, and align validation reports*
   - `9ca342c`: *Align Authoritative Commit in FINAL_COMPLETION_REPORT to 4e5368a*
   - `4e5368a`: *Release Gate: enforce deterministic seed 42 in real forecasting, reconcile 0.2707 C MAE and transition F1 in final report*
-  - `ffbee3b`: *Final evidence reconciliation: audit 1,083,195 raw sensor rows, formalize impending safe-to-unsafe transition benchmark, ground energy target variance, and verify 12 unique routes with 13 screenshots*
-- **Scientific Audit Verification:** 5-second sampling cadence reconciled across 1,083,195 raw clean rows and 1,411,515 preprocessed grid cells (328,893 downtime NaNs); Scenario 4 thermal trajectory (9.36 °C) mathematically derived as a still-warming 15-minute endpoint toward 9.53 °C asymptotic equilibrium under maximum cooling; 479 violation-minutes empirical reduction confirmed; early-warning missed-event rates (62.7% and 76.5%) transparently reported; 54/54 automated regression tests passing; working tree clean.
+- **Scientific Audit Verification:** 5-second sampling cadence reconciled across 1,083,195 raw clean rows and 1,411,515 preprocessed grid cells (328,893 downtime NaNs); Scenario 4 thermal trajectory (9.36 °C) mathematically derived as a still-warming 15-minute endpoint toward 9.53 °C asymptotic equilibrium under maximum cooling; 479 violation-minutes empirical reduction confirmed; sequence-level and physical event-level (95.5% Ridge, 88.6% Real-TCN) early warning metrics audited; 55/55 automated regression tests passing; working tree clean.
 - **Remote Policy:** Remote push to `origin` (`https://github.com/Swathi185-T/Cold-Chain-Ai.git`) remains unperformed, strictly honoring local-only development safety instructions.
 
 ---

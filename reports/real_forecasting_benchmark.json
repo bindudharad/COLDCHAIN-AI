@@ -1,5 +1,5 @@
 {
-  "benchmark_timestamp": "2026-10-15T19:27:20.970289+00:00",
+  "benchmark_timestamp": "2026-10-15T19:49:25.597126+00:00",
   "dataset_metadata": {
     "source_file": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR03_preprocessed.csv",
     "raw_observations": 84444,
@@ -369,6 +369,49 @@
         "recall": 0.1154,
         "f1_score": 0.1974
       }
+    }
+  },
+  "event_level_breach_metrics": {
+    "threshold_6_0_deg_c": {
+      "description": "Unique physical breach episode detection evaluated on contiguous excursions >6.0 deg C in held-out test series.",
+      "total_unique_physical_events": 44,
+      "persistence": {
+        "threshold_deg_c": 6.0,
+        "total_unique_physical_events": 44,
+        "unique_events_detected": 0,
+        "unique_events_missed": 44,
+        "event_detection_rate_pct": 0.0,
+        "event_missed_rate_pct": 100.0,
+        "mean_warning_lead_time_min": 0.0,
+        "total_sequence_warnings_on_events": 0,
+        "duplicate_warnings_per_detected_event": 0.0,
+        "false_alarm_sequences": 0
+      },
+      "ridge": {
+        "threshold_deg_c": 6.0,
+        "total_unique_physical_events": 44,
+        "unique_events_detected": 42,
+        "unique_events_missed": 2,
+        "event_detection_rate_pct": 95.5,
+        "event_missed_rate_pct": 4.5,
+        "mean_warning_lead_time_min": 9.9,
+        "total_sequence_warnings_on_events": 189,
+        "duplicate_warnings_per_detected_event": 4.5,
+        "false_alarm_sequences": 45
+      },
+      "real_tcn": {
+        "threshold_deg_c": 6.0,
+        "total_unique_physical_events": 44,
+        "unique_events_detected": 39,
+        "unique_events_missed": 5,
+        "event_detection_rate_pct": 88.6,
+        "event_missed_rate_pct": 11.4,
+        "mean_warning_lead_time_min": 9.1,
+        "total_sequence_warnings_on_events": 120,
+        "duplicate_warnings_per_detected_event": 3.08,
+        "false_alarm_sequences": 18
+      },
+      "scientific_distinction": "Reconciles sequence-level transition recall with physical event detection: while sliding windows generate multiple warnings per event, 88.6% - 95.5% of unique physical breach episodes are successfully anticipated 9+ minutes in advance."
     }
   }
 }
