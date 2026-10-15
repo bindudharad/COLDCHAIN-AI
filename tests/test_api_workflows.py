@@ -385,8 +385,10 @@ class ApiWorkflowTests(TestCase):
 
     # 29. IoT Telemetry Ingestion API (Single Reading)
     def test_29_iot_telemetry_single(self):
+        # Use a device registered in REGISTERED_IOT_HARDWARE_DEVICES so
+        # per-device auth grants REAL_SENSOR provenance.
         payload = {
-            'sensor_id': 'IOT-TEST-01',
+            'sensor_id': 'HW-NODE-01',
             'timestamp': timezone.now().isoformat(),
             'temperature': 3.72,
             'humidity': 65.0,

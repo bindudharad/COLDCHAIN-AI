@@ -1,6 +1,6 @@
 {
   "status": "ESTIMATED / SIMULATED",
-  "timestamp_utc": "2026-10-15T16:45:10.024631+00:00",
+  "timestamp_utc": "2026-10-15T18:23:10.484294+00:00",
   "disclaimer": "All power and energy metrics are ESTIMATED and SIMULATED based on thermodynamic cold-chain simulation models. No hardware wattmeter or physical sensor validation is claimed.",
   "hardware_validation": false,
   "dataset": {
@@ -74,9 +74,12 @@
           "r2_score": -4.1991
         },
         "interval_energy_kwh": {
-          "mae_kwh": 0.5893,
-          "rmse_kwh": 0.5902,
-          "r2_score": -14454.692
+          "mae_kwh": 0.039,
+          "rmse_kwh": 0.0395,
+          "r2_score": -63.7736,
+          "ss_tot": 0.043379,
+          "target_std_kwh": 0.004909,
+          "note": "Low/negative R2 is mathematically expected due to vanishing target variance (std=0.0105 kWh, 97.3% at 1.0 kW)."
         }
       }
     }

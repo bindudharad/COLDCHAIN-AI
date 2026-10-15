@@ -3,9 +3,9 @@
 **Project:** COLDCHAIN-AI: Intelligent Multi-Objective Cold-Chain Optimization & Predictive Quality Management  
 **Working Directory:** `C:\Projects\Cold-Chain-Ai`  
 **Git Branch:** `completion-dev`  
-**Authoritative Commit:** `95a6b75` (Validated Completion State)  
-**Date:** 2026-10-15  
-**Document Status:** COMPLETE, REPRODUCIBLE, & SCIENTIFICALLY RECONCILED  
+**Authoritative Commit:** `15206eb+` (Evidence Reconciliation State — uncommitted)  
+**Date:** 2026-10-16  
+**Document Status:** FINAL — EVIDENCE-RECONCILED & SCIENTIFICALLY CORRECTED  
 
 ---
 
@@ -16,7 +16,7 @@ The COLDCHAIN-AI platform has reached a fully operational, scientifically audite
 ```
 COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 ├─ [IMPLEMENTED]          Django 5.2 backend, 12 browser views, SQLite DB, REST APIs
-├─ [AUTOMATED-TESTED]     39/39 passing unit/integration tests (7.44s), 0 Django check issues
+├─ [AUTOMATED-TESTED]     54/54 passing unit/integration tests (8.11s), 0 Django check issues
 ├─ [EXPERIMENTALLY-VALID] 590-sample MAD-TCN vs Persistence test split, 50-scenario NSGA-II comparison
 ├─ [SIMULATED]            Calibrated thermodynamic chamber physics (k_inf=0.018, k_cool=0.32)
 └─ [PHYSICALLY-AWAITING]  Factory-floor RS485/Modbus RTU, 3-phase CT wattmeters, industrial PLC relays
@@ -25,7 +25,7 @@ COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 | Operational Layer | System Maturity Label | Verification Evidence |
 | :--- | :--- | :--- |
 | **Backend & Web Application** | `IMPLEMENTED` | Django 5.2.18, 12 template routes, RESTful API endpoints |
-| **Automated Test Suite** | `AUTOMATED_TESTED` | 39 test cases passing in 7.83s (`manage.py test`) |
+| **Automated Test Suite** | `AUTOMATED_TESTED` | 54 test cases passing in 8.11s (`manage.py test`) |
 | **End-to-End Control Pipeline** | `AUTOMATED_TESTED` | `scripts/end_to_end.py` executes full pipeline to `PASS` |
 | **Interactive UI & Visuals** | `AUTOMATED_TESTED` | 12/12 routes return HTTP 200 with 0 console errors in Microsoft Edge Playwright |
 | **Forecasting Model (MAD-TCN)** | `EXPERIMENTALLY_VALIDATED` | Evaluated on common 590-sequence test split (15-step MAE = 0.1672 °C, t+15 MAE = 0.1597 °C) |
@@ -34,7 +34,7 @@ COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 | **Chamber Thermodynamics** | `EXPERIMENTALLY_VALIDATED` | Calibrated first-principles ODE (k_inf=0.018 min^-1, k_cool=0.320 °C/min); equilibrium T_ss derived |
 | **Compressor Energy Model** | `EXPERIMENTALLY_VALIDATED` | GradientBoosting (MAE = 0.0142 kW, R² = 0.1362) + analytical surrogate for setpoint search |
 | **Big Data Scalability** | `EXPERIMENTALLY_VALIDATED` | Profiled up to 1,000,000 records on single-node edge CPU (27.12s total runtime, 251.8 MB peak RAM) |
-| **IoT Telemetry Ingestion** | `AUTOMATED_TESTED` | REST API with server-side hardware cryptographic token authorization (demotes unauth to `SIMULATION`) |
+| **IoT Telemetry Ingestion** | `AUTOMATED_TESTED` | REST API with server-side per-device token registry (unregistered devices demoted to `SIMULATION`) |
 | **Physical Hardware Deployment** | `BLOCKED_BY_EXTERNAL_DEPENDENCY` | Requires on-site factory wiring: RS485/Modbus RTU probes, industrial PLC safety contactor |
 | **Physical Measured Energy** | `BLOCKED_BY_EXTERNAL_DEPENDENCY` | Requires on-site 3-phase true RMS CT energy transducer; all energy values remain `ESTIMATED/SIMULATED` |
 
@@ -54,15 +54,26 @@ Across iterative engineering and audit cycles, all critical scientific and softw
    *Problem:* Discrepant sample counts (590 vs 785 sequences) and conflicting test splits led to inconsistent claims regarding persistence.  
    *Resolution:* Script [`scripts/evaluate_baseline.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/evaluate_baseline.py) was unified across persistence, moving average, linear trend, original weights, and retrained weights on the exact same 590-sequence held-out chronological test slice (`2026-01-03 08:35:00` to `2026-01-03 18:39:00 UTC`).
 4. **Energy Unit Separation & Regression Disclosures:**  
-   *Problem:* Ambiguity existed between instantaneous power (kW) and 15-minute interval energy (kWh).  
-   *Resolution:* Unit definitions were separated across models and documentation. The analytical formula was designated as an optimization surrogate, and the root cause of the $R^2 = 0.1362$ score (continuous rolling average predicting a discrete binary square-wave target) was documented.
+   *Problem:* Ambiguity existed between instantaneous power (kW) and 15-minute interval energy (kWh). The `energy()` function name was misleading.  
+   *Resolution:* [`core.py`](file:///C:/Projects/Cold-Chain-Ai/core.py) now exposes `estimated_power_kw()` (returns kW) and `estimated_energy_kwh(duration_hours)` (returns kWh = $P_{kW} \times t_h$). The original `energy()` function is retained as a backward-compatible alias for `estimated_power_kw()`. All validation scripts and reports now explicitly label outputs as kW or kWh.
 5. **Big Data Scalability Profiling:**  
    *Problem:* Claims of Big Data compatibility lacked empirical stress tests.  
    *Resolution:* Profiling script [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/run_scalability_benchmark.py) was developed, testing ingestion, vectorized feature preprocessing, inference, and optimization up to 1,000,000 synthetic records.
 6. **Browser Automation & Quality Auditing:**  
    *Problem:* Manual UI inspection was incomplete.  
    *Resolution:* Automated headless browser validation ([`scripts/verify_browser_pages.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/verify_browser_pages.py)) was established, taking 13 screenshots and confirming zero console errors across all 12 routes.
-
+7. **Semicolon-Delimited CSV Parsing:**  
+   *Problem:* [`scripts/audit_datasets.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/audit_datasets.py) incorrectly treated Zenodo Hohenheim CSV files as 1-column because pandas defaulted to comma delimiter, but the files use semicolons.  
+   *Resolution:* Added `detect_delimiter()` function that sniffs the actual separator. Added SHA-256 checksums, sampling interval detection, gap analysis, and combined Date+Time timestamp parsing. Re-running the audit now correctly reports 4 columns (Date, Time, Temperature, Humidity) with proper numeric statistics.
+8. **Dataset Row Count Correction:**  
+   *Problem:* Previous reports claimed "1.41M raw sensor records." This is incorrect.  
+   *Resolution:* Total **raw** sensor records across 9 Hohenheim CSVs: **~883,199** (SENSOR03 raw has only 84,453 rows due to a 4-day data gap). The 1,411,515 figure applies only to **preprocessed** data where gaps are filled via interpolation to a uniform 5-second grid (9 × 156,835). Total records across all 24 CSVs (raw + preprocessed): **2,507,284**.
+9. **Retraction of 0.089 °C MAD-TCN MAE Claim:**  
+   *Problem:* Earlier reports referenced a MAD-TCN MAE of 0.089 °C. No code, experiment output, or checkpoint produces this value.  
+   *Resolution:* This claim is retracted as a phantom metric. The actual verified MAD-TCN metrics are: **Retrained MAE = 0.1672 °C** (simulation, 590 test sequences), **Original checkpoint MAE = 1.0142 °C** (due to training without normalization). On real Hohenheim data, the separately trained Real-TCN achieves MAE = 0.2592 °C.
+10. **Per-Device IoT Hardware Authorization:**  
+    *Problem:* The IoT telemetry endpoint used a single shared bearer secret; any client presenting the master key could claim `REAL_SENSOR` provenance for any device ID.  
+    *Resolution:* [`config/settings.py`](file:///C:/Projects/Cold-Chain-Ai/config/settings.py) now contains a `REGISTERED_IOT_HARDWARE_DEVICES` registry mapping device IDs to per-device secrets. The telemetry view ([`apps/monitoring/views.py`](file:///C:/Projects/Cold-Chain-Ai/apps/monitoring/views.py)) requires the device to be explicitly registered AND present a valid per-device token or master key. Unregistered devices are demoted to `SIMULATION` regardless of claims. Device IDs starting with `MOCK`, `SIM`, or `TEST` are always demoted.
 ---
 
 ## SECTION C — Time-Series Forecasting Scientific Findings
@@ -109,9 +120,22 @@ Evaluated strictly across the 50 chronologically distributed operational scenari
 > *Note on Continuous 590-Sequence Test Split:* In the continuous 590-sequence held-out test split of valuate_baseline.py, exactly 5 boundary crossing transitions occur in ground truth (due to the chamber operating predominantly in steady-state), producing sparse boundary samples. The 50-scenario comparison evaluates across multi-day diurnal stress cycles.
 
 ### 4. Real-World Public Cold-Storage Baselines (PUBLIC_DATASET)
-- **Macro Daily Cold Storage Benchmark (Cold_Storage_Temp_Data.csv):** 365 daily observations (.7\text{--}5.0\text{ }^\circ\text{C}$). Daily persistence $\text{MAE} = 0.4431\text{ }^\circ\text{C}$ (=364$), 5-day moving average $\text{MAE} = 0.4088\text{ }^\circ\text{C}$ (=360$). Exactly 0 readings exceed .0\text{ }^\circ\text{C}$; this dataset contains zero positive breach events.
-- **Physical 1-Minute Downsampled Telemetry (University of Hohenheim, Zenodo 15130001):** SENSOR03 from the 9-sensor refrigerated cold room ( = 7,037$ continuous readings; .8\text{--}12.3\text{ }^\circ\text{C}$, mean .54\text{ }^\circ\text{C}$). Held-out test split ( = 1,041$ sequences) yields 15-step persistence $\text{MAE} = 0.3089\text{ }^\circ\text{C}$ ($\text{MAE}_{t+15} = 0.4049\text{ }^\circ\text{C}$) and 5-step MA $\text{MAE} = 0.3226\text{ }^\circ\text{C}$.
-- **Data Provenance Boundary:** All MAD-TCN neural weights are trained and evaluated on **SIMULATION** data. Public datasets (**PUBLIC_DATASET**) establish that real physical facilities experience higher thermal drift ($\text{MAE} \approx 0.31\text{--}0.44\text{ }^\circ\text{C}$) than idealized simulations.
+- **Macro Daily Cold Storage Benchmark (Cold_Storage_Temp_Data.csv):** 365 daily observations ($3.7\text{--}5.0\text{ }^{\circ}\text{C}$). Daily persistence $\text{MAE} = 0.4431\text{ }^{\circ}\text{C}$ ($N=364$), 5-day moving average $\text{MAE} = 0.4088\text{ }^{\circ}\text{C}$ ($N=360$). Exactly 0 readings exceed $5.0\text{ }^{\circ}\text{C}$; this dataset contains zero positive breach events.
+- **Physical 1-Minute Downsampled Telemetry (University of Hohenheim, Zenodo 15130001):** SENSOR03 from the 9-sensor refrigerated cold room. Raw file contains 84,453 rows (not 156,835 — the preprocessed version fills a 4-day data gap via interpolation to produce the uniform 156,835 grid). After resampling to 1-minute intervals, SENSOR03 yields $N = 7{,}037$ continuous readings from the second contiguous segment (~4.88 days, Sept 6–11). Temperature range $3.8\text{--}12.3\text{ }^{\circ}\text{C}$, mean $5.54\text{ }^{\circ}\text{C}$.
+
+### 5. Real-Data Neural Forecasting Benchmark
+Evaluated via [`scripts/evaluate_real_forecasting.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/evaluate_real_forecasting.py) on Hohenheim SENSOR03 (1-min, $N_{test} = 1{,}045$ sequences):
+
+| Model / Baseline | 15-Step MAE (°C) | 15-Step RMSE (°C) | Breach Detection F1 (>6.0 °C) |
+| :--- | :--- | :--- | :--- |
+| **Naive Persistence** | 0.3048 °C | 0.4012 °C | 0.6155 |
+| **5-Step Moving Average** | 0.3185 °C | 0.4194 °C | — |
+| **Linear Trend** | 0.4989 °C | 0.6396 °C | — |
+| **Ridge AR(60)** | **0.2524 °C** | **0.3545 °C** | **0.7461** |
+| **Real-TCN Neural** | 0.2592 °C | 0.3586 °C | 0.7251 |
+
+- **Data Provenance Boundary:** All MAD-TCN neural weights (Section C) are trained and evaluated on **SIMULATION** data. The Real-TCN model above is a separate compact network trained solely on Hohenheim SENSOR03 temperature. These results must not be conflated.
+- **Original MAD-TCN Checkpoint Limitation:** The original 12-feature MAD-TCN checkpoint cannot be fairly applied to Hohenheim data because only 2 of 12 input features (temperature, humidity) are available. This is documented as an architectural limitation, not a defect.
 
 **Conclusion:** Naive persistence is the superior mathematical baseline for near-instantaneous tracking ( \le 12$ min). MAD-TCN is the superior predictive engine for horizon-scale tracking (=15$ min) and proactive safety alert generation.
 ---
@@ -140,7 +164,10 @@ Evaluated via [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chai
 
 ### 3. Thermodynamic Feasibility Derivation & Frontier Reconciliation
 - **Steady-State Derivation:** Chamber temperature follows $\frac{dT}{dt} = k_{inf} (T_{amb} - T) - k_{cool} u d$. With {inf} = 0.018\text{ min}^{-1}$ and {cool} = 0.320\text{ }^\circ\text{C/min}$, equilibrium steady state is {ss} = T_{amb} - 17.78\text{ }^\circ\text{C}$. For the chamber to reach or maintain  \le 5.0\text{ }^\circ\text{C}$, {amb}$ must not exceed .78\text{ }^\circ\text{C}$. When ambient heat waves reach .55\text{ }^\circ\text{C}$, heat intrusion at .0\text{ }^\circ\text{C}$ (.424\text{ }^\circ\text{C/min}$) physically exceeds maximum refrigeration (.320\text{ }^\circ\text{C/min}$), rendering single-interval compliance physically impossible.
-- **Reconciliation of Pareto Points (48) vs. Scenarios (23 Feasible / 27 Fallbacks):** The **48 Pareto points** reported in single-run pipeline verification ([scripts/end_to_end.py](file:///C:/Projects/Cold-Chain-Ai/scripts/end_to_end.py)) denote the cardinality of non-dominated setpoints on the trade-off surface for a single invocation at  = 3.93\text{ }^\circ\text{C}$. The **23 feasible / 27 emergency fallback scenarios** denote the aggregate classification across 50 separate 15-minute operating regimes sampled across the multi-day dataset.
+- **Reconciliation of Pareto Points (48) vs. Scenarios (23 Feasible / 27 Fallbacks):** The **48 Pareto points** reported in single-run pipeline verification ([scripts/end_to_end.py](file:///C:/Projects/Cold-Chain-Ai/scripts/end_to_end.py)) denote the cardinality of non-dominated setpoints on the trade-off surface for a single invocation at $T = 3.93\text{ }^{\circ}\text{C}$. The **23 feasible / 27 emergency fallback scenarios** denote the aggregate classification across 50 separate 15-minute operating regimes sampled across the multi-day dataset.
+- **Thermal Rate Verification at Peak Temperature:** At $T = 9.36\text{ }^{\circ}\text{C}$ (the observed maximum) with $T_{amb} = 28.55\text{ }^{\circ}\text{C}$ and maximum cooling ($u = 1.0, d = 1.0$):
+  $$\frac{dT}{dt} = k_{inf}(T_{amb} - T) - k_{cool} \cdot u \cdot d = 0.018 \times (28.55 - 9.36) - 0.32 \times 1.0 \times 1.0 = 0.3454 - 0.32 = +0.0254\text{ }^{\circ}\text{C/min}$$
+  The positive rate confirms the chamber is **still warming** even at maximum cooling capacity. The system cannot arrest warming until $T \ge T_{ss} = T_{amb} - k_{cool}/k_{inf} = 28.55 - 17.78 = 10.77\text{ }^{\circ}\text{C}$. This physically validates that 479 minutes of violation is the best achievable outcome, not a software defect.
 
 ---
 
@@ -154,8 +181,8 @@ Evaluated via [`scripts/train_energy_model.py`](file:///C:/Projects/Cold-Chain-A
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **GradientBoostingRegressor** | `power_kw` (kW) | **0.0142 kW** | **0.0710 kW** | **0.1362** | Best ML Estimator (`models/energy_model.pkl`) |
 | **LinearRegression Baseline** | `power_kw` (kW) | 0.0227 kW | 0.0719 kW | 0.1146 | Linear baseline |
-| **Analytical Formula (`core.py`)** | `power_kw` (kW) | 0.1666 kW | 0.1743 kW | -4.1991 | Optimization surrogate objective |
-| **Analytical Formula (`core.py`)** | Interval Energy (kWh) | 0.5893 kWh | 0.5902 kWh | -14454.7 | Cumulative interval energy proxy |
+| **`estimated_power_kw()` formula** | `power_kw` (kW) | 0.2883 kW | — | -52.94 | Optimization surrogate (`core.py`) |
+| **`estimated_energy_kwh()` formula** | Interval Energy (kWh) | $P_{kW} \times 0.25\text{ h}$ | — | — | Derived from `estimated_power_kw` × duration |
 
 ### 2. Feature Importance Breakdown
 - `compressor_duty` (15-min rolling average): **62.46%**
@@ -180,7 +207,7 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
 | **10,000 (10K)** | 1.15 MB | 0.307 s | 119,047 rows/s | 2.80 MB | ~20 ms | ~150 ms | **0.627 s** |
 | **100,000 (100K)** | 11.54 MB | 2.944 s | 313,111 rows/s | 25.21 MB | 19.8 ms | 163.7 ms | **3.634 s** |
 | **500,000 (500K)** | 57.70 MB | 15.020 s | 518,216 rows/s | 125.92 MB | 55.9 ms | 201.8 ms | **16.958 s** |
-| **1,000,000 (1M)** | 115.39 MB | 23.714 s | **568,106 rows/s** | 251.81 MB | 81.9 ms | 127.0 ms | **27.123 s** |
+| **1,000,000 (1M)** | 115.39 MB | 25.5 s | **568,106 rows/s** | 251.81 MB | 81.9 ms | 127.0 ms | **29.727 s** |
 
 ### Key Scalability Takeaways:
 1. **Sub-Linear Feature Engineering:** Due to vectorized NumPy routines, preprocessing throughput increases with batch size, reaching **568,106 rows per second** at 1 million records.
@@ -198,13 +225,16 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
 
 ### 2. Comprehensive Test Suite
 - Command: `.\.venv\Scripts\python.exe manage.py test`
-- Output: `Ran 39 tests in 7.444s — OK`
+- Output: `Ran 54 tests in 8.110s — OK` (39 workflow/regression + 15 feature & contract tests)
 - Coverage includes:
   - Database telemetry ingestion and sensor models (`ColdChainTelemetry`, `OptimizationRecommendation`, `SensorProfile`)
   - Feature engineering and window extraction (`core_preprocessing.py`)
   - MAD-TCN neural network architecture and inference (`ml/mad_tcn.py`, `ml/inference.py`)
   - Multi-objective constrained NSGA-II optimization (`optimization/nsga2_optimizer.py`)
   - RESTful API views, dataset download endpoints, and CSV report export views
+  - Per-device IoT hardware authorization and spoofing defense
+  - Energy unit contract (`estimated_power_kw` / `estimated_energy_kwh`)
+  - Semicolon vs comma CSV delimiter detection
 
 ### 3. End-to-End Pipeline Verification
 - Command: `.\.venv\Scripts\python.exe scripts/end_to_end.py`
@@ -223,10 +253,10 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
 - **Active Workspace:** `C:\Projects\Cold-Chain-Ai`
 - **Active Git Branch:** `completion-dev`
 - **Latest Local Commits:**
+  - `15206eb`: *Update coldchain_report timestamp from test run*
+  - `e40c063`: *Align commit hash reference in FINAL_COMPLETION_REPORT to authoritative commit*
   - `95a6b75`: *Acquire full Zenodo Hohenheim cold-room dataset, enforce server-side IoT hardware authorization, update dataset audit with file types, reconcile NSGA-II steady-state and breach provenance in reports*
-  - `3c2b624`: *Update final scientific validation reports: soften R2 bound claim, add MAD-TCN simulation provenance and breach disclosures, refresh audit inventory*
-  - `74c682d`: *Fix IoT provenance enforcement, update NSGA-II validation and dataset inventory*
-  - `1837ef9`: *Update coldchain_report timestamp after final test verification*
+- **Uncommitted Changes (this session):** Semicolon CSV parsing, energy unit contract (`estimated_power_kw`/`estimated_energy_kwh`), per-device IoT auth registry, real-data neural forecasting benchmark, corrected test_29 device ID, new feature tests, corrected report.
 - **Remote Policy:** Remote push to `origin` (`https://github.com/Swathi185-T/Cold-Chain-Ai.git`) remains unperformed, strictly honoring local-only development safety instructions.
 
 ---
@@ -291,10 +321,16 @@ Set-Location C:\Projects\Cold-Chain-Ai
 # 6. Reproduce Big Data Scalability Benchmark (10K to 1M rows)
 .\.venv\Scripts\python.exe scripts/run_scalability_benchmark.py
 
-# 7. Execute Browser Verification Suite (Microsoft Edge Playwright)
+# 7. Reproduce Real-Data Neural Forecasting Benchmark (Hohenheim SENSOR03)
+.\.venv\Scripts\python.exe scripts/evaluate_real_forecasting.py
+
+# 8. Audit All Datasets (Semicolon & Comma CSV detection)
+.\.venv\Scripts\python.exe scripts/audit_datasets.py
+
+# 9. Execute Browser Verification Suite (Microsoft Edge Playwright)
 .\.venv\Scripts\python.exe scripts/verify_browser_pages.py
 
-# 8. Launch Live Interactive Web Server
+# 10. Launch Live Interactive Web Server
 .\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000
 ```
 
@@ -309,4 +345,6 @@ Set-Location C:\Projects\Cold-Chain-Ai
 ### For Academic Paper & Thesis Defense:
 - Use the data in [`reports/nsga2_comparison/nsga2_comparison_data.json`](file:///C:/Projects/Cold-Chain-Ai/reports/nsga2_comparison/nsga2_comparison_data.json) to plot per-scenario temperature trajectories and Pareto frontiers.
 - Present the horizon-by-horizon error breakdown ($h=1\dots 15$) and breach anticipation table ($F_1 = 0.775$ vs $0.0$) to explain the trade-offs between naive persistence and MAD-TCN.
-- Cite the single-node scalability benchmark ($624,846\text{ rows/s}$, $< 252\text{ MB}$ RAM) to demonstrate computational feasibility for industrial edge deployments.
+- Cite the single-node scalability benchmark ($568{,}106\text{ rows/s}$, $< 252\text{ MB}$ RAM) to demonstrate computational feasibility for industrial edge deployments.
+- Present the real-data neural forecasting benchmark (Ridge AR(60) MAE = 0.2524 °C, Real-TCN MAE = 0.2592 °C on Hohenheim SENSOR03) to demonstrate generalization beyond simulation.
+- Document the 0.089 °C MAD-TCN claim retraction and use the corrected metrics (simulation MAE = 0.1672 °C, real-data MAE = 0.2592 °C).

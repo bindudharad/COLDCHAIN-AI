@@ -1,6 +1,6 @@
 {
   "audit_meta": {
-    "generated_at": "2026-10-15T23:11:24.033955",
+    "generated_at": "2026-10-15T23:48:04.940694",
     "execution_user": "Bindudhara D",
     "project_root": "C:\\Projects\\Cold-Chain-Ai",
     "script": "scripts/audit_datasets.py",
@@ -101,10 +101,15 @@
       "file_name": "browser_upload.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\data\\raw\\browser_upload.csv",
       "relative_path": "data\\raw\\browser_upload.csv",
+      "sha256": "41b16996c50ab11d9470b6d3ea8c6de0c584ae48ad4a3990906922f3bd80f0d9",
       "file_size_bytes": 87,
       "file_size_formatted": "87 B",
+      "delimiter": ",",
       "row_count": 1,
       "column_count": 4,
+      "raw_lines": 2,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
         "timestamp",
         "sensor_id",
@@ -165,7 +170,9 @@
         "max_timestamp": "2026-02-03T00:00:00+00:00",
         "time_span": "0 days 00:00:00",
         "valid_rows": 1,
-        "invalid_rows": 0
+        "invalid_rows": 0,
+        "sampling_interval_sec": null,
+        "gaps_gt_30s": 0
       },
       "sensor_id_info": {
         "column_name": "sensor_id",
@@ -188,10 +195,15 @@
       "file_name": "simulated_cold_chain.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\data\\raw\\simulated_cold_chain.csv",
       "relative_path": "data\\raw\\simulated_cold_chain.csv",
+      "sha256": "33591f7672b829bef081e06f73bc144cd28643f73b6dee9e10a947ed0ffb570c",
       "file_size_bytes": 1578733,
       "file_size_formatted": "1.51 MB",
+      "delimiter": ",",
       "row_count": 12000,
       "column_count": 10,
+      "raw_lines": 12001,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
         "timestamp",
         "sensor_id",
@@ -316,7 +328,9 @@
         "max_timestamp": "2026-01-03T18:39:00",
         "time_span": "2 days 18:39:00",
         "valid_rows": 12000,
-        "invalid_rows": 0
+        "invalid_rows": 0,
+        "sampling_interval_sec": 60.0,
+        "gaps_gt_30s": 11997
       },
       "sensor_id_info": {
         "column_name": "sensor_id",
@@ -343,10 +357,15 @@
       "file_name": "Cold_Storage_Mar2018.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\cold_storage_case_study\\Cold_Storage_Mar2018.csv",
       "relative_path": "Datasets\\cold_storage_case_study\\Cold_Storage_Mar2018.csv",
+      "sha256": "b2679640dd2d0b6a2a53a2ebff6143b48446575e1f0f0f78c13c023cb7fbc026",
       "file_size_bytes": 679,
       "file_size_formatted": "679 B",
+      "delimiter": ",",
       "row_count": 35,
       "column_count": 4,
+      "raw_lines": 36,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
         "Season",
         "Month",
@@ -407,7 +426,9 @@
         "max_timestamp": "1970-01-01T00:00:00.000000028",
         "time_span": "0 days 00:00:00.000000027",
         "valid_rows": 35,
-        "invalid_rows": 0
+        "invalid_rows": 0,
+        "sampling_interval_sec": 0.0,
+        "gaps_gt_30s": 0
       },
       "sensor_id_info": null,
       "domain_classification": {
@@ -421,10 +442,15 @@
       "file_name": "Cold_Storage_Temp_Data.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\cold_storage_case_study\\Cold_Storage_Temp_Data.csv",
       "relative_path": "Datasets\\cold_storage_case_study\\Cold_Storage_Temp_Data.csv",
+      "sha256": "8e2a619138342f47f76443c1b1c95d9b62c40d019861348e159f7a1b3dce88eb",
       "file_size_bytes": 6689,
       "file_size_formatted": "6.53 KB",
+      "delimiter": ",",
       "row_count": 365,
       "column_count": 4,
+      "raw_lines": 366,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
         "Season",
         "Month",
@@ -485,7 +511,9 @@
         "max_timestamp": "1970-01-01T00:00:00.000000031",
         "time_span": "0 days 00:00:00.000000030",
         "valid_rows": 365,
-        "invalid_rows": 0
+        "invalid_rows": 0,
+        "sampling_interval_sec": 0.0,
+        "gaps_gt_30s": 0
       },
       "sensor_id_info": null,
       "domain_classification": {
@@ -499,30 +527,62 @@
       "file_name": "experiment_actions.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\experiment_actions.csv",
       "relative_path": "Datasets\\zenodo_hohenheim\\experiment_actions.csv",
+      "sha256": "ca12508bff404c31f668acff90a56aba8fd5f7fbfc4fa4b9e6f7ec58d613ca7d",
       "file_size_bytes": 5360,
       "file_size_formatted": "5.23 KB",
+      "delimiter": ";",
       "row_count": 127,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 128,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Action;Start Time;End Time"
+        "Date",
+        "Action",
+        "Start Time",
+        "End Time"
       ],
       "data_types": {
-        "Date;Action;Start Time;End Time": "object"
+        "Date": "object",
+        "Action": "object",
+        "Start Time": "object",
+        "End Time": "object"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 4
       },
       "missing_values": {
         "total_missing": 0,
         "columns": {
-          "Date;Action;Start Time;End Time": {
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Action": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Start Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "End Time": {
             "count": 0,
             "percentage": 0.0
           }
         }
       },
       "numeric_statistics": {},
-      "timestamp_info": null,
+      "timestamp_info": {
+        "column_name": "Date",
+        "min_timestamp": "2024-09-02T00:00:00",
+        "max_timestamp": "2024-09-11T00:00:00",
+        "time_span": "9 days 00:00:00",
+        "valid_rows": 127,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 0.0,
+        "gaps_gt_30s": 7
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
@@ -535,10 +595,15 @@
       "file_name": "overview.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\overview.csv",
       "relative_path": "Datasets\\zenodo_hohenheim\\overview.csv",
+      "sha256": "660cbd3820b435ce1a26b1d60d654275da48491eaf2ba3480f4dd7ec207771e7",
       "file_size_bytes": 73879,
       "file_size_formatted": "72.15 KB",
+      "delimiter": ";",
       "row_count": 42,
       "column_count": 10,
+      "raw_lines": 43,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
         "Sensor",
         "SENSOR01",
@@ -716,35 +781,83 @@
       "file_name": "SENSOR01_preprocessed.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR01_preprocessed.csv",
       "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR01_preprocessed.csv",
+      "sha256": "e2136cd17e59b1280b595c8805e8f4f713efeec0ea01b2e991d8c6b37e8a499c",
       "file_size_bytes": 4769263,
       "file_size_formatted": "4.55 MB",
+      "delimiter": ";",
       "row_count": 156835,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156836,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature;Humidity"
+        "Date",
+        "Time",
+        "Temperature",
+        "Humidity"
       ],
       "data_types": {
-        "Date;Time;Temperature;Humidity": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature": "float64",
+        "Humidity": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
-        "total_missing": 0,
+        "total_missing": 1932,
         "columns": {
-          "Date;Time;Temperature;Humidity": {
+          "Date": {
             "count": 0,
             "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature": {
+            "count": 966,
+            "percentage": 0.6159
+          },
+          "Humidity": {
+            "count": 966,
+            "percentage": 0.6159
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature": {
+          "min": 5.3,
+          "max": 42.2,
+          "mean": 11.339,
+          "std": 5.774,
+          "count": 155869
+        },
+        "Humidity": {
+          "min": 26.1,
+          "max": 99.9,
+          "mean": 75.2397,
+          "std": 11.0824,
+          "count": 155869
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:35:25",
+        "max_timestamp": "2024-09-11T11:24:55",
+        "time_span": "9 days 01:49:30",
+        "valid_rows": 156835,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
         "provenance": "PUBLIC_DATASET",
-        "file_type": "RAW_TIMESERIES",
+        "file_type": "PREPROCESSED_TIMESERIES",
         "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
       }
     },
@@ -752,35 +865,83 @@
       "file_name": "SENSOR02_preprocessed.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR02_preprocessed.csv",
       "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR02_preprocessed.csv",
+      "sha256": "eb597c438c042289fbf3456f718c7c4e4827366e252e64629111e5d726c72bec",
       "file_size_bytes": 4774493,
       "file_size_formatted": "4.55 MB",
+      "delimiter": ";",
       "row_count": 156835,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156836,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature;Humidity"
+        "Date",
+        "Time",
+        "Temperature",
+        "Humidity"
       ],
       "data_types": {
-        "Date;Time;Temperature;Humidity": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature": "float64",
+        "Humidity": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
         "total_missing": 0,
         "columns": {
-          "Date;Time;Temperature;Humidity": {
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Humidity": {
             "count": 0,
             "percentage": 0.0
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature": {
+          "min": 5.8,
+          "max": 38.7,
+          "mean": 11.935,
+          "std": 6.4195,
+          "count": 156835
+        },
+        "Humidity": {
+          "min": 28.0,
+          "max": 99.9,
+          "mean": 74.3682,
+          "std": 12.2236,
+          "count": 156835
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:35:25",
+        "max_timestamp": "2024-09-11T11:24:55",
+        "time_span": "9 days 01:49:30",
+        "valid_rows": 156835,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
         "provenance": "PUBLIC_DATASET",
-        "file_type": "RAW_TIMESERIES",
+        "file_type": "PREPROCESSED_TIMESERIES",
         "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
       }
     },
@@ -788,35 +949,83 @@
       "file_name": "SENSOR03_preprocessed.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR03_preprocessed.csv",
       "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR03_preprocessed.csv",
+      "sha256": "789da49770ad92507066435f66885a5d6227c544a5b66f6e0c894af29f723b2d",
       "file_size_bytes": 4202944,
       "file_size_formatted": "4.01 MB",
+      "delimiter": ";",
       "row_count": 156835,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156836,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature;Humidity"
+        "Date",
+        "Time",
+        "Temperature",
+        "Humidity"
       ],
       "data_types": {
-        "Date;Time;Temperature;Humidity": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature": "float64",
+        "Humidity": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
-        "total_missing": 0,
+        "total_missing": 144782,
         "columns": {
-          "Date;Time;Temperature;Humidity": {
+          "Date": {
             "count": 0,
             "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature": {
+            "count": 72391,
+            "percentage": 46.1574
+          },
+          "Humidity": {
+            "count": 72391,
+            "percentage": 46.1574
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature": {
+          "min": 4.8,
+          "max": 12.3,
+          "mean": 6.5435,
+          "std": 1.4379,
+          "count": 84444
+        },
+        "Humidity": {
+          "min": 67.0,
+          "max": 99.9,
+          "mean": 87.2632,
+          "std": 5.2129,
+          "count": 84444
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:35:25",
+        "max_timestamp": "2024-09-11T11:24:55",
+        "time_span": "9 days 01:49:30",
+        "valid_rows": 156835,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
         "provenance": "PUBLIC_DATASET",
-        "file_type": "RAW_TIMESERIES",
+        "file_type": "PREPROCESSED_TIMESERIES",
         "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
       }
     },
@@ -824,35 +1033,83 @@
       "file_name": "SENSOR04_preprocessed.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR04_preprocessed.csv",
       "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR04_preprocessed.csv",
+      "sha256": "4922e6ef24141a38fbaa7afbc2fc2ca5b40e66c41fcaf72cdf994bb643099025",
       "file_size_bytes": 4703742,
       "file_size_formatted": "4.49 MB",
+      "delimiter": ";",
       "row_count": 156835,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156836,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature;Humidity"
+        "Date",
+        "Time",
+        "Temperature",
+        "Humidity"
       ],
       "data_types": {
-        "Date;Time;Temperature;Humidity": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature": "float64",
+        "Humidity": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
-        "total_missing": 0,
+        "total_missing": 11334,
         "columns": {
-          "Date;Time;Temperature;Humidity": {
+          "Date": {
             "count": 0,
             "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature": {
+            "count": 5667,
+            "percentage": 3.6134
+          },
+          "Humidity": {
+            "count": 5667,
+            "percentage": 3.6134
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature": {
+          "min": 5.6,
+          "max": 21.9,
+          "mean": 8.3586,
+          "std": 2.1628,
+          "count": 151168
+        },
+        "Humidity": {
+          "min": 53.9,
+          "max": 99.9,
+          "mean": 79.0769,
+          "std": 7.5852,
+          "count": 151168
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:35:25",
+        "max_timestamp": "2024-09-11T11:24:55",
+        "time_span": "9 days 01:49:30",
+        "valid_rows": 156835,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
         "provenance": "PUBLIC_DATASET",
-        "file_type": "RAW_TIMESERIES",
+        "file_type": "PREPROCESSED_TIMESERIES",
         "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
       }
     },
@@ -860,35 +1117,83 @@
       "file_name": "SENSOR05_preprocessed.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR05_preprocessed.csv",
       "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR05_preprocessed.csv",
+      "sha256": "d8fed523fe9a75cb5c14f73d391661fc1c9c10fea8bf93607a36a7e92fe282cb",
       "file_size_bytes": 3828487,
       "file_size_formatted": "3.65 MB",
+      "delimiter": ";",
       "row_count": 156835,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156836,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature;Humidity"
+        "Date",
+        "Time",
+        "Temperature",
+        "Humidity"
       ],
       "data_types": {
-        "Date;Time;Temperature;Humidity": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature": "float64",
+        "Humidity": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
-        "total_missing": 0,
+        "total_missing": 251468,
         "columns": {
-          "Date;Time;Temperature;Humidity": {
+          "Date": {
             "count": 0,
             "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature": {
+            "count": 125734,
+            "percentage": 80.1696
+          },
+          "Humidity": {
+            "count": 125734,
+            "percentage": 80.1696
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature": {
+          "min": 6.9,
+          "max": 13.3,
+          "mean": 8.243,
+          "std": 1.2639,
+          "count": 31101
+        },
+        "Humidity": {
+          "min": 52.4,
+          "max": 91.9,
+          "mean": 70.2965,
+          "std": 5.1447,
+          "count": 31101
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:35:25",
+        "max_timestamp": "2024-09-11T11:24:55",
+        "time_span": "9 days 01:49:30",
+        "valid_rows": 156835,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
         "provenance": "PUBLIC_DATASET",
-        "file_type": "RAW_TIMESERIES",
+        "file_type": "PREPROCESSED_TIMESERIES",
         "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
       }
     },
@@ -896,35 +1201,83 @@
       "file_name": "SENSOR06_preprocessed.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR06_preprocessed.csv",
       "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR06_preprocessed.csv",
+      "sha256": "8ac602e42d99f601f5cc25d24e18143826ec7e9c7ad0b7b072278c9453e67507",
       "file_size_bytes": 4734585,
       "file_size_formatted": "4.52 MB",
+      "delimiter": ";",
       "row_count": 156835,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156836,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature;Humidity"
+        "Date",
+        "Time",
+        "Temperature",
+        "Humidity"
       ],
       "data_types": {
-        "Date;Time;Temperature;Humidity": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature": "float64",
+        "Humidity": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
         "total_missing": 0,
         "columns": {
-          "Date;Time;Temperature;Humidity": {
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Humidity": {
             "count": 0,
             "percentage": 0.0
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature": {
+          "min": 5.1,
+          "max": 22.1,
+          "mean": 7.7937,
+          "std": 2.1572,
+          "count": 156835
+        },
+        "Humidity": {
+          "min": 53.7,
+          "max": 99.9,
+          "mean": 79.6062,
+          "std": 8.3297,
+          "count": 156835
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:35:25",
+        "max_timestamp": "2024-09-11T11:24:55",
+        "time_span": "9 days 01:49:30",
+        "valid_rows": 156835,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
         "provenance": "PUBLIC_DATASET",
-        "file_type": "RAW_TIMESERIES",
+        "file_type": "PREPROCESSED_TIMESERIES",
         "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
       }
     },
@@ -932,35 +1285,83 @@
       "file_name": "SENSOR07_preprocessed.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR07_preprocessed.csv",
       "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR07_preprocessed.csv",
+      "sha256": "6744997fb06fd202cb6d5b8799184d59bb376dd3c26574fb46d20fff97b3fb63",
       "file_size_bytes": 4747099,
       "file_size_formatted": "4.53 MB",
+      "delimiter": ";",
       "row_count": 156835,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156836,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature;Humidity"
+        "Date",
+        "Time",
+        "Temperature",
+        "Humidity"
       ],
       "data_types": {
-        "Date;Time;Temperature;Humidity": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature": "float64",
+        "Humidity": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
         "total_missing": 0,
         "columns": {
-          "Date;Time;Temperature;Humidity": {
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Humidity": {
             "count": 0,
             "percentage": 0.0
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature": {
+          "min": 6.0,
+          "max": 22.8,
+          "mean": 8.5344,
+          "std": 2.1123,
+          "count": 156835
+        },
+        "Humidity": {
+          "min": 53.5,
+          "max": 99.9,
+          "mean": 83.0576,
+          "std": 8.1235,
+          "count": 156835
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:35:25",
+        "max_timestamp": "2024-09-11T11:24:55",
+        "time_span": "9 days 01:49:30",
+        "valid_rows": 156835,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
         "provenance": "PUBLIC_DATASET",
-        "file_type": "RAW_TIMESERIES",
+        "file_type": "PREPROCESSED_TIMESERIES",
         "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
       }
     },
@@ -968,35 +1369,83 @@
       "file_name": "SENSOR08_preprocessed.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR08_preprocessed.csv",
       "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR08_preprocessed.csv",
+      "sha256": "d6748dd6c786298dbd301c32e4fac4a49cf82c5bb0b2c97298f69505ad4af1dd",
       "file_size_bytes": 4818142,
       "file_size_formatted": "4.59 MB",
+      "delimiter": ";",
       "row_count": 156835,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156836,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature;Humidity"
+        "Date",
+        "Time",
+        "Temperature",
+        "Humidity"
       ],
       "data_types": {
-        "Date;Time;Temperature;Humidity": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature": "float64",
+        "Humidity": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
         "total_missing": 0,
         "columns": {
-          "Date;Time;Temperature;Humidity": {
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Humidity": {
             "count": 0,
             "percentage": 0.0
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature": {
+          "min": 9.0,
+          "max": 22.3,
+          "mean": 11.6853,
+          "std": 2.0864,
+          "count": 156835
+        },
+        "Humidity": {
+          "min": 41.2,
+          "max": 89.4,
+          "mean": 63.8162,
+          "std": 6.4813,
+          "count": 156835
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:35:25",
+        "max_timestamp": "2024-09-11T11:24:55",
+        "time_span": "9 days 01:49:30",
+        "valid_rows": 156835,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
         "provenance": "PUBLIC_DATASET",
-        "file_type": "RAW_TIMESERIES",
+        "file_type": "PREPROCESSED_TIMESERIES",
         "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
       }
     },
@@ -1004,35 +1453,83 @@
       "file_name": "SENSOR09_preprocessed.csv",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR09_preprocessed.csv",
       "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR09_preprocessed.csv",
+      "sha256": "da95cce302a68b8756d5b8aed3c8954465f383805fe92e3b49f2c8fd8494722a",
       "file_size_bytes": 3839624,
       "file_size_formatted": "3.66 MB",
+      "delimiter": ";",
       "row_count": 156835,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156836,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature;Humidity"
+        "Date",
+        "Time",
+        "Temperature",
+        "Humidity"
       ],
       "data_types": {
-        "Date;Time;Temperature;Humidity": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature": "float64",
+        "Humidity": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
-        "total_missing": 0,
+        "total_missing": 248270,
         "columns": {
-          "Date;Time;Temperature;Humidity": {
+          "Date": {
             "count": 0,
             "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature": {
+            "count": 124135,
+            "percentage": 79.1501
+          },
+          "Humidity": {
+            "count": 124135,
+            "percentage": 79.1501
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature": {
+          "min": 5.4,
+          "max": 12.7,
+          "mean": 7.3187,
+          "std": 1.6128,
+          "count": 32700
+        },
+        "Humidity": {
+          "min": 55.6,
+          "max": 99.9,
+          "mean": 78.2177,
+          "std": 6.9199,
+          "count": 32700
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:35:25",
+        "max_timestamp": "2024-09-11T11:24:55",
+        "time_span": "9 days 01:49:30",
+        "valid_rows": 156835,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
         "provenance": "PUBLIC_DATASET",
-        "file_type": "RAW_TIMESERIES",
+        "file_type": "PREPROCESSED_TIMESERIES",
         "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
       }
     },
@@ -1040,30 +1537,78 @@
       "file_name": "SENSOR01.CSV",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR01.CSV",
       "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR01.CSV",
+      "sha256": "163fc59e1d482b5ff8858d1a61554a61958193f6163575ee55b9731f1ca0c03f",
       "file_size_bytes": 5063738,
       "file_size_formatted": "4.83 MB",
+      "delimiter": ";",
       "row_count": 156020,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156021,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature (C);Humidity (%)"
+        "Date",
+        "Time",
+        "Temperature (C)",
+        "Humidity (%)"
       ],
       "data_types": {
-        "Date;Time;Temperature (C);Humidity (%)": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature (C)": "float64",
+        "Humidity (%)": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
-        "total_missing": 0,
+        "total_missing": 2,
         "columns": {
-          "Date;Time;Temperature (C);Humidity (%)": {
+          "Date": {
             "count": 0,
             "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature (C)": {
+            "count": 1,
+            "percentage": 0.0006
+          },
+          "Humidity (%)": {
+            "count": 1,
+            "percentage": 0.0006
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature (C)": {
+          "min": 5.3,
+          "max": 42.2,
+          "mean": 11.3448,
+          "std": 5.7772,
+          "count": 156019
+        },
+        "Humidity (%)": {
+          "min": 26.1,
+          "max": 99.9,
+          "mean": 75.2369,
+          "std": 11.0893,
+          "count": 156019
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:26:30",
+        "max_timestamp": "2024-09-11T11:28:30",
+        "time_span": "9 days 02:02:00",
+        "valid_rows": 156019,
+        "invalid_rows": 1,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 1
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
@@ -1076,30 +1621,78 @@
       "file_name": "SENSOR02.CSV",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR02.CSV",
       "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR02.CSV",
+      "sha256": "f13929e7c0290cb97fdd441331e41478fb5a09194d7ad6aa0536a2fc76090eb1",
       "file_size_bytes": 5092920,
       "file_size_formatted": "4.86 MB",
+      "delimiter": ";",
       "row_count": 156980,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156981,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature (C);Humidity (%)"
+        "Date",
+        "Time",
+        "Temperature (C)",
+        "Humidity (%)"
       ],
       "data_types": {
-        "Date;Time;Temperature (C);Humidity (%)": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature (C)": "float64",
+        "Humidity (%)": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
         "total_missing": 0,
         "columns": {
-          "Date;Time;Temperature (C);Humidity (%)": {
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature (C)": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Humidity (%)": {
             "count": 0,
             "percentage": 0.0
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature (C)": {
+          "min": 5.8,
+          "max": 38.7,
+          "mean": 11.9411,
+          "std": 6.4222,
+          "count": 156980
+        },
+        "Humidity (%)": {
+          "min": 28.0,
+          "max": 99.9,
+          "mean": 74.3664,
+          "std": 12.2266,
+          "count": 156980
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:26:20",
+        "max_timestamp": "2024-09-11T11:27:55",
+        "time_span": "9 days 02:01:35",
+        "valid_rows": 156980,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
@@ -1112,30 +1705,78 @@
       "file_name": "SENSOR03.CSV",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR03.CSV",
       "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR03.CSV",
+      "sha256": "448d4a2536803c42bfcf5465ea4416b64aff2bbcef0df64dd25e7d6f3644322d",
       "file_size_bytes": 2707165,
       "file_size_formatted": "2.58 MB",
+      "delimiter": ";",
       "row_count": 84453,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 84454,
+      "malformed_rows": 0,
+      "exact_duplicates": 2,
       "columns": [
-        "Date;Time;Temperature (C);Humidity (%)"
+        "Date",
+        "Time",
+        "Temperature (C)",
+        "Humidity (%)"
       ],
       "data_types": {
-        "Date;Time;Temperature (C);Humidity (%)": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature (C)": "float64",
+        "Humidity (%)": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
-        "total_missing": 0,
+        "total_missing": 6,
         "columns": {
-          "Date;Time;Temperature (C);Humidity (%)": {
+          "Date": {
             "count": 0,
             "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature (C)": {
+            "count": 3,
+            "percentage": 0.0036
+          },
+          "Humidity (%)": {
+            "count": 3,
+            "percentage": 0.0036
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature (C)": {
+          "min": 4.8,
+          "max": 21.2,
+          "mean": 6.5445,
+          "std": 1.4431,
+          "count": 84450
+        },
+        "Humidity (%)": {
+          "min": 67.0,
+          "max": 99.9,
+          "mean": 87.2619,
+          "std": 5.215,
+          "count": 84450
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:27:50",
+        "max_timestamp": "2024-09-11T11:24:55",
+        "time_span": "9 days 01:57:05",
+        "valid_rows": 84450,
+        "invalid_rows": 3,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 2
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
@@ -1148,30 +1789,78 @@
       "file_name": "SENSOR04.CSV",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR04.CSV",
       "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR04.CSV",
+      "sha256": "22a687ee08e40f38edaf7ebcac338f17f3b598ac6292d7cacc4b34171dbb049c",
       "file_size_bytes": 4878385,
       "file_size_formatted": "4.65 MB",
+      "delimiter": ";",
       "row_count": 151248,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 151249,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature (C);Humidity (%)"
+        "Date",
+        "Time",
+        "Temperature (C)",
+        "Humidity (%)"
       ],
       "data_types": {
-        "Date;Time;Temperature (C);Humidity (%)": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature (C)": "float64",
+        "Humidity (%)": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
         "total_missing": 0,
         "columns": {
-          "Date;Time;Temperature (C);Humidity (%)": {
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature (C)": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Humidity (%)": {
             "count": 0,
             "percentage": 0.0
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature (C)": {
+          "min": 5.6,
+          "max": 22.0,
+          "mean": 8.3658,
+          "std": 2.1847,
+          "count": 151248
+        },
+        "Humidity (%)": {
+          "min": 53.9,
+          "max": 99.9,
+          "mean": 79.067,
+          "std": 7.5954,
+          "count": 151248
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:28:45",
+        "max_timestamp": "2024-09-11T03:32:40",
+        "time_span": "8 days 18:03:55",
+        "valid_rows": 151248,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
@@ -1184,30 +1873,78 @@
       "file_name": "SENSOR05.CSV",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR05.CSV",
       "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR05.CSV",
+      "sha256": "d6e3167c2b85aee44d786ddf1439d5933e8df6ff6048b3978cd1e8a4cfb9d1ee",
       "file_size_bytes": 1000255,
       "file_size_formatted": "976.81 KB",
+      "delimiter": ";",
       "row_count": 31146,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 31147,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature (C);Humidity (%)"
+        "Date",
+        "Time",
+        "Temperature (C)",
+        "Humidity (%)"
       ],
       "data_types": {
-        "Date;Time;Temperature (C);Humidity (%)": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature (C)": "float64",
+        "Humidity (%)": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
         "total_missing": 0,
         "columns": {
-          "Date;Time;Temperature (C);Humidity (%)": {
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature (C)": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Humidity (%)": {
             "count": 0,
             "percentage": 0.0
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature (C)": {
+          "min": 6.9,
+          "max": 13.3,
+          "mean": 8.2421,
+          "std": 1.2633,
+          "count": 31146
+        },
+        "Humidity (%)": {
+          "min": 52.4,
+          "max": 99.9,
+          "mean": 70.3192,
+          "std": 5.1947,
+          "count": 31146
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-09T16:13:15",
+        "max_timestamp": "2024-09-11T11:28:40",
+        "time_span": "1 days 19:15:25",
+        "valid_rows": 31146,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
@@ -1220,30 +1957,78 @@
       "file_name": "SENSOR06.CSV",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR06.CSV",
       "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR06.CSV",
+      "sha256": "cb4b4b41d04cdd21873975954d629d5248acc21c2d5a5999339ddbe628569955",
       "file_size_bytes": 5049969,
       "file_size_formatted": "4.82 MB",
+      "delimiter": ";",
       "row_count": 156887,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156888,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature (C);Humidity (%)"
+        "Date",
+        "Time",
+        "Temperature (C)",
+        "Humidity (%)"
       ],
       "data_types": {
-        "Date;Time;Temperature (C);Humidity (%)": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature (C)": "float64",
+        "Humidity (%)": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
         "total_missing": 0,
         "columns": {
-          "Date;Time;Temperature (C);Humidity (%)": {
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature (C)": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Humidity (%)": {
             "count": 0,
             "percentage": 0.0
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature (C)": {
+          "min": 5.1,
+          "max": 22.5,
+          "mean": 7.7976,
+          "std": 2.1694,
+          "count": 156887
+        },
+        "Humidity (%)": {
+          "min": 53.7,
+          "max": 99.9,
+          "mean": 79.6027,
+          "std": 8.3351,
+          "count": 156887
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:31:55",
+        "max_timestamp": "2024-09-11T11:25:45",
+        "time_span": "9 days 01:53:50",
+        "valid_rows": 156887,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
@@ -1256,30 +2041,78 @@
       "file_name": "SENSOR07.CSV",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR07.CSV",
       "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR07.CSV",
+      "sha256": "2510542fa7cc27d014fb56995273544f363cb41d239bc91399c3ee0cabbd9ce2",
       "file_size_bytes": 5062400,
       "file_size_formatted": "4.83 MB",
+      "delimiter": ";",
       "row_count": 156885,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156886,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature (C);Humidity (%)"
+        "Date",
+        "Time",
+        "Temperature (C)",
+        "Humidity (%)"
       ],
       "data_types": {
-        "Date;Time;Temperature (C);Humidity (%)": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature (C)": "float64",
+        "Humidity (%)": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
         "total_missing": 0,
         "columns": {
-          "Date;Time;Temperature (C);Humidity (%)": {
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature (C)": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Humidity (%)": {
             "count": 0,
             "percentage": 0.0
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature (C)": {
+          "min": 6.0,
+          "max": 22.8,
+          "mean": 8.5363,
+          "std": 2.118,
+          "count": 156885
+        },
+        "Humidity (%)": {
+          "min": 53.5,
+          "max": 99.9,
+          "mean": 83.0588,
+          "std": 8.1266,
+          "count": 156885
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:33:30",
+        "max_timestamp": "2024-09-11T11:27:10",
+        "time_span": "9 days 01:53:40",
+        "valid_rows": 156885,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
@@ -1292,30 +2125,78 @@
       "file_name": "SENSOR08.CSV",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR08.CSV",
       "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR08.CSV",
+      "sha256": "fe443f127ed844f9c95db161326d8c7ea27e99367a593cb1512e0c65ef52a3d1",
       "file_size_bytes": 5132744,
       "file_size_formatted": "4.89 MB",
+      "delimiter": ";",
       "row_count": 156863,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 156864,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature (C);Humidity (%)"
+        "Date",
+        "Time",
+        "Temperature (C)",
+        "Humidity (%)"
       ],
       "data_types": {
-        "Date;Time;Temperature (C);Humidity (%)": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature (C)": "float64",
+        "Humidity (%)": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
         "total_missing": 0,
         "columns": {
-          "Date;Time;Temperature (C);Humidity (%)": {
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature (C)": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Humidity (%)": {
             "count": 0,
             "percentage": 0.0
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature (C)": {
+          "min": 9.0,
+          "max": 22.3,
+          "mean": 11.6852,
+          "std": 2.0862,
+          "count": 156863
+        },
+        "Humidity (%)": {
+          "min": 41.2,
+          "max": 91.3,
+          "mean": 63.8205,
+          "std": 6.489,
+          "count": 156863
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-02T09:35:25",
+        "max_timestamp": "2024-09-11T11:27:15",
+        "time_span": "9 days 01:51:50",
+        "valid_rows": 156863,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
@@ -1328,30 +2209,78 @@
       "file_name": "SENSOR09.CSV",
       "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR09.CSV",
       "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR09.CSV",
+      "sha256": "c50253f87996f050a0bbda5eeb383775f077b1db8ccf1b38ea52e78498f2a2ed",
       "file_size_bytes": 1050484,
       "file_size_formatted": "1.00 MB",
+      "delimiter": ";",
       "row_count": 32717,
-      "column_count": 1,
+      "column_count": 4,
+      "raw_lines": 32718,
+      "malformed_rows": 0,
+      "exact_duplicates": 0,
       "columns": [
-        "Date;Time;Temperature (C);Humidity (%)"
+        "Date",
+        "Time",
+        "Temperature (C)",
+        "Humidity (%)"
       ],
       "data_types": {
-        "Date;Time;Temperature (C);Humidity (%)": "object"
+        "Date": "object",
+        "Time": "object",
+        "Temperature (C)": "float64",
+        "Humidity (%)": "float64"
       },
       "data_type_counts": {
-        "object": 1
+        "object": 2,
+        "float64": 2
       },
       "missing_values": {
         "total_missing": 0,
         "columns": {
-          "Date;Time;Temperature (C);Humidity (%)": {
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Time": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature (C)": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Humidity (%)": {
             "count": 0,
             "percentage": 0.0
           }
         }
       },
-      "numeric_statistics": {},
-      "timestamp_info": null,
+      "numeric_statistics": {
+        "Temperature (C)": {
+          "min": 5.4,
+          "max": 12.7,
+          "mean": 7.3203,
+          "std": 1.6141,
+          "count": 32717
+        },
+        "Humidity (%)": {
+          "min": 55.6,
+          "max": 99.9,
+          "mean": 78.229,
+          "std": 6.9357,
+          "count": 32717
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date + Time",
+        "min_timestamp": "2024-09-09T14:00:00",
+        "max_timestamp": "2024-09-11T11:26:20",
+        "time_span": "1 days 21:26:20",
+        "valid_rows": 32717,
+        "invalid_rows": 0,
+        "sampling_interval_sec": 5.0,
+        "gaps_gt_30s": 0
+      },
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",

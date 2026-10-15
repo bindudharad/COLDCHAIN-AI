@@ -605,13 +605,28 @@ def iot_telemetry_api(request):
         user_agent = str(request.headers.get('User-Agent', '')).lower()
         clean_sid = str(sid).strip()
 
-        # Server-side hardware authorization check
-        hw_token = request.headers.get('X-Hardware-Key') or request.headers.get('X-Sensor-Hardware-Token')
-        expected_key = getattr(settings, 'IOT_HARDWARE_API_KEY', 'coldchain-verified-hardware-secret-key-2026')
-        valid_hw_auth = bool(hw_token and hw_token == expected_key)
+        # Server-side per-device hardware authorization check
+        reg_devices = getattr(settings, 'REGISTERED_IOT_HARDWARE_DEVICES', {})
+        expected_master_key = getattr(settings, 'IOT_HARDWARE_API_KEY', 'coldchain-verified-hardware-secret-key-2026')
+        
+        # Hardware token can be per-device secret or verified master hardware key
+        hw_token = (
+            request.headers.get('X-Device-Token') or 
+            request.headers.get('X-Hardware-Key') or 
+            request.headers.get('X-Sensor-Hardware-Token')
+        )
+        
+        # Sensor must be an explicitly registered hardware device in the server registry
+        is_registered_device = clean_sid in reg_devices
+        device_token_matches = bool(is_registered_device and hw_token and hw_token == reg_devices[clean_sid])
+        master_key_matches = bool(is_registered_device and hw_token and hw_token == expected_master_key)
+        valid_hw_auth = device_token_matches or master_key_matches
 
         src = str(rec.get('data_source', rec.get('source_type', ''))).upper()
-        # Only assign REAL_SENSOR when valid physical hardware token is authenticated
+        # Server-controlled provenance assignment:
+        # 1. PUBLIC_DATASET: for external research benchmarks
+        # 2. REAL_SENSOR: only when device is registered in hardware registry AND presents valid credentials
+        # 3. SIMULATION: default for synthetic streams, mock generators, and unverified/spoofed devices
         if src == 'PUBLIC_DATASET':
             provenance = 'PUBLIC_DATASET'
         elif (src == 'REAL_SENSOR' and valid_hw_auth and 

@@ -450,6 +450,30 @@ def check_duplicates_and_stuck_readings(df: pd.DataFrame) -> Tuple[Dict[str, Any
     return results, overall_status
 
 
+def detect_delimiter(file_path: Path) -> str:
+    """Detect CSV delimiter by inspecting first non-empty lines."""
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            for _ in range(5):
+                line = f.readline()
+                if not line:
+                    break
+                s = line.strip()
+                if s:
+                    semi = s.count(";")
+                    comma = s.count(",")
+                    tab = s.count("\t")
+                    if semi > comma and semi > 0:
+                        return ";"
+                    if tab > comma and tab > 0:
+                        return "\t"
+                    if comma > 0:
+                        return ","
+    except Exception:
+        pass
+    return ","
+
+
 def audit_dataset(file_path: Path) -> Dict[str, Any]:
     """Execute complete diagnostic suite on a single CSV telemetry file."""
     print(f"\n{'=' * 78}")
@@ -457,8 +481,12 @@ def audit_dataset(file_path: Path) -> Dict[str, Any]:
     print(f"Location: {file_path}")
     print(f"{'=' * 78}")
 
+    delim = detect_delimiter(file_path)
     try:
-        df = pd.read_csv(file_path)
+        df = pd.read_csv(file_path, sep=delim, low_memory=False)
+        if len(df.columns) == 1 and (";" in df.columns[0] or "," in df.columns[0]):
+            alt_delim = ";" if ";" in df.columns[0] else ","
+            df = pd.read_csv(file_path, sep=alt_delim, low_memory=False)
     except Exception as e:
         print(f"  [FAIL] Unable to read CSV file: {e}")
         return {
@@ -466,6 +494,23 @@ def audit_dataset(file_path: Path) -> Dict[str, Any]:
             'error': str(e),
             'overall_status': 'FAIL'
         }
+
+    # Normalize common datetime and sensor column variations for diagnostics
+    if 'Date' in df.columns and 'Time' in df.columns and 'timestamp' not in df.columns:
+        df['timestamp'] = pd.to_datetime(df['Date'].astype(str) + ' ' + df['Time'].astype(str), dayfirst=True, errors='coerce')
+    if 'Temperature (C)' in df.columns and 'temperature' not in df.columns:
+        df['temperature'] = pd.to_numeric(df['Temperature (C)'], errors='coerce')
+    elif 'Temperature' in df.columns and 'temperature' not in df.columns:
+        df['temperature'] = pd.to_numeric(df['Temperature'], errors='coerce')
+    if 'Humidity (%)' in df.columns and 'humidity' not in df.columns:
+        df['humidity'] = pd.to_numeric(df['Humidity (%)'], errors='coerce')
+    elif 'Humidity' in df.columns and 'humidity' not in df.columns:
+        df['humidity'] = pd.to_numeric(df['Humidity'], errors='coerce')
+    if 'sensor_id' not in df.columns:
+        # If filename implies sensor (e.g. SENSOR01), attach synthetic sensor_id for grouping
+        stem = file_path.stem.split('_')[0]
+        if stem.upper().startswith('SENSOR'):
+            df['sensor_id'] = stem.upper()
 
     total_rows, total_cols = df.shape
     file_size_kb = round(file_path.stat().st_size / 1024, 2)

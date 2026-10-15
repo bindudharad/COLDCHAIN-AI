@@ -188,6 +188,8 @@ def classify_dataset_domain(
         file_type = "SINGLE_TEST_UPLOAD"
     elif name_lower.endswith((".ino", ".py", ".sh")):
         file_type = "SOURCE_CODE"
+    elif "preprocessed" in name_lower or "preprocessed" in path_lower:
+        file_type = "PREPROCESSED_TIMESERIES"
 
     # 1. Predictive Maintenance (EV Battery / Industrial)
     if (
@@ -348,47 +350,114 @@ def find_csv_files(
     return discovered, dir_reports
 
 
+def detect_delimiter(file_path: Path) -> str:
+    """Detect CSV delimiter by inspecting first non-empty lines."""
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            for _ in range(5):
+                line = f.readline()
+                if not line:
+                    break
+                s = line.strip()
+                if s:
+                    semi = s.count(";")
+                    comma = s.count(",")
+                    tab = s.count("\t")
+                    if semi > comma and semi > 0:
+                        return ";"
+                    if tab > comma and tab > 0:
+                        return "\t"
+                    if comma > 0:
+                        return ","
+    except Exception:
+        pass
+    return ","
+
+
+def compute_file_sha256(file_path: Path) -> str:
+    """Compute cryptographic SHA-256 hash of a file for integrity provenance."""
+    import hashlib
+    h = hashlib.sha256()
+    try:
+        with open(file_path, "rb") as f:
+            while chunk := f.read(65536):
+                h.update(chunk)
+        return h.hexdigest()
+    except Exception:
+        return "UNKNOWN"
+
+
 def audit_single_csv(file_path: Path, project_root: Path) -> Dict[str, Any]:
     """Perform in-depth structural, missing-value, numeric, and temporal audit of a CSV file."""
     stat = file_path.stat()
     file_size_bytes = stat.st_size
     file_size_formatted = format_bytes(file_size_bytes)
     rel_path = file_path.relative_to(project_root) if file_path.is_relative_to(project_root) else file_path
+    sha256 = compute_file_sha256(file_path)
 
-    # Read CSV with fallback delimiter handling
+    # Count raw lines in the file to detect malformed / skipped rows
+    raw_lines = 0
     try:
-        df = pd.read_csv(file_path)
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            raw_lines = sum(1 for _ in f)
     except Exception:
+        pass
+
+    # Detect delimiter
+    delim = detect_delimiter(file_path)
+
+    # Read CSV with detected delimiter
+    try:
+        df = pd.read_csv(file_path, sep=delim, low_memory=False)
+        # If read as single column and delimiter appears in header, fallback to python engine
+        if len(df.columns) == 1 and (";" in df.columns[0] or "," in df.columns[0]):
+            alt_delim = ";" if ";" in df.columns[0] else ","
+            df = pd.read_csv(file_path, sep=alt_delim, low_memory=False)
+            delim = alt_delim
+    except Exception as exc:
         try:
-            df = pd.read_csv(file_path, sep=";", on_bad_lines="skip")
-        except Exception:
-            try:
-                df = pd.read_csv(file_path, sep=None, engine="python", on_bad_lines="skip")
-            except Exception as exc:
-                return {
-                    "file_name": file_path.name,
-                    "file_path": str(file_path),
-                    "relative_path": str(rel_path),
-                    "file_size_bytes": file_size_bytes,
-                    "file_size_formatted": file_size_formatted,
-                    "read_error": str(exc),
-                    "row_count": 0,
-                    "column_count": 0,
-                    "columns": [],
-                    "missing_values": {"total_missing": 0, "columns": {}},
-                    "numeric_statistics": {},
-                    "timestamp_info": None,
-                    "sensor_id_info": None,
-                    "domain_classification": {
-                        "domain": "UNKNOWN",
-                        "provenance": "UNKNOWN",
-                        "rationale": f"Read failed: {exc}",
-                    },
-                }
+            df = pd.read_csv(file_path, sep=None, engine="python", on_bad_lines="skip")
+            delim = "auto"
+        except Exception as exc2:
+            return {
+                "file_name": file_path.name,
+                "file_path": str(file_path),
+                "relative_path": str(rel_path),
+                "sha256": sha256,
+                "file_size_bytes": file_size_bytes,
+                "file_size_formatted": file_size_formatted,
+                "delimiter": delim,
+                "read_error": str(exc2),
+                "row_count": 0,
+                "column_count": 0,
+                "raw_lines": raw_lines,
+                "malformed_rows": raw_lines,
+                "exact_duplicates": 0,
+                "columns": [],
+                "missing_values": {"total_missing": 0, "columns": {}},
+                "numeric_statistics": {},
+                "timestamp_info": None,
+                "sensor_id_info": None,
+                "domain_classification": {
+                    "domain": "UNKNOWN",
+                    "provenance": "UNKNOWN",
+                    "rationale": f"Read failed: {exc2}",
+                },
+            }
 
     row_count = int(len(df))
     col_count = int(len(df.columns))
     columns = [str(c) for c in df.columns]
+
+    # Calculate malformed rows count
+    expected_rows = max(0, raw_lines - 1)
+    malformed_rows = max(0, expected_rows - row_count)
+
+    # Ensure numeric columns (e.g., temperature, humidity, power) are properly cast to float
+    for col in df.columns:
+        col_l = str(col).lower()
+        if any(k in col_l for k in ["temp", "hum", "power", "volt", "curr", "energy", "duty", "state"]):
+            df[col] = pd.to_numeric(df[col], errors="coerce")
 
     # Data types
     dtypes_map = {str(c): str(t) for c, t in df.dtypes.items()}
@@ -436,34 +505,57 @@ def audit_single_csv(file_path: Path, project_root: Path) -> Dict[str, Any]:
 
     # Timestamp column check
     timestamp_info = None
-    ts_candidates = ["timestamp", "noted_date", "datetime", "date", "time", "ts"]
     detected_ts_col = None
-    for cand in ts_candidates:
-        match = [c for c in df.columns if c.lower() == cand]
-        if match:
-            detected_ts_col = match[0]
-            break
+    parsed_ts = None
 
-    if detected_ts_col is not None:
+    # Check for combined Date + Time columns (e.g. Hohenheim)
+    if "Date" in df.columns and "Time" in df.columns:
+        detected_ts_col = "Date + Time"
         try:
-            parsed_ts = pd.to_datetime(df[detected_ts_col], errors="coerce")
-            valid_ts = parsed_ts.dropna()
-            if len(valid_ts) > 0:
-                min_dt = valid_ts.min()
-                max_dt = valid_ts.max()
-                time_span = str(max_dt - min_dt)
-                timestamp_info = {
-                    "column_name": str(detected_ts_col),
-                    "min_timestamp": min_dt.isoformat(),
-                    "max_timestamp": max_dt.isoformat(),
-                    "time_span": time_span,
-                    "valid_rows": int(len(valid_ts)),
-                    "invalid_rows": int(len(parsed_ts) - len(valid_ts)),
-                }
+            parsed_ts = pd.to_datetime(
+                df["Date"].astype(str) + " " + df["Time"].astype(str),
+                dayfirst=True,
+                errors="coerce",
+            )
         except Exception:
+            parsed_ts = None
+
+    if parsed_ts is None:
+        ts_candidates = ["timestamp", "noted_date", "datetime", "date", "time", "ts"]
+        for cand in ts_candidates:
+            match = [c for c in df.columns if c.lower() == cand]
+            if match:
+                detected_ts_col = match[0]
+                try:
+                    parsed_ts = pd.to_datetime(df[detected_ts_col], errors="coerce")
+                    break
+                except Exception:
+                    continue
+
+    if parsed_ts is not None and detected_ts_col is not None:
+        valid_ts = parsed_ts.dropna()
+        if len(valid_ts) > 0:
+            min_dt = valid_ts.min()
+            max_dt = valid_ts.max()
+            time_span = str(max_dt - min_dt)
+            sampling_interval_sec = None
+            gaps_gt_30s = 0
+            if len(valid_ts) > 1:
+                diffs = valid_ts.diff().dropna()
+                mode_diff = diffs.mode()
+                if len(mode_diff) > 0:
+                    sampling_interval_sec = round(float(mode_diff.iloc[0].total_seconds()), 2)
+                gaps_gt_30s = int((diffs > pd.Timedelta(seconds=30)).sum())
+
             timestamp_info = {
                 "column_name": str(detected_ts_col),
-                "error": "Failed to parse datetime values",
+                "min_timestamp": min_dt.isoformat(),
+                "max_timestamp": max_dt.isoformat(),
+                "time_span": time_span,
+                "valid_rows": int(len(valid_ts)),
+                "invalid_rows": int(len(parsed_ts) - len(valid_ts)),
+                "sampling_interval_sec": sampling_interval_sec,
+                "gaps_gt_30s": gaps_gt_30s,
             }
 
     # Sensor ID check
@@ -489,6 +581,9 @@ def audit_single_csv(file_path: Path, project_root: Path) -> Dict[str, Any]:
             "counts_per_sensor": counts_dict,
         }
 
+    # Duplicate rows check
+    exact_duplicates = int(df.duplicated().sum())
+
     # Domain classification
     classification = classify_dataset_domain(file_path, df)
 
@@ -496,10 +591,15 @@ def audit_single_csv(file_path: Path, project_root: Path) -> Dict[str, Any]:
         "file_name": file_path.name,
         "file_path": str(file_path),
         "relative_path": str(rel_path),
+        "sha256": sha256,
         "file_size_bytes": file_size_bytes,
         "file_size_formatted": file_size_formatted,
+        "delimiter": delim,
         "row_count": row_count,
         "column_count": col_count,
+        "raw_lines": raw_lines,
+        "malformed_rows": malformed_rows,
+        "exact_duplicates": exact_duplicates,
         "columns": columns,
         "data_types": dtypes_map,
         "data_type_counts": dtype_counts,

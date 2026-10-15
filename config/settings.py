@@ -4,6 +4,12 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'development-only-change-this-key')
 IOT_HARDWARE_API_KEY = os.getenv('COLDCHAIN_IOT_HARDWARE_KEY', 'coldchain-verified-hardware-secret-key-2026')
+REGISTERED_IOT_HARDWARE_DEVICES = {
+    'HW-NODE-01': os.getenv('HW_NODE_01_KEY', 'hw-node-01-sec-7f9a2b4c'),
+    'HW-NODE-02': os.getenv('HW_NODE_02_KEY', 'hw-node-02-sec-8e1d3c5b'),
+    'AUTHENTICATED-HW-01': os.getenv('AUTHENTICATED_HW_01_KEY', 'authenticated-hw-01-sec-1a2b3c4d'),
+    'CC-PHYSICAL-MAIN': os.getenv('CC_PHYSICAL_MAIN_KEY', 'cc-physical-main-sec-9a0b1c2d'),
+}
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
 ALLOWED_HOSTS = [h.strip() for h in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,testserver').split(',')]
 INSTALLED_APPS = ['django.contrib.admin','django.contrib.auth','django.contrib.contenttypes','django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles','rest_framework','apps.monitoring']

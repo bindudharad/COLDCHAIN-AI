@@ -76,10 +76,32 @@ def risk(prediction, profile='Food'):
         'risk_reason': f'Predicted temperature range {p.min():.1f} to {p.max():.1f} °C against {lo:.1f} to {hi:.1f} °C profile limits.',
         'predicted_breach_time': breach
     }
+def estimated_power_kw(current: float, ambient: float, intensity: float, duty: float) -> float:
+    """Estimated average electrical power demand in kW.
+    
+    P_base = 0.25 kW (base circulation and electronics)
+    P_lift = 0.035 * max(ambient - current, 0) kW (condenser thermal lift penalty)
+    P_rated = P_base + P_lift
+    P_elec = P_rated * (0.35 + 0.65 * intensity) * duty
+    """
+    return round(max(0.05, 0.25 + 0.035 * max(ambient - current, 0.0)) * (0.35 + 0.65 * intensity) * duty, 3)
 
-def energy(current, ambient, intensity, duty):
-    """Estimated refrigeration energy in kWh over 15-minute interval."""
-    return round(max(0.05, 0.25 + 0.035 * max(ambient - current, 0)) * (0.35 + 0.65 * intensity) * duty, 3)
+def estimated_energy_kwh(current: float, ambient: float, intensity: float, duty: float, duration_hours: float = 0.25) -> float:
+    """Estimated electrical energy in kWh consumed over an operational interval.
+    
+    E_kwh = P_kw * duration_hours
+    For a standard 15-minute control cycle, duration_hours = 15/60 = 0.25 h.
+    """
+    power_kw = estimated_power_kw(current, ambient, intensity, duty)
+    return round(power_kw * duration_hours, 4)
+
+def energy(current: float, ambient: float, intensity: float, duty: float) -> float:
+    """Thermodynamic power/energy calculation.
+    
+    Returns estimated electrical power in kW for compatibility.
+    For interval energy in kWh over duration_hours (e.g. 15 min), call estimated_energy_kwh().
+    """
+    return estimated_power_kw(current, ambient, intensity, duty)
 
 def optimize(current, ambient, future_risk, profile='Food'):
     """Grid-search optimization baseline with thermal infiltration and dual safety limits."""
