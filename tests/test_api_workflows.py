@@ -393,8 +393,11 @@ class ApiWorkflowTests(TestCase):
             'ambient_temperature': 21.5,
             'data_source': 'REAL_SENSOR'
         }
+        from django.conf import settings
+        hw_key = getattr(settings, 'IOT_HARDWARE_API_KEY', 'coldchain-verified-hardware-secret-key-2026')
         res = self.client.post('/api/iot/telemetry/', data=json.dumps(payload),
-                               content_type='application/json')
+                               content_type='application/json',
+                               HTTP_X_HARDWARE_KEY=hw_key)
         self.assertEqual(res.status_code, 201)
         data = res.json()
         self.assertTrue(data['success'])

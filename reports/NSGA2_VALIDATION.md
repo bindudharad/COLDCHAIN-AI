@@ -59,6 +59,10 @@ In earlier drafts, Method C reported both that an emergency override activated a
 3. **Emergency Override Behavior:**  
    Rather than labeling these points as "feasible Pareto solutions", they are explicitly classified as **`is_emergency_fallback: True`** and **`feasible: False`**. In these states, the system commands **maximum emergency cooling** ($u = 1.0, d = 1.0, \delta = -0.5$) to rapidly arrest temperature rise.
 
+4. **Reconciliation of Pareto Points (48) vs. Scenarios (23 Feasible / 27 Emergency Fallback):**  
+   - The **48 Pareto points** reported in [`scripts/end_to_end.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/end_to_end.py) and [`reports/coldchain_report.json`](file:///C:/Projects/Cold-Chain-Ai/reports/coldchain_report.json) represent the non-dominated setpoints on the Pareto frontier discovered during a **single optimization run** (population = 48) on sensor `CC-01` at a specific initial temperature ($3.93\text{ }^\circ\text{C}$) within the Food envelope.
+   - The **23 Feasible / 27 Emergency Fallback** counts reported in [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/compare_nsga2_methods.py) represent the aggregate classification across **50 distinct operational scenarios** sampled chronologically throughout the entire multi-day telemetry stream. In 23 scenarios the chamber initialized within the Food envelope and found feasible frontiers; in 27 scenarios the chamber started in pre-existing breach ($T_0 > 5.0\text{ }^\circ\text{C}$), triggering the emergency cooling override.
+
 ---
 
 ## 3. Quantitative Trajectory Comparison Across 50 Scenarios

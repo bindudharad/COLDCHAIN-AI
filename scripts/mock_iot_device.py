@@ -120,14 +120,37 @@ def direct_django_test():
     assert r5.status_code == 201
     data5 = r5.json()
     assert data5['records_persisted'] == 5
-    print(f"       Batch persisted: {data5['records_persisted']} readings")
-    
+    # Test 6: Spoofing protection - unauthenticated REAL_SENSOR claim demoted to SIMULATION
+    p6 = generate_payload(sensor_id="UNAUTH-NODE-01", temp_c=3.8, data_source="REAL_SENSOR")
+    p6['timestamp'] = (datetime.now(timezone.utc) + timedelta(minutes=25)).isoformat()
+    r6 = client.post('/api/iot/telemetry/', data=json.dumps(p6),
+                     content_type='application/json', HTTP_X_IOT_API_KEY='coldchain-iot-dev-key')
+    print(f"Test 6 (Spoofing defense - unauthenticated REAL_SENSOR): Status {r6.status_code}")
+    assert r6.status_code == 201
+    data6 = r6.json()
+    assert data6['provenance'] == 'SIMULATION', f"Expected demotion to SIMULATION, got {data6['provenance']}"
+    print(f"       Demoted unauthenticated claim to: {data6['provenance']}")
+
+    # Test 7: Authenticated hardware transmission with verified cryptographic key
+    from django.conf import settings
+    hw_key = getattr(settings, 'IOT_HARDWARE_API_KEY', 'coldchain-verified-hardware-secret-key-2026')
+    p7 = generate_payload(sensor_id="AUTHENTICATED-HW-01", temp_c=3.2, data_source="REAL_SENSOR")
+    p7['timestamp'] = (datetime.now(timezone.utc) + timedelta(minutes=30)).isoformat()
+    r7 = client.post('/api/iot/telemetry/', data=json.dumps(p7),
+                     content_type='application/json', HTTP_X_IOT_API_KEY='coldchain-iot-dev-key',
+                     HTTP_X_HARDWARE_KEY=hw_key)
+    print(f"Test 7 (Authenticated hardware key): Status {r7.status_code}")
+    assert r7.status_code == 201
+    data7 = r7.json()
+    assert data7['provenance'] == 'REAL_SENSOR', f"Expected REAL_SENSOR with valid key, got {data7['provenance']}"
+    print(f"       Authenticated hardware provenance: {data7['provenance']}")
+
     print("\nALL DIRECT IOT INGESTION TESTS PASSED SUCCESSFULLY!")
 
 def main():
     parser = argparse.ArgumentParser(description="Mock IoT Telemetry Simulator")
     parser.add_argument("--url", default="http://127.0.0.1:8000/api/iot/telemetry/", help="Target endpoint")
-    parser.add_argument("--sensor-id", default="EDGE-ESP32-01", help="Sensor identifier")
+    parser.add_argument("--sensor-id", default="MOCK-ESP32-01", help="Sensor identifier")
     parser.add_argument("--count", type=int, default=1, help="Number of telemetry packets to stream")
     parser.add_argument("--interval", type=float, default=1.0, help="Seconds between packets")
     parser.add_argument("--unit", default="C", choices=["C", "F"], help="Temperature unit")
@@ -144,7 +167,7 @@ def main():
             sensor_id=args.sensor_id,
             temp_c=3.5 + 0.3 * (i % 5),
             unit=args.unit,
-            data_source="REAL_SENSOR"
+            data_source="SIMULATION"
         )
         status, response = send_http_telemetry(args.url, payload)
         print(f"Packet {i+1}/{args.count} -> Status: {status}, Response: {response}")

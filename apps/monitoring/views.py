@@ -605,14 +605,21 @@ def iot_telemetry_api(request):
         user_agent = str(request.headers.get('User-Agent', '')).lower()
         clean_sid = str(sid).strip()
 
+        # Server-side hardware authorization check
+        hw_token = request.headers.get('X-Hardware-Key') or request.headers.get('X-Sensor-Hardware-Token')
+        expected_key = getattr(settings, 'IOT_HARDWARE_API_KEY', 'coldchain-verified-hardware-secret-key-2026')
+        valid_hw_auth = bool(hw_token and hw_token == expected_key)
+
         src = str(rec.get('data_source', rec.get('source_type', ''))).upper()
-        # Strictly enforce SIMULATION for mock/test sensors or simulator clients
-        if (clean_sid.upper().startswith(('MOCK', 'SIM', 'TEST')) or
-            'simulator' in user_agent or 'mock' in user_agent or
-            src == 'SIMULATION'):
-            src = 'SIMULATION'
-        elif src not in ('REAL_SENSOR', 'SIMULATION', 'PUBLIC_DATASET'):
-            src = 'SIMULATION'
+        # Only assign REAL_SENSOR when valid physical hardware token is authenticated
+        if src == 'PUBLIC_DATASET':
+            provenance = 'PUBLIC_DATASET'
+        elif (src == 'REAL_SENSOR' and valid_hw_auth and 
+              not clean_sid.upper().startswith(('MOCK', 'SIM', 'TEST')) and
+              'simulator' not in user_agent and 'mock' not in user_agent):
+            provenance = 'REAL_SENSOR'
+        else:
+            provenance = 'SIMULATION'
 
         valid_records.append({
             'sensor_id': clean_sid,
@@ -623,7 +630,7 @@ def iot_telemetry_api(request):
             'power_kw': power,
             'compressor_state': comp_state,
             'door_open': door_state,
-            'data_source': src,
+            'data_source': provenance,
             'location': rec.get('location', 'Cold Chain Sensor Node'),
             'product_type': rec.get('product_type', 'Food')
         })

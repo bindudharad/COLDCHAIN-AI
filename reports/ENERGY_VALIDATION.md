@@ -50,18 +50,25 @@
 
 ---
 
-## 3. Scientific Investigation of the Low $R^2$ (0.1362)
+## 3. Scientific Investigation of the Low $R^2$ (0.1362) & Dominant-State Distribution
 
-1. **Discrete Square-Wave Ground Truth:**  
-   In `simulated_cold_chain.csv`, power is modeled as a discrete binary step:
+1. **Target Distribution & Dominant Operating State:**  
+   In `simulated_cold_chain.csv`, electrical power is modeled as a discrete step function:
    $$P_{sim} = 0.25 + 0.75 \cdot \text{compressor\_state} + 0.12 \cdot \text{door\_open}$$
-   The target fluctuates instantaneously between $0.25\text{ kW}$ (idle) and $1.00\text{ kW}$ (compressor active).
-2. **Continuous Predictor Input:**  
-   The ML models and optimization formulations use **continuous 15-minute rolling duty cycle averages** ($d \in [0.2, 1.0]$) to provide continuous gradients for NSGA-II optimization. Predicting an instantaneous binary switch from a smoothed rolling average is the most likely explanation for the low fraction of instantaneous variance explained ($R^2 = 0.1362$). This is a plausible engineering hypothesis — not a proven mathematical bound — but the absolute prediction error remains small ($\text{MAE} = 0.0142\text{ kW}$, i.e. $\approx 1.4\%$ of the 1.0 kW compressor rating).
-3. **Analytical Formula Role:**  
-   The analytical equation:
+   Auditing the held-out test split ($N = 600$ readings on `CC-01`) reveals a heavily skewed discrete distribution:
+   - **Active Compressor ($1.00\text{ kW}$):** **584 readings (97.33%)**
+   - **Door Open Defrost / Loading ($1.12\text{ kW}$):** **10 readings (1.67%)**
+   - **Idle Compressor ($0.25\text{ kW}$):** **6 readings (1.00%)**
+   
+   Across the entire 12,000-record dataset, $1.00\text{ kW}$ accounts for **95.28%** of all observations ($11,434$ records). The target variance is therefore tiny ($\sigma^2 \approx 0.0188\text{ kW}^2$).
+
+2. **Source of the Low MAE (0.0142 kW) vs Low $R^2$ (0.1362):**  
+   Because 97.33% of test samples occupy the $1.00\text{ kW}$ state, predicting near $\sim 0.98\text{--}1.00\text{ kW}$ naturally yields an extraordinarily small mean absolute error ($\text{MAE} = 0.0142\text{ kW}$, $\approx 1.4\%$ of compressor rating). However, when the compressor turns idle ($0.25\text{ kW}$) or doors open ($1.12\text{ kW}$), the continuous 15-minute rolling duty cycle average ($d \in [0.2, 1.0]$) cannot instantaneously reproduce a binary step. In a target distribution with minimal total variance ($SS_{tot}$), the residual variance from these few discrete transitions represents a significant fraction of $SS_{tot}$, yielding $R^2 = 0.1362$.
+
+3. **Analytical Formula Role in Multi-Objective Optimization:**  
+   The analytical equation used in NSGA-II:
    $$E = \left(0.25 + 0.035 \cdot \max(T_{amb} - T_{cur}, 0.0)\right) \cdot (0.35 + 0.65 \cdot u) \cdot d$$
-   is designed to provide smooth convex gradients for NSGA-II setpoint optimization, not to fit instantaneous square-wave telemetry.
+   is designed to provide smooth convex gradients for evolutionary setpoint search ($u, d \in [0.2, 1.0]$), rather than fitting instantaneous discrete power telemetry. It acts as an optimization surrogate, not a physical power measurement.
 
 ---
 

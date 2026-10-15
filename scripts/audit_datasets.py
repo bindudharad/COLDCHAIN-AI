@@ -176,6 +176,19 @@ def classify_dataset_domain(
     cols_lower = [str(c).lower() for c in (df.columns if df is not None else [])]
     col_set = set(cols_lower)
 
+    # Detect physical file type
+    file_type = "RAW_TIMESERIES"
+    if "overview" in name_lower:
+        file_type = "SUMMARY_STATISTICS"
+    elif "experiment_actions" in name_lower or "action" in name_lower:
+        file_type = "EVENT_LOGS"
+    elif "cold_storage" in path_lower or "season" in col_set:
+        file_type = "DAILY_MACRO_OBSERVATIONS"
+    elif "browser_upload" in name_lower:
+        file_type = "SINGLE_TEST_UPLOAD"
+    elif name_lower.endswith((".ino", ".py", ".sh")):
+        file_type = "SOURCE_CODE"
+
     # 1. Predictive Maintenance (EV Battery / Industrial)
     if (
         "eviot" in path_lower
@@ -185,6 +198,7 @@ def classify_dataset_domain(
         return {
             "domain": "PREDICTIVE_MAINTENANCE",
             "provenance": "PUBLIC_DATASET",
+            "file_type": file_type,
             "rationale": "High-frequency EV battery pack thermal and electrical telemetry",
         }
 
@@ -197,6 +211,7 @@ def classify_dataset_domain(
         return {
             "domain": "ELECTRICITY",
             "provenance": "PUBLIC_DATASET",
+            "file_type": file_type,
             "rationale": "Municipal grid electricity demand load vs outdoor ambient conditions",
         }
 
@@ -211,6 +226,7 @@ def classify_dataset_domain(
         return {
             "domain": "ENERGY",
             "provenance": "PUBLIC_DATASET",
+            "file_type": file_type,
             "rationale": "Building HVAC electrical demand vs ambient temperature & occupancy",
         }
 
@@ -224,6 +240,7 @@ def classify_dataset_domain(
         return {
             "domain": "IOT_TEMPERATURE",
             "provenance": "PUBLIC_DATASET",
+            "file_type": file_type,
             "rationale": "Living space room ambient IoT temperature telemetry (ESP8266 node)",
         }
 
@@ -231,6 +248,8 @@ def classify_dataset_domain(
     if (
         "cold_chain" in path_lower
         or "coldchain" in path_lower
+        or "zenodo" in path_lower
+        or "cold_storage" in path_lower
         or {"compressor_state", "door_open"}.issubset(col_set)
         or (
             {"temperature", "humidity"}.issubset(col_set)
@@ -238,21 +257,33 @@ def classify_dataset_domain(
             and not {"voltage", "battery_temp"}.intersection(col_set)
         )
     ):
-        is_simulation = (
-            "simulat" in path_lower
-            or (
-                df is not None
-                and "location" in df.columns
-                and any(
-                    "SIMULATION" in str(v).upper()
-                    for v in df["location"].dropna().unique()
-                )
-            )
-        )
+        # Strict Provenance Determination
+        if "datasets/" in path_lower or "zenodo" in path_lower or "case_study" in path_lower or "hohenheim" in path_lower:
+            provenance = "PUBLIC_DATASET"
+        elif "simulat" in path_lower or "synthetic" in path_lower or "browser_upload" in path_lower:
+            provenance = "SIMULATION"
+        else:
+            provenance = "SIMULATION"
+
+        # Refined Rationale
+        if file_type == "SUMMARY_STATISTICS":
+            rationale = "Summary statistics matrix across 9 physical cold room sensors (not raw time-series)"
+        elif file_type == "EVENT_LOGS":
+            rationale = "Event log of physical door openings and sensor repositioning actions"
+        elif file_type == "DAILY_MACRO_OBSERVATIONS":
+            rationale = "Daily aggregated cold storage temperature records (1.7 to 5.0 deg C)"
+        elif "zenodo" in path_lower:
+            rationale = "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+        elif "browser_upload" in name_lower:
+            rationale = "Single-row interactive browser test upload"
+        else:
+            rationale = "Refrigerated cold-chain food safety storage logistics (0.0 to 5.0 deg C)"
+
         return {
             "domain": "COLD_CHAIN",
-            "provenance": "SIMULATION" if is_simulation else "REAL_SENSOR",
-            "rationale": "Refrigerated cold-chain food safety storage logistics (0.0 to 5.0 deg C)",
+            "provenance": provenance,
+            "file_type": file_type,
+            "rationale": rationale,
         }
 
     # 6. Generic Simulation
@@ -260,13 +291,15 @@ def classify_dataset_domain(
         return {
             "domain": "SIMULATION",
             "provenance": "SIMULATION",
+            "file_type": file_type,
             "rationale": "Synthetically generated benchmark stream for stress testing",
         }
 
     return {
         "domain": "COLD_CHAIN",
-        "provenance": "REAL_SENSOR",
-        "rationale": "Default cold-chain sensor stream",
+        "provenance": "PUBLIC_DATASET" if "datasets/" in path_lower else "SIMULATION",
+        "file_type": file_type,
+        "rationale": "Cold-chain telemetry stream",
     }
 
 
@@ -638,6 +671,7 @@ def print_classification_table(audits: List[Dict[str, Any]], project_root: Path)
     headers = [
         "Dataset Identifier",
         "Domain Classification",
+        "File Type",
         "Provenance Tag",
         "Records",
         "Research Function / Role",
@@ -649,6 +683,7 @@ def print_classification_table(audits: List[Dict[str, Any]], project_root: Path)
         rows.append([
             a["file_name"],
             cls_info["domain"],
+            cls_info.get("file_type", "RAW_TIMESERIES"),
             cls_info["provenance"],
             f"{a['row_count']:,}",
             cls_info["rationale"],
@@ -659,7 +694,7 @@ def print_classification_table(audits: List[Dict[str, Any]], project_root: Path)
         print(render_ascii_table(
             headers,
             rows,
-            alignments=["<", "^", "^", ">", "<"],
+            alignments=["<", "^", "^", "^", ">", "<"],
         ))
     else:
         print("  No active CSV files located on local disk.")

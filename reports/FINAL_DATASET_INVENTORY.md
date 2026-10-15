@@ -99,23 +99,27 @@ Datasets/
 
 ## 4. Newly Integrated Real-World Cold Storage Benchmarks (Present On Disk)
 
-The following real cold-storage benchmarks and supporting experimental artifacts are downloaded and present on disk under `Datasets/`:
+The following real cold-storage benchmarks and supporting experimental artifacts are downloaded, extracted, and present on disk under `Datasets/`:
 
-| Dataset / File | File Path | Provenance | Record Count | Cadence / Type | Experimental Suitability & Role |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Cold Storage Temp Data** | `Datasets/cold_storage_case_study/Cold_Storage_Temp_Data.csv` | `PUBLIC_DATASET` / `REAL_SENSOR` | 365 rows | Daily ($T_{mean} = 2.96^\circ\text{C}$, range 1.7–5.0°C) | Validates daily cold-storage macro persistence ($\text{MAE}=0.4431^\circ\text{C}$) and moving average ($\text{MAE}=0.4088^\circ\text{C}$). NOT suited for 1-minute or 5-second neural sequence models. |
-| **Cold Storage Mar 2018** | `Datasets/cold_storage_case_study/Cold_Storage_Mar2018.csv` | `PUBLIC_DATASET` / `REAL_SENSOR` | 35 rows | Daily ($T_{mean} = 3.96^\circ\text{C}$) | Seasonal validation of summer cold storage temperature variation. |
-| **Zenodo Experiment Actions** | `Datasets/zenodo_hohenheim/experiment_actions.csv` | `PUBLIC_DATASET` | 127 events | Event Table (Timestamps + Actions) | Logs actual physical door opening and product loading duration. Used to calibrate realistic thermal disturbance schedules in simulation. |
-| **Zenodo Sensor Overview** | `Datasets/zenodo_hohenheim/overview.csv` | `PUBLIC_DATASET` | 42 metrics $\times$ 9 sensors | Summary Matrix | Records physical distribution parameters (min, max, mean, quartiles) across 9 DHT22 sensors in a physical cold chamber. Provides spatial stratification benchmarks. |
-| **Zenodo Arduino Logger** | `Datasets/zenodo_hohenheim/temphum_logger.ino` | `PUBLIC_DATASET` | C++ Source Code | Firmware | Arduino firmware source code for DHT22 loggers operating at 5-second sampling frequency. |
+| Dataset / File | File Path | Provenance | File Type | Record Count | Cadence & Details | Experimental Role & Findings |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Zenodo Preprocessed Archive** | `Datasets/zenodo_hohenheim/Preprocessed.zip` | `PUBLIC_DATASET` | Archive (ZIP) | 9 CSVs | 5,819,018 bytes | Complete preprocessed multi-sensor dataset from University of Hohenheim (DOI: `10.5281/zenodo.15130001`, CC BY 4.0). |
+| **Zenodo Raw Archive** | `Datasets/zenodo_hohenheim/Raw.zip` | `PUBLIC_DATASET` | Archive (ZIP) | 9 CSVs | 5,056,109 bytes | Complete raw sensor logs from nine Arduino-based DHT22 data loggers. |
+| **SENSOR01-09 Preprocessed** | `Datasets/zenodo_hohenheim/preprocessed_extracted/` | `PUBLIC_DATASET` | `RAW_TIMESERIES` | 156,835 / sensor | 5-second sampling (9 days) | Over 1.3 million physical cold-room observations. SENSOR03 (core chamber: $4.8\text{--}12.3^\circ\text{C}$, mean $6.54^\circ\text{C}$) yields 1-min downsampled 15-step persistence $\text{MAE} = 0.3089^\circ\text{C}$ ($\text{MAE}_{t+15} = 0.4049^\circ\text{C}$), 5-step MA $\text{MAE} = 0.3226^\circ\text{C}$. |
+| **SENSOR01-09 Raw Logs** | `Datasets/zenodo_hohenheim/raw_extracted/` | `PUBLIC_DATASET` | `RAW_TIMESERIES` | ~156,000 / sensor | 5-second sampling | Unfiltered physical sensor readings directly from SD cards. |
+| **Cold Storage Temp Data** | `Datasets/cold_storage_case_study/Cold_Storage_Temp_Data.csv` | `PUBLIC_DATASET` | `DAILY_MACRO_OBSERVATIONS` | 365 rows | Daily ($T_{mean} = 2.96^\circ\text{C}$, range 1.7–5.0°C) | Validates daily macro persistence ($\text{MAE}=0.4431^\circ\text{C}$) and moving average ($\text{MAE}=0.4088^\circ\text{C}$). Contains **0 readings $> 5.0^\circ\text{C}$**; cannot validate future breach prediction. |
+| **Cold Storage Mar 2018** | `Datasets/cold_storage_case_study/Cold_Storage_Mar2018.csv` | `PUBLIC_DATASET` | `DAILY_MACRO_OBSERVATIONS` | 35 rows | Daily ($T_{mean} = 3.97^\circ\text{C}$, range 3.8–4.6°C) | Validates summer operational cold storage temperature variation (0 readings $> 5.0^\circ\text{C}$). |
+| **Zenodo Experiment Actions** | `Datasets/zenodo_hohenheim/experiment_actions.csv` | `PUBLIC_DATASET` | `EVENT_LOGS` | 127 events | Event Table (Timestamps + Actions) | Logs actual physical door opening and product loading duration. Used to calibrate realistic thermal disturbance schedules in simulation. |
+| **Zenodo Sensor Overview** | `Datasets/zenodo_hohenheim/overview.csv` | `PUBLIC_DATASET` | `SUMMARY_STATISTICS` | 42 metrics $\times$ 9 sensors | Summary Matrix | Records physical distribution parameters (min, max, mean, quartiles) across 9 DHT22 sensors in a physical cold chamber. Demonstrates spatial stratification. |
+| **Zenodo Arduino Logger** | `Datasets/zenodo_hohenheim/temphum_logger.ino` | `PUBLIC_DATASET` | `SOURCE_CODE` | 132 lines | C++ Firmware | Arduino firmware source code for DHT22 loggers operating at 5-second sampling frequency. |
 
 ### Critical Scientific Provenance & Cadence Distinction:
-1. **Raw Sensor Telemetry vs. Summaries:**  
-   `overview.csv` is an aggregate summary matrix and `experiment_actions.csv` is an operational event log. Neither file contains continuous raw time-series measurements.
+1. **Raw Sensor Telemetry vs. Summaries vs. Event Logs:**  
+   `overview.csv` is an aggregate summary matrix and `experiment_actions.csv` is an operational event log. Neither file contains continuous raw time-series measurements. In contrast, the newly extracted files under `preprocessed_extracted/` and `raw_extracted/` contain continuous, 5-second physical measurements across 9 sensors.
 2. **Daily Cadence vs. High-Frequency IoT:**  
    The 365-row dataset records daily aggregated observations. It is evaluated separately using daily statistical baselines and is never conflated with high-frequency 1-minute IoT telemetry.
 3. **Zenodo Archive Status (DOI: `10.5281/zenodo.15130001`):**  
-   The full raw 5-second time series (`Raw.zip`, `Preprocessed.zip`) is hosted on Zenodo. Automated Python downloads encounter Zenodo's Cloudflare DDoS anti-bot protection (`HTTP 403 Forbidden`). Manual download via standard browser into `Datasets/zenodo_hohenheim/` is fully supported, and `scripts/audit_datasets.py` will automatically parse and validate the extracted files.
+   The full raw and preprocessed 5-second time series (`Preprocessed.zip` and `Raw.zip`) have been successfully acquired and audited on local disk using Microsoft Edge via Playwright automation, resolving all earlier HTTP 403 blocks. Total audited rows on disk now exceeds 2.5 million records across 24 datasets.
 
 ---
 

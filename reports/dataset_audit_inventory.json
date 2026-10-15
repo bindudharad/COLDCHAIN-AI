@@ -1,6 +1,6 @@
 {
   "audit_meta": {
-    "generated_at": "2026-10-15T22:41:40.169946",
+    "generated_at": "2026-10-15T23:11:24.033955",
     "execution_user": "Bindudhara D",
     "project_root": "C:\\Projects\\Cold-Chain-Ai",
     "script": "scripts/audit_datasets.py",
@@ -16,15 +16,15 @@
       "Datasets": {
         "status": "FOUND",
         "path": "C:\\Projects\\Cold-Chain-Ai\\Datasets",
-        "csv_count": 4
+        "csv_count": 22
       }
     },
-    "total_csv_datasets_found": 6,
-    "total_records_audited": 12570,
-    "total_size_bytes": 1665427,
-    "total_size_formatted": "1.59 MB",
+    "total_csv_datasets_found": 24,
+    "total_records_audited": 2507284,
+    "total_size_bytes": 77121866,
+    "total_size_formatted": "73.55 MB",
     "domain_distribution": {
-      "COLD_CHAIN": 6,
+      "COLD_CHAIN": 24,
       "IOT_TEMPERATURE": 0,
       "ENERGY": 0,
       "PREDICTIVE_MAINTENANCE": 0,
@@ -179,8 +179,9 @@
       },
       "domain_classification": {
         "domain": "COLD_CHAIN",
-        "provenance": "REAL_SENSOR",
-        "rationale": "Refrigerated cold-chain food safety storage logistics (0.0 to 5.0 deg C)"
+        "provenance": "SIMULATION",
+        "file_type": "SINGLE_TEST_UPLOAD",
+        "rationale": "Single-row interactive browser test upload"
       }
     },
     {
@@ -334,6 +335,7 @@
       "domain_classification": {
         "domain": "COLD_CHAIN",
         "provenance": "SIMULATION",
+        "file_type": "RAW_TIMESERIES",
         "rationale": "Refrigerated cold-chain food safety storage logistics (0.0 to 5.0 deg C)"
       }
     },
@@ -410,8 +412,9 @@
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
-        "provenance": "REAL_SENSOR",
-        "rationale": "Default cold-chain sensor stream"
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "DAILY_MACRO_OBSERVATIONS",
+        "rationale": "Daily aggregated cold storage temperature records (1.7 to 5.0 deg C)"
       }
     },
     {
@@ -487,8 +490,9 @@
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
-        "provenance": "REAL_SENSOR",
-        "rationale": "Default cold-chain sensor stream"
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "DAILY_MACRO_OBSERVATIONS",
+        "rationale": "Daily aggregated cold storage temperature records (1.7 to 5.0 deg C)"
       }
     },
     {
@@ -522,8 +526,9 @@
       "sensor_id_info": null,
       "domain_classification": {
         "domain": "COLD_CHAIN",
-        "provenance": "REAL_SENSOR",
-        "rationale": "Default cold-chain sensor stream"
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "EVENT_LOGS",
+        "rationale": "Event log of physical door openings and sensor repositioning actions"
       }
     },
     {
@@ -702,8 +707,657 @@
       },
       "domain_classification": {
         "domain": "COLD_CHAIN",
-        "provenance": "REAL_SENSOR",
-        "rationale": "Default cold-chain sensor stream"
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "SUMMARY_STATISTICS",
+        "rationale": "Summary statistics matrix across 9 physical cold room sensors (not raw time-series)"
+      }
+    },
+    {
+      "file_name": "SENSOR01_preprocessed.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR01_preprocessed.csv",
+      "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR01_preprocessed.csv",
+      "file_size_bytes": 4769263,
+      "file_size_formatted": "4.55 MB",
+      "row_count": 156835,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature;Humidity"
+      ],
+      "data_types": {
+        "Date;Time;Temperature;Humidity": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature;Humidity": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR02_preprocessed.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR02_preprocessed.csv",
+      "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR02_preprocessed.csv",
+      "file_size_bytes": 4774493,
+      "file_size_formatted": "4.55 MB",
+      "row_count": 156835,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature;Humidity"
+      ],
+      "data_types": {
+        "Date;Time;Temperature;Humidity": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature;Humidity": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR03_preprocessed.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR03_preprocessed.csv",
+      "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR03_preprocessed.csv",
+      "file_size_bytes": 4202944,
+      "file_size_formatted": "4.01 MB",
+      "row_count": 156835,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature;Humidity"
+      ],
+      "data_types": {
+        "Date;Time;Temperature;Humidity": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature;Humidity": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR04_preprocessed.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR04_preprocessed.csv",
+      "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR04_preprocessed.csv",
+      "file_size_bytes": 4703742,
+      "file_size_formatted": "4.49 MB",
+      "row_count": 156835,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature;Humidity"
+      ],
+      "data_types": {
+        "Date;Time;Temperature;Humidity": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature;Humidity": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR05_preprocessed.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR05_preprocessed.csv",
+      "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR05_preprocessed.csv",
+      "file_size_bytes": 3828487,
+      "file_size_formatted": "3.65 MB",
+      "row_count": 156835,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature;Humidity"
+      ],
+      "data_types": {
+        "Date;Time;Temperature;Humidity": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature;Humidity": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR06_preprocessed.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR06_preprocessed.csv",
+      "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR06_preprocessed.csv",
+      "file_size_bytes": 4734585,
+      "file_size_formatted": "4.52 MB",
+      "row_count": 156835,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature;Humidity"
+      ],
+      "data_types": {
+        "Date;Time;Temperature;Humidity": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature;Humidity": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR07_preprocessed.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR07_preprocessed.csv",
+      "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR07_preprocessed.csv",
+      "file_size_bytes": 4747099,
+      "file_size_formatted": "4.53 MB",
+      "row_count": 156835,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature;Humidity"
+      ],
+      "data_types": {
+        "Date;Time;Temperature;Humidity": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature;Humidity": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR08_preprocessed.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR08_preprocessed.csv",
+      "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR08_preprocessed.csv",
+      "file_size_bytes": 4818142,
+      "file_size_formatted": "4.59 MB",
+      "row_count": 156835,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature;Humidity"
+      ],
+      "data_types": {
+        "Date;Time;Temperature;Humidity": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature;Humidity": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR09_preprocessed.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR09_preprocessed.csv",
+      "relative_path": "Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR09_preprocessed.csv",
+      "file_size_bytes": 3839624,
+      "file_size_formatted": "3.66 MB",
+      "row_count": 156835,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature;Humidity"
+      ],
+      "data_types": {
+        "Date;Time;Temperature;Humidity": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature;Humidity": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR01.CSV",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR01.CSV",
+      "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR01.CSV",
+      "file_size_bytes": 5063738,
+      "file_size_formatted": "4.83 MB",
+      "row_count": 156020,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature (C);Humidity (%)"
+      ],
+      "data_types": {
+        "Date;Time;Temperature (C);Humidity (%)": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature (C);Humidity (%)": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR02.CSV",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR02.CSV",
+      "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR02.CSV",
+      "file_size_bytes": 5092920,
+      "file_size_formatted": "4.86 MB",
+      "row_count": 156980,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature (C);Humidity (%)"
+      ],
+      "data_types": {
+        "Date;Time;Temperature (C);Humidity (%)": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature (C);Humidity (%)": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR03.CSV",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR03.CSV",
+      "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR03.CSV",
+      "file_size_bytes": 2707165,
+      "file_size_formatted": "2.58 MB",
+      "row_count": 84453,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature (C);Humidity (%)"
+      ],
+      "data_types": {
+        "Date;Time;Temperature (C);Humidity (%)": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature (C);Humidity (%)": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR04.CSV",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR04.CSV",
+      "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR04.CSV",
+      "file_size_bytes": 4878385,
+      "file_size_formatted": "4.65 MB",
+      "row_count": 151248,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature (C);Humidity (%)"
+      ],
+      "data_types": {
+        "Date;Time;Temperature (C);Humidity (%)": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature (C);Humidity (%)": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR05.CSV",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR05.CSV",
+      "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR05.CSV",
+      "file_size_bytes": 1000255,
+      "file_size_formatted": "976.81 KB",
+      "row_count": 31146,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature (C);Humidity (%)"
+      ],
+      "data_types": {
+        "Date;Time;Temperature (C);Humidity (%)": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature (C);Humidity (%)": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR06.CSV",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR06.CSV",
+      "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR06.CSV",
+      "file_size_bytes": 5049969,
+      "file_size_formatted": "4.82 MB",
+      "row_count": 156887,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature (C);Humidity (%)"
+      ],
+      "data_types": {
+        "Date;Time;Temperature (C);Humidity (%)": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature (C);Humidity (%)": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR07.CSV",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR07.CSV",
+      "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR07.CSV",
+      "file_size_bytes": 5062400,
+      "file_size_formatted": "4.83 MB",
+      "row_count": 156885,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature (C);Humidity (%)"
+      ],
+      "data_types": {
+        "Date;Time;Temperature (C);Humidity (%)": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature (C);Humidity (%)": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR08.CSV",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR08.CSV",
+      "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR08.CSV",
+      "file_size_bytes": 5132744,
+      "file_size_formatted": "4.89 MB",
+      "row_count": 156863,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature (C);Humidity (%)"
+      ],
+      "data_types": {
+        "Date;Time;Temperature (C);Humidity (%)": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature (C);Humidity (%)": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
+      }
+    },
+    {
+      "file_name": "SENSOR09.CSV",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR09.CSV",
+      "relative_path": "Datasets\\zenodo_hohenheim\\raw_extracted\\SENSOR09.CSV",
+      "file_size_bytes": 1050484,
+      "file_size_formatted": "1.00 MB",
+      "row_count": 32717,
+      "column_count": 1,
+      "columns": [
+        "Date;Time;Temperature (C);Humidity (%)"
+      ],
+      "data_types": {
+        "Date;Time;Temperature (C);Humidity (%)": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Time;Temperature (C);Humidity (%)": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "PUBLIC_DATASET",
+        "file_type": "RAW_TIMESERIES",
+        "rationale": "Physical 5-second multi-sensor cold storage room telemetry (Hohenheim, DOI: 10.5281/zenodo.15130001)"
       }
     }
   ]
