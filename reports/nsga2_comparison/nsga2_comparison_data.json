@@ -7,6 +7,13 @@
     "k_cool": 0.32,
     "door_delta": 0.16
   },
+  "feasibility_accounting": {
+    "total_scenarios": 50,
+    "ordinary_feasible_optimizations": 23,
+    "emergency_fallback_overrides": 27,
+    "ordinary_feasibility_rate_pct": 46.0,
+    "note": "Emergency overrides engage when chamber is already in severe breach and cannot reach Food envelope within 15 min."
+  },
   "method_a": {
     "mean_energy_kwh": 0.5625012105342567,
     "total_violations_min": 583,
@@ -27,7 +34,9 @@
     "max_temp_c": 9.363904710392847,
     "avg_duty_pct": 99.11200000000001,
     "energy_change_pct": 49.10119023626932,
-    "violation_change_pct": -17.83876500854573
+    "violation_change_pct": -17.83876500854573,
+    "emergency_overrides_count": 27,
+    "ordinary_feasible_count": 23
   },
   "risk_detection": {
     "precision": 0.6326530612244898,
@@ -36,8 +45,8 @@
     "forecast_mae": 0.8523618671766772
   },
   "runtime_ms": {
-    "legacy": 216.31914199997482,
-    "audited": 197.6243500000237
+    "legacy": 214.53368800003773,
+    "audited": 199.00736400001733
   },
   "per_scenario_results": {
     "scenarios": [
@@ -52,7 +61,25 @@
           "max_temp_c": 7.761,
           "min_temp_c": 6.214,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            6.21,
+            6.29,
+            6.37,
+            6.45,
+            6.52,
+            6.59,
+            6.66,
+            6.73,
+            6.8,
+            6.87,
+            6.94,
+            7.0,
+            7.07,
+            7.13,
+            7.45,
+            7.76
+          ]
         },
         "method_b": {
           "energy_kwh": 0.778,
@@ -61,7 +88,25 @@
           "min_temp_c": 6.214,
           "duty": 0.8673149644476446,
           "intensity": 0.9944016106828503,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            6.21,
+            6.23,
+            6.25,
+            6.26,
+            6.28,
+            6.29,
+            6.31,
+            6.32,
+            6.34,
+            6.35,
+            6.36,
+            6.38,
+            6.39,
+            6.4,
+            6.42,
+            6.75
+          ]
         },
         "method_c": {
           "energy_kwh": 0.9003,
@@ -71,7 +116,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            6.21,
+            6.23,
+            6.24,
+            6.26,
+            6.27,
+            6.28,
+            6.3,
+            6.31,
+            6.32,
+            6.34,
+            6.35,
+            6.36,
+            6.37,
+            6.38,
+            6.39,
+            6.41
+          ]
         }
       },
       {
@@ -85,7 +150,25 @@
           "max_temp_c": 9.334,
           "min_temp_c": 7.98,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            7.98,
+            8.04,
+            8.11,
+            8.17,
+            8.23,
+            8.29,
+            8.35,
+            8.4,
+            8.46,
+            8.52,
+            8.57,
+            8.62,
+            8.67,
+            8.73,
+            9.03,
+            9.33
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8717,
@@ -94,7 +177,25 @@
           "min_temp_c": 7.979,
           "duty": 0.9999606379517187,
           "intensity": 0.9997295106194181,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8719,
@@ -104,7 +205,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98,
+            7.98
+          ]
         }
       },
       {
@@ -118,7 +239,25 @@
           "max_temp_c": 9.873,
           "min_temp_c": 8.514,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            8.51,
+            8.58,
+            8.64,
+            8.7,
+            8.76,
+            8.82,
+            8.88,
+            8.94,
+            9.0,
+            9.05,
+            9.11,
+            9.16,
+            9.21,
+            9.27,
+            9.57,
+            9.87
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8725,
@@ -127,7 +266,25 @@
           "min_temp_c": 8.514,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            8.51,
+            8.51,
+            8.51,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8728,
@@ -137,7 +294,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            8.51,
+            8.51,
+            8.51,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52,
+            8.52
+          ]
         }
       },
       {
@@ -151,7 +328,25 @@
           "max_temp_c": 10.515,
           "min_temp_c": 9.112,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            9.11,
+            9.18,
+            9.25,
+            9.31,
+            9.37,
+            9.44,
+            9.5,
+            9.56,
+            9.62,
+            9.68,
+            9.74,
+            9.79,
+            9.85,
+            9.9,
+            10.21,
+            10.51
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8788,
@@ -160,7 +355,25 @@
           "min_temp_c": 9.112,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            9.11,
+            9.12,
+            9.12,
+            9.12,
+            9.13,
+            9.13,
+            9.13,
+            9.14,
+            9.14,
+            9.14,
+            9.14,
+            9.15,
+            9.15,
+            9.15,
+            9.16,
+            9.16
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8792,
@@ -170,7 +383,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            9.11,
+            9.12,
+            9.12,
+            9.12,
+            9.13,
+            9.13,
+            9.13,
+            9.14,
+            9.14,
+            9.14,
+            9.14,
+            9.15,
+            9.15,
+            9.15,
+            9.16,
+            9.16
+          ]
         }
       },
       {
@@ -184,7 +417,25 @@
           "max_temp_c": 10.719,
           "min_temp_c": 9.313,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            9.31,
+            9.38,
+            9.45,
+            9.51,
+            9.58,
+            9.64,
+            9.7,
+            9.76,
+            9.82,
+            9.88,
+            9.94,
+            10.0,
+            10.05,
+            10.11,
+            10.42,
+            10.72
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8794,
@@ -193,7 +444,25 @@
           "min_temp_c": 9.313,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            9.31,
+            9.32,
+            9.32,
+            9.32,
+            9.33,
+            9.33,
+            9.33,
+            9.34,
+            9.34,
+            9.35,
+            9.35,
+            9.35,
+            9.35,
+            9.36,
+            9.36,
+            9.36
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8797,
@@ -203,7 +472,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            9.31,
+            9.32,
+            9.32,
+            9.32,
+            9.33,
+            9.33,
+            9.33,
+            9.34,
+            9.34,
+            9.35,
+            9.35,
+            9.35,
+            9.35,
+            9.36,
+            9.36,
+            9.36
+          ]
         }
       },
       {
@@ -217,7 +506,25 @@
           "max_temp_c": 10.221,
           "min_temp_c": 8.962,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            8.96,
+            9.02,
+            9.07,
+            9.13,
+            9.18,
+            9.24,
+            9.29,
+            9.34,
+            9.39,
+            9.44,
+            9.49,
+            9.53,
+            9.58,
+            9.62,
+            9.93,
+            10.22
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8578,
@@ -226,7 +533,25 @@
           "min_temp_c": 8.866,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            8.96,
+            8.95,
+            8.95,
+            8.94,
+            8.93,
+            8.93,
+            8.92,
+            8.91,
+            8.91,
+            8.9,
+            8.9,
+            8.89,
+            8.88,
+            8.88,
+            8.87,
+            8.87
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8581,
@@ -236,7 +561,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            8.96,
+            8.95,
+            8.95,
+            8.94,
+            8.93,
+            8.93,
+            8.92,
+            8.91,
+            8.91,
+            8.9,
+            8.89,
+            8.89,
+            8.88,
+            8.88,
+            8.87,
+            8.87
+          ]
         }
       },
       {
@@ -250,7 +595,25 @@
           "max_temp_c": 9.916,
           "min_temp_c": 8.566,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            8.57,
+            8.63,
+            8.69,
+            8.75,
+            8.81,
+            8.87,
+            8.93,
+            8.99,
+            9.04,
+            9.1,
+            9.15,
+            9.21,
+            9.26,
+            9.31,
+            9.61,
+            9.92
+          ]
         },
         "method_b": {
           "energy_kwh": 0.871,
@@ -259,7 +622,25 @@
           "min_temp_c": 8.56,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            8.57,
+            8.57,
+            8.57,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8713,
@@ -269,7 +650,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            8.57,
+            8.57,
+            8.57,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56,
+            8.56
+          ]
         }
       },
       {
@@ -283,7 +684,25 @@
           "max_temp_c": 8.626,
           "min_temp_c": 7.449,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            7.45,
+            7.5,
+            7.55,
+            7.6,
+            7.65,
+            7.69,
+            7.74,
+            7.78,
+            7.83,
+            7.87,
+            7.92,
+            7.96,
+            8.0,
+            8.04,
+            8.34,
+            8.63
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8452,
@@ -292,7 +711,25 @@
           "min_temp_c": 7.271,
           "duty": 0.999088886804151,
           "intensity": 0.9998670399368017,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            7.45,
+            7.44,
+            7.42,
+            7.41,
+            7.4,
+            7.38,
+            7.37,
+            7.36,
+            7.35,
+            7.34,
+            7.33,
+            7.31,
+            7.3,
+            7.29,
+            7.28,
+            7.27
+          ]
         },
         "method_c": {
           "energy_kwh": 0.846,
@@ -302,7 +739,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            7.45,
+            7.44,
+            7.42,
+            7.41,
+            7.4,
+            7.38,
+            7.37,
+            7.36,
+            7.35,
+            7.34,
+            7.32,
+            7.31,
+            7.3,
+            7.29,
+            7.28,
+            7.27
+          ]
         }
       },
       {
@@ -316,7 +773,25 @@
           "max_temp_c": 7.468,
           "min_temp_c": 6.491,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            6.49,
+            6.53,
+            6.56,
+            6.6,
+            6.63,
+            6.66,
+            6.69,
+            6.73,
+            6.76,
+            6.79,
+            6.82,
+            6.85,
+            6.88,
+            6.9,
+            7.19,
+            7.47
+          ]
         },
         "method_b": {
           "energy_kwh": 0.726,
@@ -325,7 +800,25 @@
           "min_temp_c": 6.145,
           "duty": 0.8904627164737586,
           "intensity": 0.9973622243117616,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            6.49,
+            6.46,
+            6.44,
+            6.41,
+            6.38,
+            6.36,
+            6.33,
+            6.31,
+            6.28,
+            6.26,
+            6.23,
+            6.21,
+            6.19,
+            6.17,
+            6.14,
+            6.44
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8167,
@@ -335,7 +828,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            6.49,
+            6.46,
+            6.43,
+            6.41,
+            6.38,
+            6.35,
+            6.33,
+            6.3,
+            6.28,
+            6.25,
+            6.23,
+            6.2,
+            6.18,
+            6.16,
+            6.13,
+            6.11
+          ]
         }
       },
       {
@@ -349,7 +862,25 @@
           "max_temp_c": 6.29,
           "min_temp_c": 5.054,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            5.05,
+            5.11,
+            5.16,
+            5.22,
+            5.27,
+            5.32,
+            5.37,
+            5.42,
+            5.47,
+            5.51,
+            5.56,
+            5.61,
+            5.65,
+            5.7,
+            6.0,
+            6.29
+          ]
         },
         "method_b": {
           "energy_kwh": 0.5834,
@@ -358,7 +889,25 @@
           "min_temp_c": 5.002,
           "duty": 0.6879533272014433,
           "intensity": 0.9879369474161791,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            5.05,
+            5.05,
+            5.04,
+            5.04,
+            5.03,
+            5.03,
+            5.02,
+            5.02,
+            5.02,
+            5.01,
+            5.01,
+            5.0,
+            5.31,
+            5.62,
+            5.92,
+            6.22
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8547,
@@ -368,7 +917,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 7,
+          "trajectory": [
+            5.05,
+            5.05,
+            5.04,
+            5.03,
+            5.02,
+            5.01,
+            5.0,
+            4.99,
+            4.99,
+            4.98,
+            4.97,
+            4.96,
+            4.96,
+            4.95,
+            4.94,
+            4.93
+          ]
         }
       },
       {
@@ -382,7 +951,25 @@
           "max_temp_c": 5.132,
           "min_temp_c": 4.249,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            4.25,
+            4.28,
+            4.31,
+            4.33,
+            4.36,
+            4.39,
+            4.41,
+            4.44,
+            4.46,
+            4.49,
+            4.51,
+            4.53,
+            4.56,
+            4.58,
+            4.86,
+            5.13
+          ]
         },
         "method_b": {
           "energy_kwh": 0.3986,
@@ -391,7 +978,25 @@
           "min_temp_c": 4.004,
           "duty": 0.4995657490657117,
           "intensity": 0.9904065106269918,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            4.25,
+            4.22,
+            4.18,
+            4.15,
+            4.12,
+            4.09,
+            4.06,
+            4.03,
+            4.0,
+            4.29,
+            4.58,
+            4.85,
+            5.13,
+            5.4,
+            5.66,
+            5.92
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8021,
@@ -401,7 +1006,27 @@
           "duty": 0.999,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            4.25,
+            4.21,
+            4.18,
+            4.14,
+            4.11,
+            4.08,
+            4.04,
+            4.01,
+            3.98,
+            3.95,
+            3.92,
+            3.89,
+            3.86,
+            3.83,
+            3.8,
+            3.78
+          ]
         }
       },
       {
@@ -415,7 +1040,25 @@
           "max_temp_c": 5.674,
           "min_temp_c": 3.955,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            3.96,
+            4.0,
+            4.05,
+            4.1,
+            4.14,
+            4.19,
+            4.23,
+            4.27,
+            4.32,
+            4.36,
+            4.4,
+            4.66,
+            4.92,
+            5.18,
+            5.43,
+            5.67
+          ]
         },
         "method_b": {
           "energy_kwh": 0.3706,
@@ -424,7 +1067,25 @@
           "min_temp_c": 3.612,
           "duty": 0.47766190774522177,
           "intensity": 0.9933436902526944,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            3.96,
+            3.91,
+            3.86,
+            3.82,
+            3.78,
+            3.73,
+            3.69,
+            3.65,
+            3.61,
+            3.89,
+            4.16,
+            4.43,
+            4.7,
+            4.95,
+            5.21,
+            5.46
+          ]
         },
         "method_c": {
           "energy_kwh": 0.7789,
@@ -434,7 +1095,27 @@
           "duty": 1.0,
           "intensity": 0.999,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            3.96,
+            3.91,
+            3.86,
+            3.82,
+            3.77,
+            3.73,
+            3.68,
+            3.64,
+            3.6,
+            3.56,
+            3.52,
+            3.48,
+            3.44,
+            3.4,
+            3.36,
+            3.33
+          ]
         }
       },
       {
@@ -448,7 +1129,25 @@
           "max_temp_c": 5.787,
           "min_temp_c": 4.089,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            4.09,
+            4.14,
+            4.18,
+            4.23,
+            4.27,
+            4.31,
+            4.36,
+            4.4,
+            4.44,
+            4.48,
+            4.52,
+            4.78,
+            5.04,
+            5.29,
+            5.54,
+            5.79
+          ]
         },
         "method_b": {
           "energy_kwh": 0.3528,
@@ -457,7 +1156,25 @@
           "min_temp_c": 3.798,
           "duty": 0.4596251163315612,
           "intensity": 0.9828707010486785,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            4.09,
+            4.04,
+            4.0,
+            3.96,
+            3.92,
+            3.88,
+            3.84,
+            3.8,
+            4.07,
+            4.34,
+            4.61,
+            4.87,
+            5.13,
+            5.38,
+            5.63,
+            5.87
+          ]
         },
         "method_c": {
           "energy_kwh": 0.7761,
@@ -467,7 +1184,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            4.09,
+            4.04,
+            3.99,
+            3.94,
+            3.9,
+            3.85,
+            3.81,
+            3.76,
+            3.72,
+            3.68,
+            3.63,
+            3.59,
+            3.55,
+            3.51,
+            3.47,
+            3.43
+          ]
         }
       },
       {
@@ -481,7 +1218,25 @@
           "max_temp_c": 5.621,
           "min_temp_c": 3.906,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            3.91,
+            3.95,
+            4.0,
+            4.05,
+            4.09,
+            4.14,
+            4.18,
+            4.22,
+            4.27,
+            4.31,
+            4.35,
+            4.61,
+            4.87,
+            5.13,
+            5.38,
+            5.62
+          ]
         },
         "method_b": {
           "energy_kwh": 0.3682,
@@ -490,7 +1245,25 @@
           "min_temp_c": 3.553,
           "duty": 0.47397479642891327,
           "intensity": 0.9964739893659474,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            3.91,
+            3.86,
+            3.81,
+            3.77,
+            3.72,
+            3.68,
+            3.64,
+            3.59,
+            3.55,
+            3.83,
+            4.1,
+            4.37,
+            4.64,
+            4.9,
+            5.15,
+            5.4
+          ]
         },
         "method_c": {
           "energy_kwh": 0.7781,
@@ -500,7 +1273,27 @@
           "duty": 0.999,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            3.91,
+            3.86,
+            3.81,
+            3.76,
+            3.72,
+            3.67,
+            3.63,
+            3.59,
+            3.54,
+            3.5,
+            3.46,
+            3.42,
+            3.38,
+            3.34,
+            3.31,
+            3.27
+          ]
         }
       },
       {
@@ -514,7 +1307,25 @@
           "max_temp_c": 5.701,
           "min_temp_c": 3.813,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            3.81,
+            3.87,
+            3.93,
+            3.99,
+            4.05,
+            4.11,
+            4.16,
+            4.22,
+            4.27,
+            4.32,
+            4.38,
+            4.65,
+            4.92,
+            5.19,
+            5.45,
+            5.7
+          ]
         },
         "method_b": {
           "energy_kwh": 0.0722,
@@ -523,7 +1334,25 @@
           "min_temp_c": 3.813,
           "duty": 0.20000089576684177,
           "intensity": 0.15196620446692644,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            3.81,
+            4.05,
+            4.28,
+            4.51,
+            4.73,
+            5.0,
+            5.27,
+            5.52,
+            5.78,
+            6.03,
+            6.27,
+            6.51,
+            6.75,
+            6.98,
+            7.21,
+            7.43
+          ]
         },
         "method_c": {
           "energy_kwh": 0.385,
@@ -533,7 +1362,27 @@
           "duty": 0.558,
           "intensity": 0.781,
           "num_pareto": 1,
-          "feasible_pareto": 1
+          "feasible_pareto": 1,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            3.81,
+            3.85,
+            3.88,
+            3.92,
+            3.95,
+            3.98,
+            4.01,
+            4.05,
+            4.08,
+            4.11,
+            4.39,
+            4.66,
+            4.93,
+            5.2,
+            5.46,
+            5.71
+          ]
         }
       },
       {
@@ -547,7 +1396,25 @@
           "max_temp_c": 6.64,
           "min_temp_c": 3.785,
           "duty": 0.4,
-          "intensity": 0.5
+          "intensity": 0.5,
+          "trajectory": [
+            3.79,
+            3.9,
+            4.01,
+            4.12,
+            4.23,
+            4.34,
+            4.44,
+            4.7,
+            4.96,
+            5.21,
+            5.46,
+            5.71,
+            5.95,
+            6.18,
+            6.41,
+            6.64
+          ]
         },
         "method_b": {
           "energy_kwh": 0.3529,
@@ -556,7 +1423,25 @@
           "min_temp_c": 3.485,
           "duty": 0.4508395703938116,
           "intensity": 0.9987409891756587,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            3.79,
+            3.74,
+            3.7,
+            3.65,
+            3.61,
+            3.57,
+            3.53,
+            3.48,
+            3.76,
+            4.04,
+            4.31,
+            4.57,
+            4.83,
+            5.09,
+            5.34,
+            5.59
+          ]
         },
         "method_c": {
           "energy_kwh": 0.7832,
@@ -566,7 +1451,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            3.79,
+            3.74,
+            3.69,
+            3.65,
+            3.61,
+            3.56,
+            3.52,
+            3.48,
+            3.44,
+            3.4,
+            3.36,
+            3.33,
+            3.29,
+            3.25,
+            3.22,
+            3.18
+          ]
         }
       },
       {
@@ -580,7 +1485,25 @@
           "max_temp_c": 6.198,
           "min_temp_c": 3.878,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            3.88,
+            3.97,
+            4.06,
+            4.15,
+            4.24,
+            4.33,
+            4.41,
+            4.5,
+            4.58,
+            4.66,
+            4.74,
+            5.04,
+            5.34,
+            5.63,
+            5.92,
+            6.2
+          ]
         },
         "method_b": {
           "energy_kwh": 0.4844,
@@ -589,7 +1512,25 @@
           "min_temp_c": 3.878,
           "duty": 0.5702256090770279,
           "intensity": 0.9683217959133537,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            3.88,
+            3.89,
+            3.89,
+            3.9,
+            3.91,
+            3.92,
+            3.92,
+            3.93,
+            3.94,
+            3.94,
+            4.26,
+            4.57,
+            4.87,
+            5.17,
+            5.47,
+            5.76
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8673,
@@ -599,7 +1540,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            3.88,
+            3.88,
+            3.87,
+            3.87,
+            3.87,
+            3.87,
+            3.86,
+            3.86,
+            3.86,
+            3.86,
+            3.86,
+            3.85,
+            3.85,
+            3.85,
+            3.85,
+            3.85
+          ]
         }
       },
       {
@@ -613,7 +1574,25 @@
           "max_temp_c": 6.586,
           "min_temp_c": 4.127,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            4.13,
+            4.23,
+            4.33,
+            4.43,
+            4.53,
+            4.63,
+            4.72,
+            4.82,
+            4.91,
+            5.0,
+            5.09,
+            5.4,
+            5.7,
+            6.0,
+            6.3,
+            6.59
+          ]
         },
         "method_b": {
           "energy_kwh": 0.5041,
@@ -622,7 +1601,25 @@
           "min_temp_c": 4.127,
           "duty": 0.5719586476526608,
           "intensity": 0.988850062582356,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            4.13,
+            4.14,
+            4.15,
+            4.16,
+            4.17,
+            4.18,
+            4.19,
+            4.2,
+            4.21,
+            4.22,
+            4.55,
+            4.87,
+            5.19,
+            5.49,
+            5.8,
+            6.1
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8878,
@@ -632,7 +1629,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            4.13,
+            4.14,
+            4.14,
+            4.15,
+            4.16,
+            4.17,
+            4.17,
+            4.18,
+            4.19,
+            4.19,
+            4.2,
+            4.21,
+            4.21,
+            4.22,
+            4.23,
+            4.23
+          ]
         }
       },
       {
@@ -646,7 +1663,25 @@
           "max_temp_c": 6.33,
           "min_temp_c": 4.871,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            4.87,
+            4.94,
+            5.01,
+            5.08,
+            5.15,
+            5.22,
+            5.28,
+            5.35,
+            5.41,
+            5.47,
+            5.53,
+            5.59,
+            5.65,
+            5.71,
+            6.02,
+            6.33
+          ]
         },
         "method_b": {
           "energy_kwh": 0.5975,
@@ -655,7 +1690,25 @@
           "min_temp_c": 4.871,
           "duty": 0.6739211274442295,
           "intensity": 0.9988289768122877,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            4.87,
+            4.88,
+            4.89,
+            4.9,
+            4.9,
+            4.91,
+            4.92,
+            4.93,
+            4.93,
+            4.94,
+            4.95,
+            4.95,
+            5.28,
+            5.6,
+            5.91,
+            6.22
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8873,
@@ -665,7 +1718,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            4.87,
+            4.88,
+            4.89,
+            4.89,
+            4.9,
+            4.91,
+            4.92,
+            4.92,
+            4.93,
+            4.94,
+            4.94,
+            4.95,
+            4.96,
+            4.96,
+            4.97,
+            4.97
+          ]
         }
       },
       {
@@ -679,7 +1752,25 @@
           "max_temp_c": 7.502,
           "min_temp_c": 6.136,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            6.14,
+            6.2,
+            6.26,
+            6.33,
+            6.39,
+            6.45,
+            6.51,
+            6.57,
+            6.62,
+            6.68,
+            6.73,
+            6.79,
+            6.84,
+            6.89,
+            7.2,
+            7.5
+          ]
         },
         "method_b": {
           "energy_kwh": 0.7464,
@@ -688,7 +1779,25 @@
           "min_temp_c": 6.136,
           "duty": 0.8674477613503795,
           "intensity": 0.9767555291811487,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            6.14,
+            6.14,
+            6.15,
+            6.16,
+            6.17,
+            6.18,
+            6.18,
+            6.19,
+            6.2,
+            6.21,
+            6.21,
+            6.22,
+            6.23,
+            6.23,
+            6.24,
+            6.56
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8737,
@@ -698,7 +1807,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            6.14,
+            6.14,
+            6.14,
+            6.14,
+            6.14,
+            6.14,
+            6.14,
+            6.14,
+            6.14,
+            6.14,
+            6.14,
+            6.14,
+            6.14,
+            6.15,
+            6.15,
+            6.15
+          ]
         }
       },
       {
@@ -712,7 +1841,25 @@
           "max_temp_c": 8.659,
           "min_temp_c": 7.138,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            7.14,
+            7.21,
+            7.29,
+            7.36,
+            7.44,
+            7.51,
+            7.58,
+            7.65,
+            7.71,
+            7.78,
+            7.84,
+            7.91,
+            7.97,
+            8.03,
+            8.35,
+            8.66
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8963,
@@ -721,7 +1868,25 @@
           "min_temp_c": 7.138,
           "duty": 0.9999995389661535,
           "intensity": 0.9994260993330216,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            7.14,
+            7.15,
+            7.16,
+            7.18,
+            7.19,
+            7.2,
+            7.21,
+            7.22,
+            7.23,
+            7.24,
+            7.26,
+            7.27,
+            7.28,
+            7.29,
+            7.3,
+            7.31
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8967,
@@ -731,7 +1896,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            7.14,
+            7.15,
+            7.16,
+            7.17,
+            7.19,
+            7.2,
+            7.21,
+            7.22,
+            7.23,
+            7.24,
+            7.25,
+            7.26,
+            7.27,
+            7.28,
+            7.29,
+            7.3
+          ]
         }
       },
       {
@@ -745,7 +1930,25 @@
           "max_temp_c": 9.986,
           "min_temp_c": 8.533,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            8.53,
+            8.6,
+            8.67,
+            8.74,
+            8.81,
+            8.88,
+            8.94,
+            9.01,
+            9.07,
+            9.13,
+            9.19,
+            9.25,
+            9.31,
+            9.37,
+            9.68,
+            9.99
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8863,
@@ -754,7 +1957,25 @@
           "min_temp_c": 8.533,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            8.53,
+            8.54,
+            8.55,
+            8.55,
+            8.56,
+            8.57,
+            8.58,
+            8.58,
+            8.59,
+            8.59,
+            8.6,
+            8.61,
+            8.61,
+            8.62,
+            8.63,
+            8.63
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8866,
@@ -764,7 +1985,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            8.53,
+            8.54,
+            8.55,
+            8.55,
+            8.56,
+            8.57,
+            8.58,
+            8.58,
+            8.59,
+            8.59,
+            8.6,
+            8.61,
+            8.61,
+            8.62,
+            8.63,
+            8.63
+          ]
         }
       },
       {
@@ -778,7 +2019,25 @@
           "max_temp_c": 10.507,
           "min_temp_c": 9.046,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            9.05,
+            9.12,
+            9.19,
+            9.26,
+            9.33,
+            9.39,
+            9.46,
+            9.52,
+            9.59,
+            9.65,
+            9.71,
+            9.77,
+            9.83,
+            9.89,
+            10.2,
+            10.51
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8874,
@@ -787,7 +2046,25 @@
           "min_temp_c": 9.046,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            9.05,
+            9.05,
+            9.06,
+            9.07,
+            9.08,
+            9.08,
+            9.09,
+            9.1,
+            9.11,
+            9.11,
+            9.12,
+            9.13,
+            9.13,
+            9.14,
+            9.15,
+            9.15
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8877,
@@ -797,7 +2074,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            9.05,
+            9.05,
+            9.06,
+            9.07,
+            9.08,
+            9.08,
+            9.09,
+            9.1,
+            9.11,
+            9.11,
+            9.12,
+            9.13,
+            9.13,
+            9.14,
+            9.15,
+            9.15
+          ]
         }
       },
       {
@@ -811,7 +2108,25 @@
           "max_temp_c": 10.238,
           "min_temp_c": 8.922,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            8.92,
+            8.98,
+            9.04,
+            9.1,
+            9.16,
+            9.22,
+            9.27,
+            9.33,
+            9.38,
+            9.43,
+            9.49,
+            9.54,
+            9.59,
+            9.64,
+            9.94,
+            10.24
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8662,
@@ -820,7 +2135,25 @@
           "min_temp_c": 8.883,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            8.92,
+            8.92,
+            8.92,
+            8.91,
+            8.91,
+            8.91,
+            8.9,
+            8.9,
+            8.9,
+            8.9,
+            8.89,
+            8.89,
+            8.89,
+            8.89,
+            8.88,
+            8.88
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8665,
@@ -830,7 +2163,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            8.92,
+            8.92,
+            8.92,
+            8.91,
+            8.91,
+            8.91,
+            8.9,
+            8.9,
+            8.9,
+            8.9,
+            8.89,
+            8.89,
+            8.89,
+            8.89,
+            8.88,
+            8.88
+          ]
         }
       },
       {
@@ -844,7 +2197,25 @@
           "max_temp_c": 10.363,
           "min_temp_c": 8.859,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            8.86,
+            8.93,
+            9.01,
+            9.08,
+            9.15,
+            9.22,
+            9.29,
+            9.36,
+            9.42,
+            9.49,
+            9.55,
+            9.62,
+            9.68,
+            9.74,
+            10.05,
+            10.36
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8937,
@@ -853,7 +2224,25 @@
           "min_temp_c": 8.859,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            8.86,
+            8.87,
+            8.88,
+            8.89,
+            8.9,
+            8.91,
+            8.92,
+            8.93,
+            8.94,
+            8.95,
+            8.96,
+            8.97,
+            8.98,
+            8.99,
+            9.0,
+            9.01
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8941,
@@ -863,7 +2252,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            8.86,
+            8.87,
+            8.88,
+            8.89,
+            8.9,
+            8.91,
+            8.92,
+            8.93,
+            8.94,
+            8.95,
+            8.96,
+            8.97,
+            8.98,
+            8.99,
+            9.0,
+            9.01
+          ]
         }
       },
       {
@@ -877,7 +2286,25 @@
           "max_temp_c": 9.831,
           "min_temp_c": 8.645,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            8.64,
+            8.7,
+            8.75,
+            8.8,
+            8.84,
+            8.89,
+            8.94,
+            8.98,
+            9.03,
+            9.07,
+            9.12,
+            9.16,
+            9.2,
+            9.24,
+            9.54,
+            9.83
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8471,
@@ -886,7 +2313,25 @@
           "min_temp_c": 8.476,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            8.64,
+            8.63,
+            8.62,
+            8.61,
+            8.6,
+            8.58,
+            8.57,
+            8.56,
+            8.55,
+            8.54,
+            8.53,
+            8.52,
+            8.51,
+            8.5,
+            8.49,
+            8.48
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8474,
@@ -896,7 +2341,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            8.64,
+            8.63,
+            8.62,
+            8.61,
+            8.6,
+            8.58,
+            8.57,
+            8.56,
+            8.55,
+            8.54,
+            8.53,
+            8.52,
+            8.51,
+            8.5,
+            8.49,
+            8.48
+          ]
         }
       },
       {
@@ -910,7 +2375,25 @@
           "max_temp_c": 8.488,
           "min_temp_c": 7.344,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            7.34,
+            7.39,
+            7.44,
+            7.49,
+            7.53,
+            7.58,
+            7.62,
+            7.66,
+            7.7,
+            7.75,
+            7.79,
+            7.83,
+            7.87,
+            7.91,
+            8.2,
+            8.49
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8409,
@@ -919,7 +2402,25 @@
           "min_temp_c": 7.133,
           "duty": 0.9998991012036327,
           "intensity": 0.9998218511205627,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            7.34,
+            7.33,
+            7.31,
+            7.3,
+            7.28,
+            7.27,
+            7.25,
+            7.24,
+            7.22,
+            7.21,
+            7.2,
+            7.18,
+            7.17,
+            7.16,
+            7.15,
+            7.13
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8411,
@@ -929,7 +2430,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            7.34,
+            7.33,
+            7.31,
+            7.3,
+            7.28,
+            7.27,
+            7.25,
+            7.24,
+            7.22,
+            7.21,
+            7.2,
+            7.18,
+            7.17,
+            7.16,
+            7.14,
+            7.13
+          ]
         }
       },
       {
@@ -943,7 +2464,25 @@
           "max_temp_c": 7.378,
           "min_temp_c": 6.208,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            6.21,
+            6.26,
+            6.31,
+            6.36,
+            6.4,
+            6.45,
+            6.5,
+            6.54,
+            6.58,
+            6.63,
+            6.67,
+            6.71,
+            6.75,
+            6.79,
+            7.09,
+            7.38
+          ]
         },
         "method_b": {
           "energy_kwh": 0.7262,
@@ -952,7 +2491,25 @@
           "min_temp_c": 6.092,
           "duty": 0.8665549953006771,
           "intensity": 0.987321855755159,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            6.21,
+            6.2,
+            6.19,
+            6.18,
+            6.17,
+            6.16,
+            6.15,
+            6.14,
+            6.13,
+            6.12,
+            6.12,
+            6.11,
+            6.1,
+            6.09,
+            6.4,
+            6.7
+          ]
         },
         "method_c": {
           "energy_kwh": 0.845,
@@ -962,7 +2519,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            6.21,
+            6.19,
+            6.18,
+            6.17,
+            6.15,
+            6.14,
+            6.13,
+            6.12,
+            6.1,
+            6.09,
+            6.08,
+            6.07,
+            6.06,
+            6.04,
+            6.03,
+            6.02
+          ]
         }
       },
       {
@@ -976,7 +2553,25 @@
           "max_temp_c": 6.339,
           "min_temp_c": 5.037,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            5.04,
+            5.1,
+            5.16,
+            5.21,
+            5.27,
+            5.33,
+            5.38,
+            5.43,
+            5.49,
+            5.54,
+            5.59,
+            5.64,
+            5.69,
+            5.74,
+            6.04,
+            6.34
+          ]
         },
         "method_b": {
           "energy_kwh": 0.6403,
@@ -985,7 +2580,25 @@
           "min_temp_c": 5.01,
           "duty": 0.7431390949594214,
           "intensity": 0.9952128914520123,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            5.04,
+            5.03,
+            5.03,
+            5.03,
+            5.03,
+            5.03,
+            5.02,
+            5.02,
+            5.02,
+            5.02,
+            5.01,
+            5.01,
+            5.01,
+            5.33,
+            5.64,
+            5.94
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8643,
@@ -995,7 +2608,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 10,
+          "trajectory": [
+            5.04,
+            5.03,
+            5.03,
+            5.03,
+            5.02,
+            5.02,
+            5.01,
+            5.01,
+            5.01,
+            5.0,
+            5.0,
+            5.0,
+            4.99,
+            4.99,
+            4.99,
+            4.98
+          ]
         }
       },
       {
@@ -1009,7 +2642,25 @@
           "max_temp_c": 5.897,
           "min_temp_c": 3.955,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            3.96,
+            4.02,
+            4.08,
+            4.15,
+            4.21,
+            4.27,
+            4.33,
+            4.39,
+            4.44,
+            4.5,
+            4.56,
+            4.83,
+            5.11,
+            5.38,
+            5.64,
+            5.9
+          ]
         },
         "method_b": {
           "energy_kwh": 0.3903,
@@ -1018,7 +2669,25 @@
           "min_temp_c": 3.789,
           "duty": 0.48940140539601784,
           "intensity": 0.9724634652049566,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            3.96,
+            3.93,
+            3.91,
+            3.89,
+            3.87,
+            3.85,
+            3.83,
+            3.81,
+            3.79,
+            4.08,
+            4.37,
+            4.65,
+            4.93,
+            5.2,
+            5.46,
+            5.73
+          ]
         },
         "method_c": {
           "energy_kwh": 0.812,
@@ -1028,7 +2697,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            3.96,
+            3.92,
+            3.89,
+            3.86,
+            3.83,
+            3.81,
+            3.78,
+            3.75,
+            3.72,
+            3.7,
+            3.67,
+            3.64,
+            3.62,
+            3.59,
+            3.57,
+            3.54
+          ]
         }
       },
       {
@@ -1042,7 +2731,25 @@
           "max_temp_c": 5.999,
           "min_temp_c": 4.168,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            4.17,
+            4.22,
+            4.28,
+            4.33,
+            4.39,
+            4.44,
+            4.49,
+            4.54,
+            4.59,
+            4.64,
+            4.69,
+            4.96,
+            5.23,
+            5.49,
+            5.75,
+            6.0
+          ]
         },
         "method_b": {
           "energy_kwh": 0.429,
@@ -1051,7 +2758,25 @@
           "min_temp_c": 3.87,
           "duty": 0.5433158418426333,
           "intensity": 0.9880568537694371,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            4.17,
+            4.13,
+            4.1,
+            4.06,
+            4.03,
+            4.0,
+            3.96,
+            3.93,
+            3.9,
+            3.87,
+            4.16,
+            4.44,
+            4.71,
+            4.98,
+            5.25,
+            5.51
+          ]
         },
         "method_c": {
           "energy_kwh": 0.7957,
@@ -1061,7 +2786,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            4.17,
+            4.13,
+            4.09,
+            4.05,
+            4.01,
+            3.98,
+            3.94,
+            3.91,
+            3.87,
+            3.84,
+            3.8,
+            3.77,
+            3.74,
+            3.71,
+            3.68,
+            3.65
+          ]
         }
       },
       {
@@ -1075,7 +2820,25 @@
           "max_temp_c": 5.881,
           "min_temp_c": 3.951,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            3.95,
+            4.02,
+            4.08,
+            4.14,
+            4.2,
+            4.26,
+            4.32,
+            4.38,
+            4.43,
+            4.49,
+            4.54,
+            4.82,
+            5.09,
+            5.36,
+            5.62,
+            5.88
+          ]
         },
         "method_b": {
           "energy_kwh": 0.3723,
@@ -1084,7 +2847,25 @@
           "min_temp_c": 3.748,
           "duty": 0.46072937731276586,
           "intensity": 0.9960866729438774,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            3.95,
+            3.92,
+            3.89,
+            3.86,
+            3.83,
+            3.8,
+            3.78,
+            3.75,
+            4.04,
+            4.33,
+            4.61,
+            4.88,
+            5.15,
+            5.42,
+            5.68,
+            5.94
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8098,
@@ -1094,7 +2875,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            3.95,
+            3.92,
+            3.89,
+            3.86,
+            3.83,
+            3.8,
+            3.77,
+            3.74,
+            3.71,
+            3.68,
+            3.66,
+            3.63,
+            3.6,
+            3.58,
+            3.55,
+            3.53
+          ]
         }
       },
       {
@@ -1108,7 +2909,25 @@
           "max_temp_c": 5.699,
           "min_temp_c": 4.148,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            4.15,
+            4.18,
+            4.22,
+            4.25,
+            4.29,
+            4.32,
+            4.35,
+            4.38,
+            4.41,
+            4.45,
+            4.48,
+            4.73,
+            4.98,
+            5.22,
+            5.46,
+            5.7
+          ]
         },
         "method_b": {
           "energy_kwh": 0.3689,
@@ -1117,7 +2936,25 @@
           "min_temp_c": 3.706,
           "duty": 0.4906082825572847,
           "intensity": 0.9948321210115436,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            4.15,
+            4.09,
+            4.03,
+            3.97,
+            3.92,
+            3.86,
+            3.81,
+            3.76,
+            3.71,
+            3.97,
+            4.24,
+            4.49,
+            4.75,
+            5.0,
+            5.24,
+            5.48
+          ]
         },
         "method_c": {
           "energy_kwh": 0.7545,
@@ -1127,7 +2964,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            4.15,
+            4.09,
+            4.03,
+            3.97,
+            3.91,
+            3.86,
+            3.8,
+            3.75,
+            3.69,
+            3.64,
+            3.59,
+            3.54,
+            3.49,
+            3.44,
+            3.39,
+            3.35
+          ]
         }
       },
       {
@@ -1141,7 +2998,25 @@
           "max_temp_c": 5.827,
           "min_temp_c": 3.926,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            3.93,
+            3.99,
+            4.05,
+            4.11,
+            4.17,
+            4.22,
+            4.28,
+            4.34,
+            4.39,
+            4.45,
+            4.5,
+            4.77,
+            5.04,
+            5.31,
+            5.57,
+            5.83
+          ]
         },
         "method_b": {
           "energy_kwh": 0.3634,
@@ -1150,7 +3025,25 @@
           "min_temp_c": 3.706,
           "duty": 0.4517215822273928,
           "intensity": 0.9972694358196952,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            3.93,
+            3.89,
+            3.86,
+            3.83,
+            3.8,
+            3.77,
+            3.74,
+            3.71,
+            4.0,
+            4.28,
+            4.56,
+            4.83,
+            5.1,
+            5.37,
+            5.63,
+            5.88
+          ]
         },
         "method_c": {
           "energy_kwh": 0.806,
@@ -1160,7 +3053,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            3.93,
+            3.89,
+            3.86,
+            3.83,
+            3.79,
+            3.76,
+            3.73,
+            3.7,
+            3.67,
+            3.64,
+            3.61,
+            3.58,
+            3.56,
+            3.53,
+            3.5,
+            3.47
+          ]
         }
       },
       {
@@ -1174,7 +3087,25 @@
           "max_temp_c": 5.862,
           "min_temp_c": 3.99,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            3.99,
+            4.05,
+            4.11,
+            4.17,
+            4.22,
+            4.28,
+            4.33,
+            4.39,
+            4.44,
+            4.49,
+            4.54,
+            4.81,
+            5.08,
+            5.35,
+            5.61,
+            5.86
+          ]
         },
         "method_b": {
           "energy_kwh": 0.3863,
@@ -1183,7 +3114,25 @@
           "min_temp_c": 3.773,
           "duty": 0.4892299205639622,
           "intensity": 0.9769898060848783,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            3.99,
+            3.96,
+            3.93,
+            3.91,
+            3.88,
+            3.85,
+            3.82,
+            3.8,
+            3.77,
+            4.06,
+            4.34,
+            4.62,
+            4.89,
+            5.16,
+            5.42,
+            5.68
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8013,
@@ -1193,7 +3142,27 @@
           "duty": 1.0,
           "intensity": 0.999,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            3.99,
+            3.95,
+            3.92,
+            3.88,
+            3.85,
+            3.82,
+            3.78,
+            3.75,
+            3.72,
+            3.69,
+            3.66,
+            3.63,
+            3.6,
+            3.57,
+            3.54,
+            3.51
+          ]
         }
       },
       {
@@ -1207,7 +3176,25 @@
           "max_temp_c": 6.25,
           "min_temp_c": 4.104,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            4.1,
+            4.18,
+            4.26,
+            4.34,
+            4.42,
+            4.49,
+            4.57,
+            4.64,
+            4.71,
+            4.78,
+            4.85,
+            5.14,
+            5.42,
+            5.7,
+            5.98,
+            6.25
+          ]
         },
         "method_b": {
           "energy_kwh": 0.4171,
@@ -1216,7 +3203,25 @@
           "min_temp_c": 3.988,
           "duty": 0.49549328085429967,
           "intensity": 0.9996000865000749,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            4.1,
+            4.09,
+            4.07,
+            4.06,
+            4.04,
+            4.03,
+            4.02,
+            4.0,
+            3.99,
+            4.29,
+            4.6,
+            4.89,
+            5.18,
+            5.47,
+            5.75,
+            6.02
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8419,
@@ -1226,7 +3231,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            4.1,
+            4.09,
+            4.07,
+            4.06,
+            4.04,
+            4.03,
+            4.01,
+            4.0,
+            3.99,
+            3.97,
+            3.96,
+            3.95,
+            3.93,
+            3.92,
+            3.91,
+            3.9
+          ]
         }
       },
       {
@@ -1240,7 +3265,25 @@
           "max_temp_c": 5.583,
           "min_temp_c": 4.204,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            4.2,
+            4.27,
+            4.33,
+            4.4,
+            4.46,
+            4.52,
+            4.58,
+            4.64,
+            4.7,
+            4.76,
+            4.81,
+            4.87,
+            4.92,
+            4.97,
+            5.28,
+            5.58
+          ]
         },
         "method_b": {
           "energy_kwh": 0.4868,
@@ -1249,7 +3292,25 @@
           "min_temp_c": 4.204,
           "duty": 0.5648901984206873,
           "intensity": 0.9755858595204104,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            4.2,
+            4.21,
+            4.22,
+            4.23,
+            4.24,
+            4.25,
+            4.26,
+            4.27,
+            4.28,
+            4.28,
+            4.6,
+            4.92,
+            5.23,
+            5.53,
+            5.83,
+            6.12
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8756,
@@ -1259,7 +3320,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            4.2,
+            4.21,
+            4.21,
+            4.21,
+            4.21,
+            4.21,
+            4.21,
+            4.22,
+            4.22,
+            4.22,
+            4.22,
+            4.22,
+            4.22,
+            4.22,
+            4.23,
+            4.23
+          ]
         }
       },
       {
@@ -1273,7 +3354,25 @@
           "max_temp_c": 6.612,
           "min_temp_c": 5.143,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            5.14,
+            5.22,
+            5.29,
+            5.36,
+            5.43,
+            5.49,
+            5.56,
+            5.62,
+            5.69,
+            5.75,
+            5.81,
+            5.87,
+            5.93,
+            5.99,
+            6.3,
+            6.61
+          ]
         },
         "method_b": {
           "energy_kwh": 0.5907,
@@ -1282,7 +3381,25 @@
           "min_temp_c": 5.143,
           "duty": 0.6706382273214813,
           "intensity": 0.9860822734372925,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            5.14,
+            5.16,
+            5.17,
+            5.18,
+            5.19,
+            5.21,
+            5.22,
+            5.23,
+            5.24,
+            5.25,
+            5.26,
+            5.27,
+            5.6,
+            5.92,
+            6.24,
+            6.54
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8889,
@@ -1292,7 +3409,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": null,
+          "trajectory": [
+            5.14,
+            5.15,
+            5.16,
+            5.17,
+            5.18,
+            5.18,
+            5.19,
+            5.2,
+            5.21,
+            5.21,
+            5.22,
+            5.23,
+            5.24,
+            5.24,
+            5.25,
+            5.26
+          ]
         }
       },
       {
@@ -1306,7 +3443,25 @@
           "max_temp_c": 8.094,
           "min_temp_c": 6.605,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            6.61,
+            6.68,
+            6.75,
+            6.82,
+            6.89,
+            6.96,
+            7.03,
+            7.1,
+            7.16,
+            7.23,
+            7.29,
+            7.35,
+            7.41,
+            7.47,
+            7.78,
+            8.09
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8001,
@@ -1315,7 +3470,25 @@
           "min_temp_c": 6.605,
           "duty": 0.9043830445666285,
           "intensity": 0.9877247524577559,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            6.61,
+            6.62,
+            6.63,
+            6.65,
+            6.66,
+            6.67,
+            6.69,
+            6.7,
+            6.71,
+            6.72,
+            6.73,
+            6.75,
+            6.76,
+            6.77,
+            6.78,
+            7.11
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8918,
@@ -1325,7 +3498,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            6.61,
+            6.62,
+            6.62,
+            6.63,
+            6.64,
+            6.65,
+            6.66,
+            6.67,
+            6.68,
+            6.69,
+            6.7,
+            6.71,
+            6.71,
+            6.72,
+            6.73,
+            6.74
+          ]
         }
       },
       {
@@ -1339,7 +3532,25 @@
           "max_temp_c": 8.955,
           "min_temp_c": 7.514,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            7.51,
+            7.58,
+            7.65,
+            7.72,
+            7.79,
+            7.85,
+            7.92,
+            7.98,
+            8.04,
+            8.1,
+            8.16,
+            8.22,
+            8.28,
+            8.34,
+            8.65,
+            8.95
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8841,
@@ -1348,7 +3559,25 @@
           "min_temp_c": 7.514,
           "duty": 0.9997820766490635,
           "intensity": 0.9991259854476383,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            7.51,
+            7.52,
+            7.53,
+            7.53,
+            7.54,
+            7.55,
+            7.55,
+            7.56,
+            7.56,
+            7.57,
+            7.58,
+            7.58,
+            7.59,
+            7.59,
+            7.6,
+            7.6
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8848,
@@ -1358,7 +3587,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            7.51,
+            7.52,
+            7.53,
+            7.53,
+            7.54,
+            7.54,
+            7.55,
+            7.56,
+            7.56,
+            7.57,
+            7.57,
+            7.58,
+            7.58,
+            7.59,
+            7.59,
+            7.6
+          ]
         }
       },
       {
@@ -1372,7 +3621,25 @@
           "max_temp_c": 9.625,
           "min_temp_c": 8.178,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            8.18,
+            8.25,
+            8.32,
+            8.39,
+            8.45,
+            8.52,
+            8.58,
+            8.65,
+            8.71,
+            8.77,
+            8.83,
+            8.89,
+            8.95,
+            9.01,
+            9.32,
+            9.63
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8852,
@@ -1381,7 +3648,25 @@
           "min_temp_c": 8.178,
           "duty": 0.9999949174669471,
           "intensity": 0.9990687151275464,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            8.18,
+            8.18,
+            8.19,
+            8.2,
+            8.21,
+            8.21,
+            8.22,
+            8.23,
+            8.23,
+            8.24,
+            8.24,
+            8.25,
+            8.26,
+            8.26,
+            8.27,
+            8.27
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8857,
@@ -1391,7 +3676,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            8.18,
+            8.18,
+            8.19,
+            8.2,
+            8.2,
+            8.21,
+            8.22,
+            8.22,
+            8.23,
+            8.24,
+            8.24,
+            8.25,
+            8.25,
+            8.26,
+            8.26,
+            8.27
+          ]
         }
       },
       {
@@ -1405,7 +3710,25 @@
           "max_temp_c": 10.249,
           "min_temp_c": 8.693,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            8.69,
+            8.77,
+            8.85,
+            8.93,
+            9.0,
+            9.07,
+            9.15,
+            9.22,
+            9.29,
+            9.36,
+            9.42,
+            9.49,
+            9.55,
+            9.62,
+            9.94,
+            10.25
+          ]
         },
         "method_b": {
           "energy_kwh": 0.9014,
@@ -1414,7 +3737,25 @@
           "min_temp_c": 8.693,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            8.69,
+            8.71,
+            8.72,
+            8.74,
+            8.75,
+            8.77,
+            8.78,
+            8.79,
+            8.81,
+            8.82,
+            8.83,
+            8.85,
+            8.86,
+            8.87,
+            8.88,
+            8.89
+          ]
         },
         "method_c": {
           "energy_kwh": 0.9017,
@@ -1424,7 +3765,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            8.69,
+            8.71,
+            8.72,
+            8.74,
+            8.75,
+            8.77,
+            8.78,
+            8.79,
+            8.81,
+            8.82,
+            8.83,
+            8.85,
+            8.86,
+            8.87,
+            8.88,
+            8.89
+          ]
         }
       },
       {
@@ -1438,7 +3799,25 @@
           "max_temp_c": 10.523,
           "min_temp_c": 8.969,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            8.97,
+            9.05,
+            9.13,
+            9.2,
+            9.28,
+            9.35,
+            9.42,
+            9.49,
+            9.56,
+            9.63,
+            9.7,
+            9.76,
+            9.83,
+            9.89,
+            10.21,
+            10.52
+          ]
         },
         "method_b": {
           "energy_kwh": 0.9011,
@@ -1447,7 +3826,25 @@
           "min_temp_c": 8.969,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            8.97,
+            8.98,
+            9.0,
+            9.01,
+            9.03,
+            9.04,
+            9.06,
+            9.07,
+            9.08,
+            9.09,
+            9.11,
+            9.12,
+            9.13,
+            9.14,
+            9.16,
+            9.17
+          ]
         },
         "method_c": {
           "energy_kwh": 0.9014,
@@ -1457,7 +3854,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            8.97,
+            8.98,
+            9.0,
+            9.01,
+            9.03,
+            9.04,
+            9.06,
+            9.07,
+            9.08,
+            9.09,
+            9.11,
+            9.12,
+            9.13,
+            9.14,
+            9.16,
+            9.17
+          ]
         }
       },
       {
@@ -1471,7 +3888,25 @@
           "max_temp_c": 10.036,
           "min_temp_c": 8.8,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            8.8,
+            8.86,
+            8.91,
+            8.96,
+            9.01,
+            9.07,
+            9.12,
+            9.16,
+            9.21,
+            9.26,
+            9.31,
+            9.35,
+            9.4,
+            9.44,
+            9.74,
+            10.04
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8543,
@@ -1480,7 +3915,25 @@
           "min_temp_c": 8.68,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            8.8,
+            8.79,
+            8.78,
+            8.77,
+            8.77,
+            8.76,
+            8.75,
+            8.74,
+            8.73,
+            8.72,
+            8.72,
+            8.71,
+            8.7,
+            8.69,
+            8.69,
+            8.68
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8546,
@@ -1490,7 +3943,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            8.8,
+            8.79,
+            8.78,
+            8.77,
+            8.77,
+            8.76,
+            8.75,
+            8.74,
+            8.73,
+            8.72,
+            8.72,
+            8.71,
+            8.7,
+            8.69,
+            8.69,
+            8.68
+          ]
         }
       },
       {
@@ -1504,7 +3977,25 @@
           "max_temp_c": 9.489,
           "min_temp_c": 8.296,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            8.3,
+            8.35,
+            8.4,
+            8.45,
+            8.5,
+            8.55,
+            8.59,
+            8.64,
+            8.68,
+            8.73,
+            8.77,
+            8.82,
+            8.86,
+            8.9,
+            9.2,
+            9.49
+          ]
         },
         "method_b": {
           "energy_kwh": 0.848,
@@ -1513,7 +4004,25 @@
           "min_temp_c": 8.133,
           "duty": 0.9996664159106117,
           "intensity": 0.999961924665547,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            8.3,
+            8.28,
+            8.27,
+            8.26,
+            8.25,
+            8.24,
+            8.23,
+            8.21,
+            8.2,
+            8.19,
+            8.18,
+            8.17,
+            8.16,
+            8.15,
+            8.14,
+            8.13
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8483,
@@ -1523,7 +4032,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            8.3,
+            8.28,
+            8.27,
+            8.26,
+            8.25,
+            8.24,
+            8.23,
+            8.21,
+            8.2,
+            8.19,
+            8.18,
+            8.17,
+            8.16,
+            8.15,
+            8.14,
+            8.13
+          ]
         }
       },
       {
@@ -1537,7 +4066,25 @@
           "max_temp_c": 8.967,
           "min_temp_c": 7.994,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            7.99,
+            8.03,
+            8.06,
+            8.1,
+            8.13,
+            8.16,
+            8.2,
+            8.23,
+            8.26,
+            8.29,
+            8.32,
+            8.35,
+            8.38,
+            8.4,
+            8.69,
+            8.97
+          ]
         },
         "method_b": {
           "energy_kwh": 0.8159,
@@ -1546,7 +4093,25 @@
           "min_temp_c": 7.613,
           "duty": 0.9999246543248518,
           "intensity": 0.9997380915960662,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            7.99,
+            7.97,
+            7.94,
+            7.91,
+            7.88,
+            7.86,
+            7.83,
+            7.8,
+            7.78,
+            7.75,
+            7.73,
+            7.7,
+            7.68,
+            7.66,
+            7.64,
+            7.61
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8161,
@@ -1556,7 +4121,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            7.99,
+            7.97,
+            7.94,
+            7.91,
+            7.88,
+            7.86,
+            7.83,
+            7.8,
+            7.78,
+            7.75,
+            7.73,
+            7.7,
+            7.68,
+            7.66,
+            7.63,
+            7.61
+          ]
         }
       },
       {
@@ -1570,7 +4155,25 @@
           "max_temp_c": 7.419,
           "min_temp_c": 6.437,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            6.44,
+            6.47,
+            6.51,
+            6.54,
+            6.58,
+            6.61,
+            6.64,
+            6.67,
+            6.71,
+            6.74,
+            6.77,
+            6.8,
+            6.83,
+            6.86,
+            7.14,
+            7.42
+          ]
         },
         "method_b": {
           "energy_kwh": 0.7995,
@@ -1579,7 +4182,25 @@
           "min_temp_c": 6.068,
           "duty": 0.9787916183250347,
           "intensity": 0.998898976619504,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            6.44,
+            6.41,
+            6.38,
+            6.35,
+            6.33,
+            6.3,
+            6.28,
+            6.25,
+            6.23,
+            6.2,
+            6.18,
+            6.16,
+            6.13,
+            6.11,
+            6.09,
+            6.07
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8174,
@@ -1589,7 +4210,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 1,
-          "feasible_pareto": 0
+          "feasible_pareto": 0,
+          "is_emergency_fallback": true,
+          "recovery_time_min": null,
+          "trajectory": [
+            6.44,
+            6.41,
+            6.38,
+            6.35,
+            6.33,
+            6.3,
+            6.28,
+            6.25,
+            6.22,
+            6.2,
+            6.18,
+            6.15,
+            6.13,
+            6.11,
+            6.09,
+            6.06
+          ]
         }
       },
       {
@@ -1603,7 +4244,25 @@
           "max_temp_c": 6.287,
           "min_temp_c": 5.162,
           "duty": 0.85,
-          "intensity": 0.8
+          "intensity": 0.8,
+          "trajectory": [
+            5.16,
+            5.21,
+            5.25,
+            5.3,
+            5.34,
+            5.39,
+            5.43,
+            5.47,
+            5.51,
+            5.55,
+            5.59,
+            5.63,
+            5.67,
+            5.71,
+            6.0,
+            6.29
+          ]
         },
         "method_b": {
           "energy_kwh": 0.6497,
@@ -1612,7 +4271,25 @@
           "min_temp_c": 5.066,
           "duty": 0.7885518298742409,
           "intensity": 0.9734058113621663,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            5.16,
+            5.15,
+            5.14,
+            5.14,
+            5.13,
+            5.12,
+            5.11,
+            5.1,
+            5.1,
+            5.09,
+            5.08,
+            5.07,
+            5.07,
+            5.37,
+            5.67,
+            5.96
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8384,
@@ -1622,7 +4299,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 11,
+          "trajectory": [
+            5.16,
+            5.14,
+            5.13,
+            5.11,
+            5.09,
+            5.08,
+            5.06,
+            5.05,
+            5.03,
+            5.02,
+            5.0,
+            4.99,
+            4.97,
+            4.96,
+            4.95,
+            4.93
+          ]
         }
       },
       {
@@ -1636,7 +4333,25 @@
           "max_temp_c": 6.901,
           "min_temp_c": 3.775,
           "duty": 0.4,
-          "intensity": 0.5
+          "intensity": 0.5,
+          "trajectory": [
+            3.78,
+            3.91,
+            4.04,
+            4.17,
+            4.3,
+            4.43,
+            4.55,
+            4.83,
+            5.1,
+            5.38,
+            5.64,
+            5.9,
+            6.16,
+            6.41,
+            6.66,
+            6.9
+          ]
         },
         "method_b": {
           "energy_kwh": 0.4724,
@@ -1645,7 +4360,25 @@
           "min_temp_c": 3.576,
           "duty": 0.5755238533433109,
           "intensity": 0.9954880562753154,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            3.78,
+            3.75,
+            3.73,
+            3.71,
+            3.68,
+            3.66,
+            3.64,
+            3.62,
+            3.6,
+            3.58,
+            3.87,
+            4.17,
+            4.45,
+            4.74,
+            5.01,
+            5.29
+          ]
         },
         "method_c": {
           "energy_kwh": 0.8231,
@@ -1655,7 +4388,27 @@
           "duty": 1.0,
           "intensity": 1.0,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            3.78,
+            3.75,
+            3.73,
+            3.7,
+            3.68,
+            3.65,
+            3.63,
+            3.61,
+            3.59,
+            3.56,
+            3.54,
+            3.52,
+            3.5,
+            3.48,
+            3.46,
+            3.44
+          ]
         }
       },
       {
@@ -1669,7 +4422,25 @@
           "max_temp_c": 5.713,
           "min_temp_c": 3.942,
           "duty": 0.65,
-          "intensity": 0.7
+          "intensity": 0.7,
+          "trajectory": [
+            3.94,
+            3.99,
+            4.05,
+            4.1,
+            4.14,
+            4.19,
+            4.24,
+            4.29,
+            4.33,
+            4.38,
+            4.42,
+            4.69,
+            4.95,
+            5.21,
+            5.46,
+            5.71
+          ]
         },
         "method_b": {
           "energy_kwh": 0.3588,
@@ -1678,7 +4449,25 @@
           "min_temp_c": 3.68,
           "duty": 0.4600234394661098,
           "intensity": 0.9863849078018154,
-          "num_pareto": 48
+          "num_pareto": 48,
+          "trajectory": [
+            3.94,
+            3.9,
+            3.86,
+            3.83,
+            3.79,
+            3.75,
+            3.72,
+            3.68,
+            3.96,
+            4.24,
+            4.51,
+            4.77,
+            5.03,
+            5.29,
+            5.54,
+            5.79
+          ]
         },
         "method_c": {
           "energy_kwh": 0.7862,
@@ -1688,7 +4477,27 @@
           "duty": 1.0,
           "intensity": 0.999,
           "num_pareto": 48,
-          "feasible_pareto": 48
+          "feasible_pareto": 48,
+          "is_emergency_fallback": false,
+          "recovery_time_min": 0,
+          "trajectory": [
+            3.94,
+            3.9,
+            3.86,
+            3.81,
+            3.77,
+            3.73,
+            3.69,
+            3.65,
+            3.61,
+            3.58,
+            3.54,
+            3.5,
+            3.47,
+            3.43,
+            3.4,
+            3.36
+          ]
         }
       }
     ]

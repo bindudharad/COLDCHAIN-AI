@@ -175,6 +175,15 @@ def main():
         final_temp_c, hist_c = simulate_interval(current_temp, ambient_temp, intensity_c, duty_c)
         viols_c = sum(1 for t in hist_c if t > hi_limit or t < lo_limit)
         feasible_count = sum(1 for p in pareto_c if p['feasible'])
+        is_emergency = bool(rec_c.get('is_emergency_fallback', False))
+        
+        # Calculate time to recovery (minutes until temperature <= 5.0 °C)
+        recovery_time_c = None
+        for m_idx, t_val in enumerate(hist_c):
+            if t_val <= hi_limit:
+                recovery_time_c = m_idx
+                break
+
         results_c.append({
             'energy': energy_c,
             'violations': viols_c,
@@ -183,7 +192,10 @@ def main():
             'duty': duty_c,
             'intensity': intensity_c,
             'num_pareto': len(pareto_c),
-            'feasible_pareto': feasible_count
+            'feasible_pareto': feasible_count,
+            'is_emergency': is_emergency,
+            'recovery_time_min': recovery_time_c,
+            'trajectory': [round(t, 2) for t in hist_c]
         })
 
     # Metrics computation
@@ -202,6 +214,9 @@ def main():
     max_t_a = max(r['max_temp'] for r in results_a)
     max_t_b = max(r['max_temp'] for r in results_b)
     max_t_c = max(r['max_temp'] for r in results_c)
+    
+    emergency_overrides_c = sum(1 for r in results_c if r['is_emergency'])
+    ordinary_feasible_c = num_scenarios - emergency_overrides_c
     
     avg_duty_a = np.mean([r['duty'] for r in results_a]) * 100
     avg_duty_b = np.mean([r['duty'] for r in results_b]) * 100
@@ -308,9 +323,25 @@ The reported anomaly (**~19.6% energy reduction accompanied by +182.6% temperatu
         'random_seed': 42,
         'profile': 'Food (0.0 to 5.0 °C)',
         'plant_parameters': {'k_inf': 0.018, 'k_cool': 0.32, 'door_delta': 0.16},
+        'feasibility_accounting': {
+            'total_scenarios': num_scenarios,
+            'ordinary_feasible_optimizations': ordinary_feasible_c,
+            'emergency_fallback_overrides': emergency_overrides_c,
+            'ordinary_feasibility_rate_pct': round((ordinary_feasible_c / num_scenarios) * 100, 1),
+            'note': 'Emergency overrides engage when chamber is already in severe breach and cannot reach Food envelope within 15 min.'
+        },
         'method_a': {'mean_energy_kwh': mean_e_a, 'total_violations_min': total_viol_a, 'max_temp_c': max_t_a, 'avg_duty_pct': avg_duty_a},
         'method_b_legacy': {'mean_energy_kwh': mean_e_b, 'total_violations_min': total_viol_b, 'max_temp_c': max_t_b, 'avg_duty_pct': avg_duty_b, 'energy_change_pct': b_vs_a_energy, 'violation_change_pct': b_vs_a_viols},
-        'method_c_audited': {'mean_energy_kwh': mean_e_c, 'total_violations_min': total_viol_c, 'max_temp_c': max_t_c, 'avg_duty_pct': avg_duty_c, 'energy_change_pct': c_vs_a_energy, 'violation_change_pct': c_vs_a_viols},
+        'method_c_audited': {
+            'mean_energy_kwh': mean_e_c,
+            'total_violations_min': total_viol_c,
+            'max_temp_c': max_t_c,
+            'avg_duty_pct': avg_duty_c,
+            'energy_change_pct': c_vs_a_energy,
+            'violation_change_pct': c_vs_a_viols,
+            'emergency_overrides_count': emergency_overrides_c,
+            'ordinary_feasible_count': ordinary_feasible_c
+        },
         'risk_detection': {'precision': precision, 'recall': recall, 'f1': f1, 'forecast_mae': mean_mae},
         'runtime_ms': {'legacy': float(np.mean(runtimes_legacy)), 'audited': float(np.mean(runtimes_audited))},
         'per_scenario_results': {
@@ -326,7 +357,8 @@ The reported anomaly (**~19.6% energy reduction accompanied by +182.6% temperatu
                         'max_temp_c': round(results_a[i]['max_temp'], 3),
                         'min_temp_c': round(results_a[i]['min_temp'], 3),
                         'duty': results_a[i]['duty'],
-                        'intensity': results_a[i]['intensity']
+                        'intensity': results_a[i]['intensity'],
+                        'trajectory': results_a[i]['trajectory'] if 'trajectory' in results_a[i] else [round(t, 2) for t in simulate_interval(float(X_all[step_indices[i]][-1, 0]), float(X_all[step_indices[i]][-1, 2]), results_a[i]['intensity'], results_a[i]['duty'])[1]]
                     },
                     'method_b': {
                         'energy_kwh': round(results_b[i]['energy'], 4),
@@ -335,7 +367,8 @@ The reported anomaly (**~19.6% energy reduction accompanied by +182.6% temperatu
                         'min_temp_c': round(results_b[i]['min_temp'], 3),
                         'duty': results_b[i]['duty'],
                         'intensity': results_b[i]['intensity'],
-                        'num_pareto': results_b[i]['num_pareto']
+                        'num_pareto': results_b[i]['num_pareto'],
+                        'trajectory': results_b[i]['trajectory'] if 'trajectory' in results_b[i] else [round(t, 2) for t in simulate_interval(float(X_all[step_indices[i]][-1, 0]), float(X_all[step_indices[i]][-1, 2]), results_b[i]['intensity'], results_b[i]['duty'])[1]]
                     },
                     'method_c': {
                         'energy_kwh': round(results_c[i]['energy'], 4),
@@ -345,7 +378,10 @@ The reported anomaly (**~19.6% energy reduction accompanied by +182.6% temperatu
                         'duty': results_c[i]['duty'],
                         'intensity': results_c[i]['intensity'],
                         'num_pareto': results_c[i]['num_pareto'],
-                        'feasible_pareto': results_c[i]['feasible_pareto']
+                        'feasible_pareto': results_c[i]['feasible_pareto'],
+                        'is_emergency_fallback': results_c[i]['is_emergency'],
+                        'recovery_time_min': results_c[i]['recovery_time_min'],
+                        'trajectory': results_c[i]['trajectory']
                     }
                 }
                 for i in range(num_scenarios)

@@ -118,11 +118,14 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
         F = np.atleast_2d(r.F)
         G = np.atleast_2d(r.G) if (hasattr(r, 'G') and r.G is not None) else np.zeros((len(X), 2))
         
+    is_fallback = bool(r.X is None or len(r.X) == 0)
+    
     rows = []
     for x_val, f_val, g_val in zip(X, F, G):
         cooling = 3.2 * x_val[0] * x_val[1]
         t_exp = round(float(current + ambient_gain - cooling + x_val[2]), 2)
-        is_feasible = bool(g_val[0] <= 1e-4 and g_val[1] <= 1e-4)
+        # An emergency fallback action where constraints are violated is NOT feasible
+        is_feasible = bool(not is_fallback and g_val[0] <= 1e-4 and g_val[1] <= 1e-4)
         rows.append({
             'cooling_intensity': round(float(x_val[0]), 3),
             'compressor_duty_cycle': round(float(x_val[1]), 3),
@@ -130,7 +133,8 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
             'safety_risk': round(float(f_val[0]), 3),
             'estimated_energy_kwh': round(float(f_val[1]), 4),
             'expected_temperature': t_exp,
-            'feasible': is_feasible
+            'feasible': is_feasible,
+            'is_emergency_fallback': is_fallback
         })
 
     # Filter feasible solutions for recommendation
@@ -154,9 +158,17 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
         )
     )
     rec_copy = dict(rec)
-    rec_copy['explanation'] = (
-        f"Selected from constrained NSGA-II Pareto frontier. "
-        f"Maintains expected temperature {rec_copy['expected_temperature']} °C "
-        f"within {lo:.1f} to {hi:.1f} °C safe profile with {rec_copy['estimated_energy_kwh']:.3f} kWh estimated energy."
-    )
+    if is_fallback:
+        rec_copy['explanation'] = (
+            f"Emergency Fallback Override: No feasible solution could bring chamber "
+            f"into the safe {lo:.1f} to {hi:.1f} °C range within 15 min. Maximum cooling "
+            f"(intensity {rec_copy['cooling_intensity']}, duty {rec_copy['compressor_duty_cycle']}) "
+            f"commanded. Expected temperature: {rec_copy['expected_temperature']} °C."
+        )
+    else:
+        rec_copy['explanation'] = (
+            f"Selected from constrained NSGA-II Pareto frontier. "
+            f"Maintains expected temperature {rec_copy['expected_temperature']} °C "
+            f"within {lo:.1f} to {hi:.1f} °C safe profile with {rec_copy['estimated_energy_kwh']:.3f} kWh estimated energy."
+        )
     return rows, rec_copy

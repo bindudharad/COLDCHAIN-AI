@@ -5,7 +5,7 @@
   "data_provenance": "DEMONSTRATION / SIMULATION DATA",
   "energy_notice": "ENERGY VALUES ARE ESTIMATED/SIMULATED",
   "sensor": "TEST-01",
-  "timestamp": "2026-10-15T15:31:05.021960+00:00",
+  "timestamp": "2026-10-15T15:49:12.475033+00:00",
   "current_temperature": 3.4942607593108406,
   "forecast": [
     4.14397668838501,
@@ -38,7 +38,8 @@
       "safety_risk": 0.653,
       "estimated_energy_kwh": 0.8276,
       "expected_temperature": 2.78,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.997,
@@ -47,7 +48,8 @@
       "safety_risk": 16.736,
       "estimated_energy_kwh": 0.3079,
       "expected_temperature": 4.78,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -56,7 +58,8 @@
       "safety_risk": 3.123,
       "estimated_energy_kwh": 0.7477,
       "expected_temperature": 3.29,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.982,
@@ -65,7 +68,8 @@
       "safety_risk": 4.15,
       "estimated_energy_kwh": 0.7192,
       "expected_temperature": 3.33,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -74,7 +78,8 @@
       "safety_risk": 7.258,
       "estimated_energy_kwh": 0.6141,
       "expected_temperature": 3.99,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.997,
@@ -83,7 +88,8 @@
       "safety_risk": 14.058,
       "estimated_energy_kwh": 0.3946,
       "expected_temperature": 4.52,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -92,7 +98,8 @@
       "safety_risk": 9.261,
       "estimated_energy_kwh": 0.5493,
       "expected_temperature": 3.88,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -101,7 +108,8 @@
       "safety_risk": 11.903,
       "estimated_energy_kwh": 0.4639,
       "expected_temperature": 4.61,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.997,
@@ -110,7 +118,8 @@
       "safety_risk": 12.607,
       "estimated_energy_kwh": 0.4416,
       "expected_temperature": 4.69,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -119,7 +128,8 @@
       "safety_risk": 6.201,
       "estimated_energy_kwh": 0.6483,
       "expected_temperature": 3.55,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.999,
@@ -128,7 +138,8 @@
       "safety_risk": 6.845,
       "estimated_energy_kwh": 0.6275,
       "expected_temperature": 4.3,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.938,
@@ -137,7 +148,8 @@
       "safety_risk": 11.211,
       "estimated_energy_kwh": 0.4975,
       "expected_temperature": 4.21,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -146,7 +158,8 @@
       "safety_risk": 10.076,
       "estimated_energy_kwh": 0.5229,
       "expected_temperature": 4.39,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.997,
@@ -155,7 +168,8 @@
       "safety_risk": 9.537,
       "estimated_energy_kwh": 0.541,
       "expected_temperature": 4.31,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.985,
@@ -164,7 +178,8 @@
       "safety_risk": 2.675,
       "estimated_energy_kwh": 0.7664,
       "expected_temperature": 3.72,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -173,7 +188,8 @@
       "safety_risk": 7.687,
       "estimated_energy_kwh": 0.6002,
       "expected_temperature": 4.03,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -182,7 +198,8 @@
       "safety_risk": 0.872,
       "estimated_energy_kwh": 0.8206,
       "expected_temperature": 2.85,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.999,
@@ -191,7 +208,8 @@
       "safety_risk": 4.352,
       "estimated_energy_kwh": 0.7083,
       "expected_temperature": 3.9,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.996,
@@ -200,7 +218,8 @@
       "safety_risk": 2.404,
       "estimated_energy_kwh": 0.7721,
       "expected_temperature": 3.69,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.995,
@@ -209,7 +228,8 @@
       "safety_risk": 13.546,
       "estimated_energy_kwh": 0.4115,
       "expected_temperature": 4.4,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.992,
@@ -218,7 +238,8 @@
       "safety_risk": 1.264,
       "estimated_energy_kwh": 0.8102,
       "expected_temperature": 2.95,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.962,
@@ -227,7 +248,8 @@
       "safety_risk": 8.802,
       "estimated_energy_kwh": 0.5719,
       "expected_temperature": 3.79,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.997,
@@ -236,7 +258,8 @@
       "safety_risk": 14.83,
       "estimated_energy_kwh": 0.3696,
       "expected_temperature": 4.61,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.993,
@@ -245,7 +268,8 @@
       "safety_risk": 11.499,
       "estimated_energy_kwh": 0.4781,
       "expected_temperature": 4.25,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.962,
@@ -254,7 +278,8 @@
       "safety_risk": 15.808,
       "estimated_energy_kwh": 0.3423,
       "expected_temperature": 4.66,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.962,
@@ -263,7 +288,8 @@
       "safety_risk": 13.082,
       "estimated_energy_kwh": 0.4316,
       "expected_temperature": 4.33,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.997,
@@ -272,7 +298,8 @@
       "safety_risk": 1.598,
       "estimated_energy_kwh": 0.7978,
       "expected_temperature": 2.89,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.997,
@@ -281,7 +308,8 @@
       "safety_risk": 14.375,
       "estimated_energy_kwh": 0.3843,
       "expected_temperature": 4.7,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.996,
@@ -290,7 +318,8 @@
       "safety_risk": 14.481,
       "estimated_energy_kwh": 0.381,
       "expected_temperature": 4.66,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -299,7 +328,8 @@
       "safety_risk": 4.63,
       "estimated_energy_kwh": 0.6991,
       "expected_temperature": 3.69,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -308,7 +338,8 @@
       "safety_risk": 16.465,
       "estimated_energy_kwh": 0.3164,
       "expected_temperature": 4.77,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.959,
@@ -317,7 +348,8 @@
       "safety_risk": 10.59,
       "estimated_energy_kwh": 0.5138,
       "expected_temperature": 4.13,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -326,7 +358,8 @@
       "safety_risk": 1.982,
       "estimated_energy_kwh": 0.7847,
       "expected_temperature": 2.98,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.999,
@@ -335,7 +368,8 @@
       "safety_risk": 5.82,
       "estimated_energy_kwh": 0.6608,
       "expected_temperature": 3.42,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.997,
@@ -344,7 +378,8 @@
       "safety_risk": 16.317,
       "estimated_energy_kwh": 0.3215,
       "expected_temperature": 4.73,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.958,
@@ -353,7 +388,8 @@
       "safety_risk": 8.432,
       "estimated_energy_kwh": 0.5849,
       "expected_temperature": 4.18,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.961,
@@ -362,7 +398,8 @@
       "safety_risk": 10.344,
       "estimated_energy_kwh": 0.5216,
       "expected_temperature": 4.12,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.943,
@@ -371,7 +408,8 @@
       "safety_risk": 10.934,
       "estimated_energy_kwh": 0.5057,
       "expected_temperature": 4.09,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -380,7 +418,8 @@
       "safety_risk": 1.97,
       "estimated_energy_kwh": 0.7851,
       "expected_temperature": 2.99,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.992,
@@ -389,7 +428,8 @@
       "safety_risk": 12.661,
       "estimated_energy_kwh": 0.4407,
       "expected_temperature": 4.69,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -398,7 +438,8 @@
       "safety_risk": 8.524,
       "estimated_energy_kwh": 0.5731,
       "expected_temperature": 3.81,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -407,7 +448,8 @@
       "safety_risk": 11.849,
       "estimated_energy_kwh": 0.4657,
       "expected_temperature": 4.24,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.995,
@@ -416,7 +458,8 @@
       "safety_risk": 13.257,
       "estimated_energy_kwh": 0.4208,
       "expected_temperature": 4.49,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.995,
@@ -425,7 +468,8 @@
       "safety_risk": 11.538,
       "estimated_energy_kwh": 0.4765,
       "expected_temperature": 4.27,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -434,7 +478,8 @@
       "safety_risk": 14.791,
       "estimated_energy_kwh": 0.3705,
       "expected_temperature": 4.75,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 1.0,
@@ -443,7 +488,8 @@
       "safety_risk": 7.84,
       "estimated_energy_kwh": 0.5953,
       "expected_temperature": 3.72,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.985,
@@ -452,7 +498,8 @@
       "safety_risk": 6.591,
       "estimated_energy_kwh": 0.639,
       "expected_temperature": 3.56,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     },
     {
       "cooling_intensity": 0.997,
@@ -461,7 +508,8 @@
       "safety_risk": 5.285,
       "estimated_energy_kwh": 0.6785,
       "expected_temperature": 3.81,
-      "feasible": true
+      "feasible": true,
+      "is_emergency_fallback": false
     }
   ],
   "recommendation": {
@@ -472,6 +520,7 @@
     "estimated_energy_kwh": 0.8276,
     "expected_temperature": 2.78,
     "feasible": true,
+    "is_emergency_fallback": false,
     "explanation": "Selected from pymoo NSGA-II constrained optimization using future risk from MAD-TCN."
   },
   "metrics": {
