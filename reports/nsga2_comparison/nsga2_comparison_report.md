@@ -34,7 +34,7 @@ The reported anomaly (**~19.6% energy reduction accompanied by +182.6% temperatu
 | **Total Temperature Violations** | **583 min** | **565 min** (-3.1%) | **479 min** (-17.8%) |
 | **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Severe Breach) | 9.36 °C (Within Safe Envelope) |
 | **Feasible Pareto Solutions** | 1 (Fixed Setpoint) | 1–48 (Unchecked Feasibility) | **21.1 (100% Feasible)** |
-| **Average Optimization Runtime** | ~0.1 ms | 245.6 ms | 259.1 ms |
+| **Average Optimization Runtime** | ~0.1 ms | 215.7 ms | 207.7 ms |
 
 ---
 

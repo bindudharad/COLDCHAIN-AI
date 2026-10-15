@@ -322,30 +322,36 @@ def audit_single_csv(file_path: Path, project_root: Path) -> Dict[str, Any]:
     file_size_formatted = format_bytes(file_size_bytes)
     rel_path = file_path.relative_to(project_root) if file_path.is_relative_to(project_root) else file_path
 
-    # Read CSV
+    # Read CSV with fallback delimiter handling
     try:
         df = pd.read_csv(file_path)
-    except Exception as exc:
-        return {
-            "file_name": file_path.name,
-            "file_path": str(file_path),
-            "relative_path": str(rel_path),
-            "file_size_bytes": file_size_bytes,
-            "file_size_formatted": file_size_formatted,
-            "read_error": str(exc),
-            "row_count": 0,
-            "column_count": 0,
-            "columns": [],
-            "missing_values": {"total_missing": 0, "columns": {}},
-            "numeric_statistics": {},
-            "timestamp_info": None,
-            "sensor_id_info": None,
-            "domain_classification": {
-                "domain": "UNKNOWN",
-                "provenance": "UNKNOWN",
-                "rationale": f"Read failed: {exc}",
-            },
-        }
+    except Exception:
+        try:
+            df = pd.read_csv(file_path, sep=";", on_bad_lines="skip")
+        except Exception:
+            try:
+                df = pd.read_csv(file_path, sep=None, engine="python", on_bad_lines="skip")
+            except Exception as exc:
+                return {
+                    "file_name": file_path.name,
+                    "file_path": str(file_path),
+                    "relative_path": str(rel_path),
+                    "file_size_bytes": file_size_bytes,
+                    "file_size_formatted": file_size_formatted,
+                    "read_error": str(exc),
+                    "row_count": 0,
+                    "column_count": 0,
+                    "columns": [],
+                    "missing_values": {"total_missing": 0, "columns": {}},
+                    "numeric_statistics": {},
+                    "timestamp_info": None,
+                    "sensor_id_info": None,
+                    "domain_classification": {
+                        "domain": "UNKNOWN",
+                        "provenance": "UNKNOWN",
+                        "rationale": f"Read failed: {exc}",
+                    },
+                }
 
     row_count = int(len(df))
     col_count = int(len(df.columns))

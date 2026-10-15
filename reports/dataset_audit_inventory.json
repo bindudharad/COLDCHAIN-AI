@@ -1,6 +1,6 @@
 {
   "audit_meta": {
-    "generated_at": "2026-10-15T21:00:04.326244",
+    "generated_at": "2026-10-15T22:14:35.055659",
     "execution_user": "Bindudhara D",
     "project_root": "C:\\Projects\\Cold-Chain-Ai",
     "script": "scripts/audit_datasets.py",
@@ -16,15 +16,15 @@
       "Datasets": {
         "status": "FOUND",
         "path": "C:\\Projects\\Cold-Chain-Ai\\Datasets",
-        "csv_count": 0
+        "csv_count": 4
       }
     },
-    "total_csv_datasets_found": 2,
-    "total_records_audited": 12001,
-    "total_size_bytes": 1578820,
-    "total_size_formatted": "1.51 MB",
+    "total_csv_datasets_found": 6,
+    "total_records_audited": 12570,
+    "total_size_bytes": 1665427,
+    "total_size_formatted": "1.59 MB",
     "domain_distribution": {
-      "COLD_CHAIN": 2,
+      "COLD_CHAIN": 6,
       "IOT_TEMPERATURE": 0,
       "ENERGY": 0,
       "PREDICTIVE_MAINTENANCE": 0,
@@ -335,6 +335,375 @@
         "domain": "COLD_CHAIN",
         "provenance": "SIMULATION",
         "rationale": "Refrigerated cold-chain food safety storage logistics (0.0 to 5.0 deg C)"
+      }
+    },
+    {
+      "file_name": "Cold_Storage_Mar2018.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\cold_storage_case_study\\Cold_Storage_Mar2018.csv",
+      "relative_path": "Datasets\\cold_storage_case_study\\Cold_Storage_Mar2018.csv",
+      "file_size_bytes": 679,
+      "file_size_formatted": "679 B",
+      "row_count": 35,
+      "column_count": 4,
+      "columns": [
+        "Season",
+        "Month",
+        "Date",
+        " Temperature "
+      ],
+      "data_types": {
+        "Season": "object",
+        "Month": "object",
+        "Date": "int64",
+        " Temperature ": "float64"
+      },
+      "data_type_counts": {
+        "object": 2,
+        "int64": 1,
+        "float64": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Season": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Month": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          " Temperature ": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {
+        "Date": {
+          "min": 1.0,
+          "max": 28.0,
+          "mean": 14.4,
+          "std": 7.3892,
+          "count": 35
+        },
+        " Temperature ": {
+          "min": 3.8,
+          "max": 4.6,
+          "mean": 3.9743,
+          "std": 0.1597,
+          "count": 35
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date",
+        "min_timestamp": "1970-01-01T00:00:00.000000001",
+        "max_timestamp": "1970-01-01T00:00:00.000000028",
+        "time_span": "0 days 00:00:00.000000027",
+        "valid_rows": 35,
+        "invalid_rows": 0
+      },
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "REAL_SENSOR",
+        "rationale": "Default cold-chain sensor stream"
+      }
+    },
+    {
+      "file_name": "Cold_Storage_Temp_Data.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\cold_storage_case_study\\Cold_Storage_Temp_Data.csv",
+      "relative_path": "Datasets\\cold_storage_case_study\\Cold_Storage_Temp_Data.csv",
+      "file_size_bytes": 6689,
+      "file_size_formatted": "6.53 KB",
+      "row_count": 365,
+      "column_count": 4,
+      "columns": [
+        "Season",
+        "Month",
+        "Date",
+        "Temperature "
+      ],
+      "data_types": {
+        "Season": "object",
+        "Month": "object",
+        "Date": "int64",
+        "Temperature ": "float64"
+      },
+      "data_type_counts": {
+        "object": 2,
+        "int64": 1,
+        "float64": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Season": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Month": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Date": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "Temperature ": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {
+        "Date": {
+          "min": 1.0,
+          "max": 31.0,
+          "mean": 15.7205,
+          "std": 8.8083,
+          "count": 365
+        },
+        "Temperature ": {
+          "min": 1.7,
+          "max": 5.0,
+          "mean": 2.9627,
+          "std": 0.5086,
+          "count": 365
+        }
+      },
+      "timestamp_info": {
+        "column_name": "Date",
+        "min_timestamp": "1970-01-01T00:00:00.000000001",
+        "max_timestamp": "1970-01-01T00:00:00.000000031",
+        "time_span": "0 days 00:00:00.000000030",
+        "valid_rows": 365,
+        "invalid_rows": 0
+      },
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "REAL_SENSOR",
+        "rationale": "Default cold-chain sensor stream"
+      }
+    },
+    {
+      "file_name": "experiment_actions.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\experiment_actions.csv",
+      "relative_path": "Datasets\\zenodo_hohenheim\\experiment_actions.csv",
+      "file_size_bytes": 5360,
+      "file_size_formatted": "5.23 KB",
+      "row_count": 127,
+      "column_count": 1,
+      "columns": [
+        "Date;Action;Start Time;End Time"
+      ],
+      "data_types": {
+        "Date;Action;Start Time;End Time": "object"
+      },
+      "data_type_counts": {
+        "object": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "Date;Action;Start Time;End Time": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": null,
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "REAL_SENSOR",
+        "rationale": "Default cold-chain sensor stream"
+      }
+    },
+    {
+      "file_name": "overview.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\overview.csv",
+      "relative_path": "Datasets\\zenodo_hohenheim\\overview.csv",
+      "file_size_bytes": 73879,
+      "file_size_formatted": "72.15 KB",
+      "row_count": 42,
+      "column_count": 10,
+      "columns": [
+        "Sensor",
+        "SENSOR01",
+        "SENSOR02",
+        "SENSOR03",
+        "SENSOR04",
+        "SENSOR05",
+        "SENSOR06",
+        "SENSOR07",
+        "SENSOR08",
+        "SENSOR09"
+      ],
+      "data_types": {
+        "Sensor": "object",
+        "SENSOR01": "object",
+        "SENSOR02": "object",
+        "SENSOR03": "object",
+        "SENSOR04": "object",
+        "SENSOR05": "object",
+        "SENSOR06": "object",
+        "SENSOR07": "object",
+        "SENSOR08": "object",
+        "SENSOR09": "object"
+      },
+      "data_type_counts": {
+        "object": 10
+      },
+      "missing_values": {
+        "total_missing": 8,
+        "columns": {
+          "Sensor": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "SENSOR01": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "SENSOR02": {
+            "count": 2,
+            "percentage": 4.7619
+          },
+          "SENSOR03": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "SENSOR04": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "SENSOR05": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "SENSOR06": {
+            "count": 2,
+            "percentage": 4.7619
+          },
+          "SENSOR07": {
+            "count": 2,
+            "percentage": 4.7619
+          },
+          "SENSOR08": {
+            "count": 2,
+            "percentage": 4.7619
+          },
+          "SENSOR09": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {},
+      "timestamp_info": null,
+      "sensor_id_info": {
+        "column_name": "Sensor",
+        "unique_count": 42,
+        "unique_values": [
+          "End",
+          "Humidity max",
+          "Humidity mean",
+          "Humidity median",
+          "Humidity min",
+          "Humidity q25",
+          "Humidity q75",
+          "Humidity std",
+          "Length",
+          "MP_Humidity max",
+          "MP_Humidity mean",
+          "MP_Humidity median",
+          "MP_Humidity min",
+          "MP_Humidity q25",
+          "MP_Humidity q75",
+          "MP_Humidity std",
+          "MP_Temperature max",
+          "MP_Temperature mean",
+          "MP_Temperature median",
+          "MP_Temperature min",
+          "MP_Temperature q25",
+          "MP_Temperature q75",
+          "MP_Temperature std",
+          "Missing End",
+          "Missing Start",
+          "Peak Prominences Humidity",
+          "Peak Prominences Temperature",
+          "Peaks_Humidity",
+          "Peaks_Humidity End",
+          "Peaks_Humidity Start",
+          "Peaks_Temperature",
+          "Peaks_Temperature End",
+          "Peaks_Temperature Start",
+          "Prominence",
+          "Start",
+          "Temperature max",
+          "Temperature mean",
+          "Temperature median",
+          "Temperature min",
+          "Temperature q25",
+          "Temperature q75",
+          "Temperature std"
+        ],
+        "counts_per_sensor": {
+          "Start": 1,
+          "End": 1,
+          "Missing Start": 1,
+          "Missing End": 1,
+          "Length": 1,
+          "Temperature min": 1,
+          "Temperature max": 1,
+          "Temperature mean": 1,
+          "Temperature std": 1,
+          "Temperature q25": 1,
+          "Temperature median": 1,
+          "Temperature q75": 1,
+          "Humidity min": 1,
+          "Humidity max": 1,
+          "Humidity mean": 1,
+          "Humidity std": 1,
+          "Humidity q25": 1,
+          "Humidity median": 1,
+          "Humidity q75": 1,
+          "Prominence": 1,
+          "Peaks_Temperature": 1,
+          "Peaks_Humidity": 1,
+          "Peaks_Temperature Start": 1,
+          "Peaks_Temperature End": 1,
+          "Peaks_Humidity Start": 1,
+          "Peaks_Humidity End": 1,
+          "Peak Prominences Temperature": 1,
+          "Peak Prominences Humidity": 1,
+          "MP_Temperature min": 1,
+          "MP_Temperature max": 1,
+          "MP_Temperature mean": 1,
+          "MP_Temperature std": 1,
+          "MP_Temperature q25": 1,
+          "MP_Temperature median": 1,
+          "MP_Temperature q75": 1,
+          "MP_Humidity min": 1,
+          "MP_Humidity max": 1,
+          "MP_Humidity mean": 1,
+          "MP_Humidity std": 1,
+          "MP_Humidity q25": 1,
+          "MP_Humidity median": 1,
+          "MP_Humidity q75": 1
+        }
+      },
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "REAL_SENSOR",
+        "rationale": "Default cold-chain sensor stream"
       }
     }
   ]
