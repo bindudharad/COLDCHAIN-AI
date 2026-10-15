@@ -57,7 +57,7 @@
    $$P_{sim} = 0.25 + 0.75 \cdot \text{compressor\_state} + 0.12 \cdot \text{door\_open}$$
    The target fluctuates instantaneously between $0.25\text{ kW}$ (idle) and $1.00\text{ kW}$ (compressor active).
 2. **Continuous Predictor Input:**  
-   The ML models and optimization formulations use **continuous 15-minute rolling duty cycle averages** ($d \in [0.2, 1.0]$) to provide continuous gradients for NSGA-II optimization. Predicting an instantaneous binary switch from a rolling average inherently limits the fraction of instantaneous variance explained ($R^2 = 0.1362$), although the absolute prediction error is tiny ($\text{MAE} = 0.0142\text{ kW}$).
+   The ML models and optimization formulations use **continuous 15-minute rolling duty cycle averages** ($d \in [0.2, 1.0]$) to provide continuous gradients for NSGA-II optimization. Predicting an instantaneous binary switch from a smoothed rolling average is the most likely explanation for the low fraction of instantaneous variance explained ($R^2 = 0.1362$). This is a plausible engineering hypothesis — not a proven mathematical bound — but the absolute prediction error remains small ($\text{MAE} = 0.0142\text{ kW}$, i.e. $\approx 1.4\%$ of the 1.0 kW compressor rating).
 3. **Analytical Formula Role:**  
    The analytical equation:
    $$E = \left(0.25 + 0.035 \cdot \max(T_{amb} - T_{cur}, 0.0)\right) \cdot (0.35 + 0.65 \cdot u) \cdot d$$

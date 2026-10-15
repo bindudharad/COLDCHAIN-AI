@@ -3,7 +3,7 @@
 **Project:** COLDCHAIN-AI: Intelligent Multi-Objective Cold-Chain Optimization & Predictive Quality Management  
 **Working Directory:** `C:\Projects\Cold-Chain-Ai`  
 **Git Branch:** `completion-dev`  
-**Authoritative Commit:** `3322dbf`  
+**Authoritative Commit:** `4b59795` (Validated Completion State)  
 **Date:** 2026-10-15  
 **Document Status:** COMPLETE, REPRODUCIBLE, & SCIENTIFICALLY RECONCILED  
 
@@ -99,6 +99,8 @@ When evaluated on critical boundary crossing events ($T_{current} \le 5.0\text{ 
 
 **Conclusion:** Naive persistence is the superior mathematical baseline for near-instantaneous tracking ($h \le 12$ min). MAD-TCN is the superior predictive engine for horizon-scale tracking ($h=15$ min) and proactive safety alert generation.
 
+> **Data Provenance:** All MAD-TCN training, validation and test results above use `SIMULATION` data from `data/raw/simulated_cold_chain.csv`. The daily real cold-storage benchmarks (`Datasets/cold_storage_case_study/`) are evaluated separately using daily statistical baselines and are never cross-validated with the neural model. Breach detection ($F_1 = 0.775$) is evaluated exclusively on simulation data where breach dynamics are present; the 365-row daily dataset has maximum temperature exactly $5.0\text{ }^\circ\text{C}$ and may have zero breach events.
+
 ---
 
 ## SECTION D — Constrained Optimization Scientific Findings
@@ -147,7 +149,7 @@ Evaluated via [`scripts/train_energy_model.py`](file:///C:/Projects/Cold-Chain-A
 1. **Target Formulation:** Simulated electrical demand follows an instantaneous step function:
    $$P = 0.25 + 0.75 \cdot \text{compressor\_state} + 0.12 \cdot \text{door\_open}$$
    Values switch discontinuously between $0.25\text{ kW}$ and $1.00\text{ kW}$.
-2. **Predictor Formulation:** The ML regressor and NSGA-II solver accept continuous 15-minute rolling duty averages ($d \in [0.2, 1.0]$) to maintain smooth gradients for optimization. Predicting a discontinuous square wave from a smoothed average caps instantaneous $R^2$ at $0.1362$, though absolute error is low ($\text{MAE} = 0.0142\text{ kW}$).
+2. **Predictor Formulation:** The ML regressor and NSGA-II solver accept continuous 15-minute rolling duty averages ($d \in [0.2, 1.0]$) to maintain smooth gradients for optimization. Predicting a discontinuous square wave from a smoothed average is the most likely explanation for the low $R^2$ ($0.1362$). This is a plausible engineering hypothesis — not a proven bound — but the absolute error remains small ($\text{MAE} = 0.0142\text{ kW}$, i.e. $\approx 1.4\%$ of the compressor rating).
 3. **Surrogate Role:** The analytical formula in [`core.py`](file:///C:/Projects/Cold-Chain-Ai/core.py) is formulated as a convex surrogate for evolutionary search, providing smooth optimization trade-offs rather than fitting instantaneous discrete power switches.
 
 ---
@@ -204,9 +206,10 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
 - **Active Workspace:** `C:\Projects\Cold-Chain-Ai`
 - **Active Git Branch:** `completion-dev`
 - **Latest Local Commits:**
-  - `3322dbf`: *Complete final critical scientific correction audit: clarify NSGA-II feasibility accounting (23 feasible / 27 emergency fallback), document horizon-by-horizon persistence vs MAD-TCN trade-off, and finalize authoritative reports*
-  - `b3299f2`: *Reconcile final scientific reports: unify MAD-TCN test split (590 samples), fix NSGA-II emergency cooling override (max temp 9.36 C), clarify energy units (kW vs kWh), export per-scenario trajectories, and update changelog*
-  - `10e0e89`: *Execute final scientific validation: NSGA-II comparison reproduction, MAD-TCN retraining, energy model analysis, expanded test suite (39 tests), and browser verification*
+  - `74c682d`: *Fix IoT provenance enforcement, update NSGA-II validation and dataset inventory*
+  - `1837ef9`: *Update coldchain_report timestamp after final test verification*
+  - `882fabf`: *Integrate real cold-storage datasets, update audit delimiter handling, and refresh experimental reports*
+  - `adce0e8`: *Add final project gap analysis and requirements traceability matrix*
 - **Remote Policy:** Remote push to `origin` (`https://github.com/Swathi185-T/Cold-Chain-Ai.git`) remains unperformed, strictly honoring local-only development safety instructions.
 
 ---

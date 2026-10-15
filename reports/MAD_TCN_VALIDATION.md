@@ -12,6 +12,7 @@
 **Production Baseline Checkpoint:** [`models/mad_tcn_best.pt`](file:///C:/Projects/Cold-Chain-Ai/models/mad_tcn_best.pt)  
 **Retrained Checkpoint:** [`models/mad_tcn_retrained.pt`](file:///C:/Projects/Cold-Chain-Ai/models/mad_tcn_retrained.pt)  
 **Document Status:** COMPLETE & VERIFIED  
+**Data Provenance:** All MAD-TCN training, validation and test results in this report use `SIMULATION` data from `data/raw/simulated_cold_chain.csv`. The daily real cold-storage benchmarks (`Datasets/cold_storage_case_study/`) are evaluated separately using daily statistical baselines — they are **never** cross-validated with, or substituted for, the 1-minute neural model evaluation.
 
 ---
 
@@ -79,3 +80,7 @@ $$\text{Event} = \begin{cases} 1 & \text{if } T_t \le 5.0\text{ }^\circ\text{C} 
 - **Naive Persistence Breach F1-Score:** **0.000**
 
 **Conclusion:** Naive persistence is the superior numerical forecasting baseline for short-term thermal tracking ($h \le 12$ min). MAD-TCN is the superior model for proactive thermal risk anticipation and early excursion warnings.
+
+### 4.3 Provenance & Generalizability Disclosure
+- All breach detection metrics above are evaluated on **simulation data** (`data/raw/simulated_cold_chain.csv`, sensor `CC-01`). Transfer to physical cold rooms requires revalidation on site-specific real sensor telemetry.
+- The 365-row daily cold-storage dataset (`Cold_Storage_Temp_Data.csv`) has a maximum recorded temperature of exactly $5.0\text{ }^\circ\text{C}$. Breach events ($T > 5.0\text{ }^\circ\text{C}$) may have zero support in that dataset, making breach detection evaluation on it uninformative. This is why the neural breach detection evaluation is conducted exclusively on the simulation data where breach dynamics are present.
