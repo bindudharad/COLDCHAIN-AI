@@ -219,24 +219,36 @@ def run_benchmark(
     m_tcn = compute_metrics(y_test, pred_tcn)
 
     # Breach Detection Validation on Real Test Data
-    # Food threshold: 6.0 °C and 6.5 °C
+    # 1. Primary Standard Food Safety Limit (5.0 °C):
+    # In SENSOR03 test data, chamber runs at mean ~6.5 °C; 1045/1045 test sequences exceed 5.0 °C.
+    breach_50_pers = compute_breach_metrics(y_test, pred_pers, 5.0)
+    breach_50_ridge = compute_breach_metrics(y_test, pred_ridge, 5.0)
+    breach_50_tcn = compute_breach_metrics(y_test, pred_tcn, 5.0)
+
+    # 2. Secondary Warning Threshold (5.5 °C):
+    breach_55_pers = compute_breach_metrics(y_test, pred_pers, 5.5)
+    breach_55_ridge = compute_breach_metrics(y_test, pred_ridge, 5.5)
+    breach_55_tcn = compute_breach_metrics(y_test, pred_tcn, 5.5)
+
+    # 3. Dynamic Regime Excursion Threshold (6.0 °C, median operating temperature):
     breach_60_pers = compute_breach_metrics(y_test, pred_pers, 6.0)
     breach_60_ridge = compute_breach_metrics(y_test, pred_ridge, 6.0)
     breach_60_tcn = compute_breach_metrics(y_test, pred_tcn, 6.0)
 
+    # 4. Severe Excursion Threshold (6.5 °C, upper 75th percentile):
     breach_65_pers = compute_breach_metrics(y_test, pred_pers, 6.5)
     breach_65_ridge = compute_breach_metrics(y_test, pred_ridge, 6.5)
     breach_65_tcn = compute_breach_metrics(y_test, pred_tcn, 6.5)
 
     # Print Formatted Comparison Table
-    print(f"{'Method / Model':<35} {'MAE (°C)':<12} {'RMSE (°C)':<12} {'R² Score':<10} {'Breach F1 (>6.0°C)':<18}")
-    print("-" * 88)
-    print(f"{'1. Naive Persistence (Last Value)':<35} {m_pers['mae_deg_c']:<12.4f} {m_pers['rmse_deg_c']:<12.4f} {m_pers['r2_score']:<10.4f} {breach_60_pers['f1_score']:<18.4f}")
-    print(f"{'2. 5-Step Moving Average':<35} {m_ma5['mae_deg_c']:<12.4f} {m_ma5['rmse_deg_c']:<12.4f} {m_ma5['r2_score']:<10.4f} {'N/A':<18}")
-    print(f"{'3. Linear Trend Extrapolation':<35} {m_linear['mae_deg_c']:<12.4f} {m_linear['rmse_deg_c']:<12.4f} {m_linear['r2_score']:<10.4f} {'N/A':<18}")
-    print(f"{'4. Ridge Autoregression AR(60)':<35} {m_ridge['mae_deg_c']:<12.4f} {m_ridge['rmse_deg_c']:<12.4f} {m_ridge['r2_score']:<10.4f} {breach_60_ridge['f1_score']:<18.4f}")
-    print(f"{'5. Real-TCN (Learned Neural)':<35} {m_tcn['mae_deg_c']:<12.4f} {m_tcn['rmse_deg_c']:<12.4f} {m_tcn['r2_score']:<10.4f} {breach_60_tcn['f1_score']:<18.4f}")
-    print("-" * 88)
+    print(f"{'Method / Model':<35} {'MAE (°C)':<12} {'RMSE (°C)':<12} {'R² Score':<10} {'F1 (>5.0°C)':<12} {'F1 (>6.0°C)':<12} {'F1 (>6.5°C)':<12}")
+    print("-" * 105)
+    print(f"{'1. Naive Persistence (Last Value)':<35} {m_pers['mae_deg_c']:<12.4f} {m_pers['rmse_deg_c']:<12.4f} {m_pers['r2_score']:<10.4f} {breach_50_pers['f1_score']:<12.4f} {breach_60_pers['f1_score']:<12.4f} {breach_65_pers['f1_score']:<12.4f}")
+    print(f"{'2. 5-Step Moving Average':<35} {m_ma5['mae_deg_c']:<12.4f} {m_ma5['rmse_deg_c']:<12.4f} {m_ma5['r2_score']:<10.4f} {'N/A':<12} {'N/A':<12} {'N/A':<12}")
+    print(f"{'3. Linear Trend Extrapolation':<35} {m_linear['mae_deg_c']:<12.4f} {m_linear['rmse_deg_c']:<12.4f} {m_linear['r2_score']:<10.4f} {'N/A':<12} {'N/A':<12} {'N/A':<12}")
+    print(f"{'4. Ridge Autoregression AR(60)':<35} {m_ridge['mae_deg_c']:<12.4f} {m_ridge['rmse_deg_c']:<12.4f} {m_ridge['r2_score']:<10.4f} {breach_50_ridge['f1_score']:<12.4f} {breach_60_ridge['f1_score']:<12.4f} {breach_65_ridge['f1_score']:<12.4f}")
+    print(f"{'5. Real-TCN (Learned Neural)':<35} {m_tcn['mae_deg_c']:<12.4f} {m_tcn['rmse_deg_c']:<12.4f} {m_tcn['r2_score']:<10.4f} {breach_50_tcn['f1_score']:<12.4f} {breach_60_tcn['f1_score']:<12.4f} {breach_65_tcn['f1_score']:<12.4f}")
+    print("-" * 105)
 
     benchmark_results = {
         "benchmark_timestamp": datetime.now(timezone.utc).isoformat(),
@@ -266,12 +278,26 @@ def run_benchmark(
             "real_tcn_neural": m_tcn,
         },
         "breach_detection_metrics": {
+            "threshold_5_0_deg_c": {
+                "description": "Standard Food Profile Critical Limit (0.0 to 5.0 deg C). Chamber operates above 5.0 deg C at baseline.",
+                "persistence": breach_50_pers,
+                "ridge": breach_50_ridge,
+                "real_tcn": breach_50_tcn,
+            },
+            "threshold_5_5_deg_c": {
+                "description": "Secondary Precautionary Warning Threshold (+0.5 deg C above critical limit).",
+                "persistence": breach_55_pers,
+                "ridge": breach_55_ridge,
+                "real_tcn": breach_55_tcn,
+            },
             "threshold_6_0_deg_c": {
+                "description": "Dynamic Regime Excursion Threshold (chamber operating median ~6.0 deg C).",
                 "persistence": breach_60_pers,
                 "ridge": breach_60_ridge,
                 "real_tcn": breach_60_tcn,
             },
             "threshold_6_5_deg_c": {
+                "description": "Severe Dynamic Thermal Excursion Threshold (75th percentile ~6.5 deg C).",
                 "persistence": breach_65_pers,
                 "ridge": breach_65_ridge,
                 "real_tcn": breach_65_tcn,

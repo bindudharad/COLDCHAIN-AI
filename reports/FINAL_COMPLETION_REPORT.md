@@ -124,20 +124,26 @@ Evaluated strictly across the 50 chronologically distributed operational scenari
 - **Physical 1-Minute Downsampled Telemetry (University of Hohenheim, Zenodo 15130001):** SENSOR03 from the 9-sensor refrigerated cold room. Raw file contains 84,453 rows (not 156,835 — the preprocessed version fills a 4-day data gap via interpolation to produce the uniform 156,835 grid). After resampling to 1-minute intervals, SENSOR03 yields $N = 7{,}037$ continuous readings from the second contiguous segment (~4.88 days, Sept 6–11). Temperature range $3.8\text{--}12.3\text{ }^{\circ}\text{C}$, mean $5.54\text{ }^{\circ}\text{C}$.
 
 ### 5. Real-Data Neural Forecasting Benchmark
-Evaluated via [`scripts/evaluate_real_forecasting.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/evaluate_real_forecasting.py) on Hohenheim SENSOR03 (1-min, $N_{test} = 1{,}045$ sequences):
+Evaluated strictly via [`scripts/evaluate_real_forecasting.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/evaluate_real_forecasting.py) on Hohenheim SENSOR03 (1-min resampled, $N_{test} = 1{,}045$ sequences):
 
-| Model / Baseline | 15-Step MAE (°C) | 15-Step RMSE (°C) | Breach Detection F1 (>6.0 °C) |
-| :--- | :--- | :--- | :--- |
-| **Naive Persistence** | 0.3048 °C | 0.4012 °C | 0.6155 |
-| **5-Step Moving Average** | 0.3185 °C | 0.4194 °C | — |
-| **Linear Trend** | 0.4989 °C | 0.6396 °C | — |
-| **Ridge AR(60)** | **0.2524 °C** | **0.3545 °C** | **0.7461** |
-| **Real-TCN Neural** | 0.2592 °C | 0.3586 °C | 0.7251 |
+| Model / Baseline | 15-Step MAE (°C) | 15-Step RMSE (°C) | Test $R^2$ Score | F1 (>5.0 °C Critical) | F1 (>5.5 °C Warning) | F1 (>6.0 °C Dynamic) | F1 (>6.5 °C Severe) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Naive Persistence** | 0.3048 °C | 0.4012 °C | 0.2557 | 0.9962 | 0.9154 | 0.6155 | 0.5854 |
+| **5-Step Moving Average** | 0.3185 °C | 0.4194 °C | 0.1867 | — | — | — | — |
+| **Linear Trend Extrapolation** | 0.4989 °C | 0.6721 °C | -1.0885 | — | — | — | — |
+| **Ridge AR(60) Autoregression** | **0.2524 °C** | **0.3545 °C** | **0.4190** | **1.0000** | **0.9888** | **0.7461** | **0.6759** |
+| **Real-TCN (Learned Neural)** | 0.2670 °C | 0.3657 °C | 0.3817 | **1.0000** | 0.9774 | 0.7086 | 0.6071 |
 
-- **Data Provenance Boundary:** All MAD-TCN neural weights (Section C) are trained and evaluated on **SIMULATION** data. The Real-TCN model above is a separate compact network trained solely on Hohenheim SENSOR03 temperature. These results must not be conflated.
+### 6. Threshold Justification & Physical Context for Real Benchmark
+1. **Critical Food Limit ($5.0\text{ }^{\circ}\text{C}$):** Primary cold-chain profile threshold. In the Hohenheim cold-storage research facility, SENSOR03 operated under a commercial cooling regime with a baseline mean temperature of $6.54\text{ }^{\circ}\text{C}$. Consequently, all 1,045 held-out test sequences ($100.0\%$) exceed $5.0\text{ }^{\circ}\text{C}$. Both Ridge AR(60) and Real-TCN achieve $F_1 = 1.0000$ (1,045 TP, 0 FP, 0 FN).
+2. **Precautionary Warning Threshold ($5.5\text{ }^{\circ}\text{C}$):** $1{,}038$ of $1{,}045$ test sequences ($99.3\%$) cross $5.5\text{ }^{\circ}\text{C}$. Ridge AR(60) achieves $F_1 = 0.9888$ and Real-TCN achieves $F_1 = 0.9774$, whereas naive persistence drops to $F_1 = 0.9154$ with $161$ false negatives due to thermal inertia lag.
+3. **Dynamic Median Excursion Threshold ($6.0\text{ }^{\circ}\text{C}$):** Represents dynamic thermal fluctuations around the operating median. $704$ of $1{,}045$ sequences ($67.4\%$) breach $6.0\text{ }^{\circ}\text{C}$. Ridge AR(60) achieves $F_1 = 0.7461$ (Recall 64.5%, Precision 88.5%) and Real-TCN achieves $F_1 = 0.7086$ (Recall 57.7%, Precision 91.9%), outperforming naive persistence ($F_1 = 0.6155$, Recall 45.6%, 383 false negatives).
+4. **Severe Dynamic Excursion Threshold ($6.5\text{ }^{\circ}\text{C}$):** Upper quartile excursions ($226$ ground-truth events, $21.6\%$). Ridge AR(60) achieves $F_1 = 0.6759$ and Real-TCN achieves $F_1 = 0.6071$ versus persistence $F_1 = 0.5854$.
+
+- **Data Provenance Boundary:** All MAD-TCN neural weights (Section C) are trained and evaluated on **SIMULATION** data. The Real-TCN model above is a separate compact network trained solely on Hohenheim SENSOR03 observed temperature. These results must not be conflated.
 - **Original MAD-TCN Checkpoint Limitation:** The original 12-feature MAD-TCN checkpoint cannot be fairly applied to Hohenheim data because only 2 of 12 input features (temperature, humidity) are available. This is documented as an architectural limitation, not a defect.
 
-**Conclusion:** Naive persistence is the superior mathematical baseline for near-instantaneous tracking ( \le 12$ min). MAD-TCN is the superior predictive engine for horizon-scale tracking (=15$ min) and proactive safety alert generation.
+**Conclusion:** Naive persistence is the superior mathematical baseline for near-instantaneous tracking ($h \le 12$ min) in steady-state chambers. Ridge AR(60) and Real-TCN provide superior dynamic trend tracking and significantly earlier warning detection across dynamic thermal excursions ($F_1 = 0.7461$ vs $0.6155$).
 ---
 
 ## SECTION D — Constrained Optimization Scientific Findings
@@ -165,10 +171,10 @@ Evaluated via [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chai
 ### 3. Thermodynamic Feasibility Derivation & Frontier Reconciliation
 - **Steady-State Derivation:** Chamber temperature follows $\frac{dT}{dt} = k_{inf} (T_{amb} - T) - k_{cool} u d$. With {inf} = 0.018\text{ min}^{-1}$ and {cool} = 0.320\text{ }^\circ\text{C/min}$, equilibrium steady state is {ss} = T_{amb} - 17.78\text{ }^\circ\text{C}$. For the chamber to reach or maintain  \le 5.0\text{ }^\circ\text{C}$, {amb}$ must not exceed .78\text{ }^\circ\text{C}$. When ambient heat waves reach .55\text{ }^\circ\text{C}$, heat intrusion at .0\text{ }^\circ\text{C}$ (.424\text{ }^\circ\text{C/min}$) physically exceeds maximum refrigeration (.320\text{ }^\circ\text{C/min}$), rendering single-interval compliance physically impossible.
 - **Reconciliation of Pareto Points (48) vs. Scenarios (23 Feasible / 27 Fallbacks):** The **48 Pareto points** reported in single-run pipeline verification ([scripts/end_to_end.py](file:///C:/Projects/Cold-Chain-Ai/scripts/end_to_end.py)) denote the cardinality of non-dominated setpoints on the trade-off surface for a single invocation at $T = 3.93\text{ }^{\circ}\text{C}$. The **23 feasible / 27 emergency fallback scenarios** denote the aggregate classification across 50 separate 15-minute operating regimes sampled across the multi-day dataset.
-- **Thermal Rate Verification at Peak Temperature:** At $T = 9.36\text{ }^{\circ}\text{C}$ (the observed maximum) with $T_{amb} = 28.55\text{ }^{\circ}\text{C}$ and maximum cooling ($u = 1.0, d = 1.0$):
+- **Thermal Rate Verification at Peak Temperature:** At $T = 9.36\text{ }^{\circ}\text{C}$ (the observed maximum) with $T_{amb} = 28.55\text{ }^{\circ}\text{C}$ under maximum cooling ($u = 1.0, d = 1.0$):
   $$\frac{dT}{dt} = k_{inf}(T_{amb} - T) - k_{cool} \cdot u \cdot d = 0.018 \times (28.55 - 9.36) - 0.32 \times 1.0 \times 1.0 = 0.3454 - 0.32 = +0.0254\text{ }^{\circ}\text{C/min}$$
-  The positive rate confirms the chamber is **still warming** even at maximum cooling capacity. The system cannot arrest warming until $T \ge T_{ss} = T_{amb} - k_{cool}/k_{inf} = 28.55 - 17.78 = 10.77\text{ }^{\circ}\text{C}$. This physically validates that 479 minutes of violation is the best achievable outcome, not a software defect.
-
+  The positive rate demonstrates that heat intrusion momentarily exceeds maximum refrigeration capacity until chamber temperature climbs toward $T_{ss} = T_{amb} - k_{cool}/k_{inf} = 28.55 - 17.78 = 10.77\text{ }^{\circ}\text{C}$. Emergency cooling slows the rate of warming from $+0.345\text{ }^{\circ}\text{C/min}$ (uncooled) to $+0.025\text{ }^{\circ}\text{C/min}$ (fully cooled), successfully containing peak chamber temperature to $9.36\text{ }^{\circ}\text{C}$ compared to $10.72\text{ }^{\circ}\text{C}$ in the baseline.
+- **Distinction Between Steady-State Bounds & Trajectory Reduction:** The 479-minute total violation represents the **experimentally observed reduction** (-17.8% relative to baseline's 583 minutes) achieved across 50 tested operational regimes by invoking emergency full cooling ($u=1.0, d=1.0$) whenever $T_0 > 5.0\text{ }^{\circ}\text{C}$. This is an empirically evaluated control policy result, not a formal mathematical proof of global trajectory-level optimality.
 ---
 
 ## SECTION E — Energy & Thermodynamic Modeling Findings

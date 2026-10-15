@@ -1,5 +1,5 @@
 {
-  "benchmark_timestamp": "2026-10-15T18:26:50.565704+00:00",
+  "benchmark_timestamp": "2026-10-15T18:52:01.288941+00:00",
   "dataset_metadata": {
     "source_file": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR03_preprocessed.csv",
     "raw_observations": 84444,
@@ -52,13 +52,92 @@
       "r2_score": 0.419
     },
     "real_tcn_neural": {
-      "mae_deg_c": 0.2592,
-      "rmse_deg_c": 0.3586,
-      "r2_score": 0.4054
+      "mae_deg_c": 0.267,
+      "rmse_deg_c": 0.3657,
+      "r2_score": 0.3817
     }
   },
   "breach_detection_metrics": {
+    "threshold_5_0_deg_c": {
+      "description": "Standard Food Profile Critical Limit (0.0 to 5.0 deg C). Chamber operates above 5.0 deg C at baseline.",
+      "persistence": {
+        "threshold_deg_c": 5.0,
+        "ground_truth_breaches": 1045,
+        "predicted_breaches": 1037,
+        "true_positives": 1037,
+        "false_positives": 0,
+        "false_negatives": 8,
+        "true_negatives": 0,
+        "precision": 1.0,
+        "recall": 0.9923,
+        "f1_score": 0.9962
+      },
+      "ridge": {
+        "threshold_deg_c": 5.0,
+        "ground_truth_breaches": 1045,
+        "predicted_breaches": 1045,
+        "true_positives": 1045,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "true_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "real_tcn": {
+        "threshold_deg_c": 5.0,
+        "ground_truth_breaches": 1045,
+        "predicted_breaches": 1045,
+        "true_positives": 1045,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "true_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      }
+    },
+    "threshold_5_5_deg_c": {
+      "description": "Secondary Precautionary Warning Threshold (+0.5 deg C above critical limit).",
+      "persistence": {
+        "threshold_deg_c": 5.5,
+        "ground_truth_breaches": 1038,
+        "predicted_breaches": 878,
+        "true_positives": 877,
+        "false_positives": 1,
+        "false_negatives": 161,
+        "true_negatives": 6,
+        "precision": 0.9989,
+        "recall": 0.8449,
+        "f1_score": 0.9154
+      },
+      "ridge": {
+        "threshold_deg_c": 5.5,
+        "ground_truth_breaches": 1038,
+        "predicted_breaches": 1019,
+        "true_positives": 1017,
+        "false_positives": 2,
+        "false_negatives": 21,
+        "true_negatives": 5,
+        "precision": 0.998,
+        "recall": 0.9798,
+        "f1_score": 0.9888
+      },
+      "real_tcn": {
+        "threshold_deg_c": 5.5,
+        "ground_truth_breaches": 1038,
+        "predicted_breaches": 998,
+        "true_positives": 995,
+        "false_positives": 3,
+        "false_negatives": 43,
+        "true_negatives": 4,
+        "precision": 0.997,
+        "recall": 0.9586,
+        "f1_score": 0.9774
+      }
+    },
     "threshold_6_0_deg_c": {
+      "description": "Dynamic Regime Excursion Threshold (chamber operating median ~6.0 deg C).",
       "persistence": {
         "threshold_deg_c": 6.0,
         "ground_truth_breaches": 704,
@@ -86,17 +165,18 @@
       "real_tcn": {
         "threshold_deg_c": 6.0,
         "ground_truth_breaches": 704,
-        "predicted_breaches": 471,
-        "true_positives": 426,
-        "false_positives": 45,
-        "false_negatives": 278,
-        "true_negatives": 296,
-        "precision": 0.9045,
-        "recall": 0.6051,
-        "f1_score": 0.7251
+        "predicted_breaches": 442,
+        "true_positives": 406,
+        "false_positives": 36,
+        "false_negatives": 298,
+        "true_negatives": 305,
+        "precision": 0.9186,
+        "recall": 0.5767,
+        "f1_score": 0.7086
       }
     },
     "threshold_6_5_deg_c": {
+      "description": "Severe Dynamic Thermal Excursion Threshold (75th percentile ~6.5 deg C).",
       "persistence": {
         "threshold_deg_c": 6.5,
         "ground_truth_breaches": 226,
@@ -124,14 +204,14 @@
       "real_tcn": {
         "threshold_deg_c": 6.5,
         "ground_truth_breaches": 226,
-        "predicted_breaches": 114,
-        "true_positives": 101,
-        "false_positives": 13,
-        "false_negatives": 125,
-        "true_negatives": 806,
-        "precision": 0.886,
-        "recall": 0.4469,
-        "f1_score": 0.5941
+        "predicted_breaches": 110,
+        "true_positives": 102,
+        "false_positives": 8,
+        "false_negatives": 124,
+        "true_negatives": 811,
+        "precision": 0.9273,
+        "recall": 0.4513,
+        "f1_score": 0.6071
       }
     }
   }
