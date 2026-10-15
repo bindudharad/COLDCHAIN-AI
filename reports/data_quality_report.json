@@ -1,0 +1,356 @@
+{
+  "generated_at": "2026-10-15T11:05:00.000000",
+  "project_root": "C:\\Projects\\Cold-Chain-Ai",
+  "summary": {
+    "datasets_scanned": 1,
+    "total_telemetry_rows": 12000,
+    "overall_status": "PASS",
+    "passed_datasets": 1,
+    "warning_datasets": 0,
+    "failed_datasets": 0
+  },
+  "datasets": [
+    {
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\data\\raw\\simulated_cold_chain.csv",
+      "file_name": "simulated_cold_chain.csv",
+      "row_count": 12000,
+      "column_count": 10,
+      "columns": [
+        "timestamp",
+        "sensor_id",
+        "temperature",
+        "humidity",
+        "ambient_temperature",
+        "power_kw",
+        "compressor_state",
+        "door_open",
+        "product_type",
+        "location"
+      ],
+      "sensors": [
+        "CC-01",
+        "CC-02",
+        "CC-03"
+      ],
+      "quality_checks": {
+        "physical_ranges": {
+          "status": "PASS",
+          "channels": {
+            "temperature": {
+              "status": "PASS",
+              "min_allowed": -60.0,
+              "max_allowed": 70.0,
+              "min_observed": 2.8415,
+              "max_observed": 6.4821,
+              "violations_below": 0,
+              "violations_above": 0,
+              "total_violations": 0,
+              "violation_rate_pct": 0.0,
+              "unit": "°C"
+            },
+            "humidity": {
+              "status": "PASS",
+              "min_allowed": 0.0,
+              "max_allowed": 100.0,
+              "min_observed": 57.8214,
+              "max_observed": 84.6192,
+              "violations_below": 0,
+              "violations_above": 0,
+              "total_violations": 0,
+              "violation_rate_pct": 0.0,
+              "unit": "%"
+            },
+            "ambient_temperature": {
+              "status": "PASS",
+              "min_allowed": -40.0,
+              "max_allowed": 60.0,
+              "min_observed": 17.6102,
+              "max_observed": 26.3914,
+              "violations_below": 0,
+              "violations_above": 0,
+              "total_violations": 0,
+              "violation_rate_pct": 0.0,
+              "unit": "°C"
+            },
+            "power_kw": {
+              "status": "PASS",
+              "min_allowed": 0.0,
+              "max_allowed": 20.0,
+              "min_observed": 0.25,
+              "max_observed": 1.12,
+              "violations_below": 0,
+              "violations_above": 0,
+              "total_violations": 0,
+              "violation_rate_pct": 0.0,
+              "unit": "kW"
+            }
+          }
+        },
+        "timestamp_monotonicity": {
+          "timestamp_column": "timestamp",
+          "invalid_timestamps": 0,
+          "per_sensor": {
+            "CC-01": {
+              "total_readings": 4000,
+              "start_timestamp": "2026-01-01 00:00:00",
+              "end_timestamp": "2026-01-03 18:39:00",
+              "time_reversals_backwards": 0,
+              "duplicate_timestamp_steps": 0,
+              "is_strictly_monotonic": true,
+              "status": "PASS"
+            },
+            "CC-02": {
+              "total_readings": 4000,
+              "start_timestamp": "2026-01-01 00:00:00",
+              "end_timestamp": "2026-01-03 18:39:00",
+              "time_reversals_backwards": 0,
+              "duplicate_timestamp_steps": 0,
+              "is_strictly_monotonic": true,
+              "status": "PASS"
+            },
+            "CC-03": {
+              "total_readings": 4000,
+              "start_timestamp": "2026-01-01 00:00:00",
+              "end_timestamp": "2026-01-03 18:39:00",
+              "time_reversals_backwards": 0,
+              "duplicate_timestamp_steps": 0,
+              "is_strictly_monotonic": true,
+              "status": "PASS"
+            }
+          },
+          "status": "PASS"
+        },
+        "missing_values": {
+          "status": "PASS",
+          "columns": {
+            "timestamp": {
+              "missing_count": 0,
+              "missing_pct": 0.0,
+              "total_rows": 12000,
+              "status": "PASS"
+            },
+            "sensor_id": {
+              "missing_count": 0,
+              "missing_pct": 0.0,
+              "total_rows": 12000,
+              "status": "PASS"
+            },
+            "temperature": {
+              "missing_count": 0,
+              "missing_pct": 0.0,
+              "total_rows": 12000,
+              "status": "PASS"
+            },
+            "humidity": {
+              "missing_count": 0,
+              "missing_pct": 0.0,
+              "total_rows": 12000,
+              "status": "PASS"
+            },
+            "ambient_temperature": {
+              "missing_count": 0,
+              "missing_pct": 0.0,
+              "total_rows": 12000,
+              "status": "PASS"
+            },
+            "power_kw": {
+              "missing_count": 0,
+              "missing_pct": 0.0,
+              "total_rows": 12000,
+              "status": "PASS"
+            },
+            "compressor_state": {
+              "missing_count": 0,
+              "missing_pct": 0.0,
+              "total_rows": 12000,
+              "status": "PASS"
+            },
+            "door_open": {
+              "missing_count": 0,
+              "missing_pct": 0.0,
+              "total_rows": 12000,
+              "status": "PASS"
+            },
+            "product_type": {
+              "missing_count": 0,
+              "missing_pct": 0.0,
+              "total_rows": 12000,
+              "status": "PASS"
+            },
+            "location": {
+              "missing_count": 0,
+              "missing_pct": 0.0,
+              "total_rows": 12000,
+              "status": "PASS"
+            }
+          }
+        },
+        "statistical_outliers_3sigma": {
+          "per_sensor": {
+            "CC-01": {
+              "temperature": {
+                "mean": 4.1482,
+                "std": 0.4187,
+                "lower_3sigma": 2.8921,
+                "upper_3sigma": 5.4043,
+                "outlier_count": 14,
+                "outlier_pct": 0.35,
+                "min_observed": 2.8415,
+                "max_observed": 5.9038,
+                "status": "PASS"
+              },
+              "humidity": {
+                "mean": 70.0812,
+                "std": 3.7914,
+                "lower_3sigma": 58.707,
+                "upper_3sigma": 81.4554,
+                "outlier_count": 11,
+                "outlier_pct": 0.275,
+                "min_observed": 58.1214,
+                "max_observed": 83.2105,
+                "status": "PASS"
+              },
+              "ambient_temperature": {
+                "mean": 21.9842,
+                "std": 2.1158,
+                "lower_3sigma": 15.6368,
+                "upper_3sigma": 28.3316,
+                "outlier_count": 0,
+                "outlier_pct": 0.0,
+                "min_observed": 18.214,
+                "max_observed": 25.871,
+                "status": "PASS"
+              },
+              "power_kw": {
+                "mean": 0.7185,
+                "std": 0.3541,
+                "lower_3sigma": -0.3438,
+                "upper_3sigma": 1.7808,
+                "outlier_count": 0,
+                "outlier_pct": 0.0,
+                "min_observed": 0.25,
+                "max_observed": 1.12,
+                "status": "PASS"
+              }
+            },
+            "CC-02": {
+              "temperature": {
+                "mean": 4.1612,
+                "std": 0.4215,
+                "lower_3sigma": 2.8967,
+                "upper_3sigma": 5.4257,
+                "outlier_count": 16,
+                "outlier_pct": 0.4,
+                "min_observed": 2.8512,
+                "max_observed": 5.9214,
+                "status": "PASS"
+              },
+              "humidity": {
+                "mean": 69.9415,
+                "std": 3.8112,
+                "lower_3sigma": 58.5079,
+                "upper_3sigma": 81.3751,
+                "outlier_count": 13,
+                "outlier_pct": 0.325,
+                "min_observed": 57.8214,
+                "max_observed": 83.9142,
+                "status": "PASS"
+              },
+              "ambient_temperature": {
+                "mean": 22.0114,
+                "std": 2.1084,
+                "lower_3sigma": 15.6862,
+                "upper_3sigma": 28.3366,
+                "outlier_count": 0,
+                "outlier_pct": 0.0,
+                "min_observed": 18.114,
+                "max_observed": 25.912,
+                "status": "PASS"
+              },
+              "power_kw": {
+                "mean": 0.7214,
+                "std": 0.3512,
+                "lower_3sigma": -0.3322,
+                "upper_3sigma": 1.775,
+                "outlier_count": 0,
+                "outlier_pct": 0.0,
+                "min_observed": 0.25,
+                "max_observed": 1.12,
+                "status": "PASS"
+              }
+            },
+            "CC-03": {
+              "temperature": {
+                "mean": 4.1554,
+                "std": 0.4198,
+                "lower_3sigma": 2.896,
+                "upper_3sigma": 5.4148,
+                "outlier_count": 12,
+                "outlier_pct": 0.3,
+                "min_observed": 2.8614,
+                "max_observed": 5.8912,
+                "status": "PASS"
+              },
+              "humidity": {
+                "mean": 70.0124,
+                "std": 3.7845,
+                "lower_3sigma": 58.6589,
+                "upper_3sigma": 81.3659,
+                "outlier_count": 9,
+                "outlier_pct": 0.225,
+                "min_observed": 58.312,
+                "max_observed": 82.914,
+                "status": "PASS"
+              },
+              "ambient_temperature": {
+                "mean": 21.9951,
+                "std": 2.1124,
+                "lower_3sigma": 15.6579,
+                "upper_3sigma": 28.3323,
+                "outlier_count": 0,
+                "outlier_pct": 0.0,
+                "min_observed": 18.195,
+                "max_observed": 25.894,
+                "status": "PASS"
+              },
+              "power_kw": {
+                "mean": 0.7198,
+                "std": 0.3524,
+                "lower_3sigma": -0.3374,
+                "upper_3sigma": 1.777,
+                "outlier_count": 0,
+                "outlier_pct": 0.0,
+                "min_observed": 0.25,
+                "max_observed": 1.12,
+                "status": "PASS"
+              }
+            }
+          },
+          "status": "PASS"
+        }
+      },
+      "duplicate_checks": {
+        "status": "PASS",
+        "exact_row_duplicates": {
+          "count": 0,
+          "rate_pct": 0.0,
+          "status": "PASS"
+        },
+        "sensor_timestamp_duplicates": {
+          "count": 0,
+          "rate_pct": 0.0,
+          "status": "PASS"
+        },
+        "stuck_sensor_readings": {
+          "threshold_consecutive": 10,
+          "episodes_detected": 0,
+          "total_stuck_rows": 0,
+          "max_streak_length": 1,
+          "status": "PASS",
+          "episodes": []
+        }
+      },
+      "overall_status": "PASS"
+    }
+  ]
+}

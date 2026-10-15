@@ -1,0 +1,84 @@
+{
+  "status": "ESTIMATED / SIMULATED",
+  "timestamp_utc": "2026-10-15T05:36:15.369794+00:00",
+  "disclaimer": "All power and energy metrics are ESTIMATED and SIMULATED based on thermodynamic cold-chain simulation models. No hardware wattmeter or physical sensor validation is claimed.",
+  "hardware_validation": false,
+  "dataset": {
+    "source": "C:\\Projects\\Cold-Chain-Ai\\data\\raw\\simulated_cold_chain.csv",
+    "total_samples": 12000,
+    "train_samples": 8400,
+    "val_samples": 1800,
+    "test_samples": 1800,
+    "split_ratio": "70% Train / 15% Val / 15% Test (Strict Chronological)"
+  },
+  "features": [
+    "thermal_lift",
+    "compressor_duty",
+    "door_exposure"
+  ],
+  "target": "power_kw",
+  "target_units": "kW",
+  "results": {
+    "gradient_boosting_regressor": {
+      "train": {
+        "mae_kw": 0.0415,
+        "rmse_kw": 0.1188,
+        "r2_score": 0.2837
+      },
+      "val": {
+        "mae_kw": 0.0207,
+        "rmse_kw": 0.0803,
+        "r2_score": 0.1016
+      },
+      "test": {
+        "mae_kw": 0.0142,
+        "rmse_kw": 0.071,
+        "r2_score": 0.1362
+      },
+      "feature_importances": {
+        "thermal_lift": 0.3445,
+        "compressor_duty": 0.6246,
+        "door_exposure": 0.0309
+      }
+    },
+    "linear_regression": {
+      "train": {
+        "mae_kw": 0.0531,
+        "rmse_kw": 0.1298,
+        "r2_score": 0.1441
+      },
+      "val": {
+        "mae_kw": 0.0241,
+        "rmse_kw": 0.0806,
+        "r2_score": 0.0948
+      },
+      "test": {
+        "mae_kw": 0.0227,
+        "rmse_kw": 0.0719,
+        "r2_score": 0.1146
+      },
+      "coefficients": {
+        "thermal_lift": -0.0081,
+        "compressor_duty": 0.9676,
+        "door_exposure": 0.0039
+      },
+      "intercept": 0.1794
+    },
+    "analytical_thermodynamic_formula": {
+      "formula": "E = max(0.05, 0.25 + 0.035 * max(T_amb - T_cur, 0)) * (0.35 + 0.65 * intensity) * duty",
+      "source": "core.energy",
+      "test": {
+        "mae_kw": 0.1666,
+        "rmse_kw": 0.1743,
+        "r2_score": -4.1991
+      }
+    }
+  },
+  "best_model": {
+    "name": "GradientBoostingRegressor",
+    "saved_to": "C:\\Projects\\Cold-Chain-Ai\\models\\energy_model.pkl",
+    "test_mae_kw": 0.0142,
+    "test_rmse_kw": 0.071,
+    "test_r2_score": 0.1362
+  }
+}

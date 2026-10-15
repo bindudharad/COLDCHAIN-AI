@@ -1,0 +1,341 @@
+{
+  "audit_meta": {
+    "generated_at": "2026-10-15T11:07:45.501950",
+    "execution_user": "Bindudhara D",
+    "project_root": "C:\\Projects\\Cold-Chain-Ai",
+    "script": "scripts/audit_datasets.py",
+    "framework": "ColdChain-AI Big Data & IoT Audit Suite"
+  },
+  "scan_summary": {
+    "scanned_directories": {
+      "data\\raw": {
+        "status": "FOUND",
+        "path": "C:\\Projects\\Cold-Chain-Ai\\data\\raw",
+        "csv_count": 2
+      },
+      "Datasets": {
+        "status": "FOUND",
+        "path": "C:\\Projects\\Cold-Chain-Ai\\Datasets",
+        "csv_count": 0
+      }
+    },
+    "total_csv_datasets_found": 2,
+    "total_records_audited": 12001,
+    "total_size_bytes": 1578820,
+    "total_size_formatted": "1.51 MB",
+    "domain_distribution": {
+      "COLD_CHAIN": 2,
+      "IOT_TEMPERATURE": 0,
+      "ENERGY": 0,
+      "PREDICTIVE_MAINTENANCE": 0,
+      "ELECTRICITY": 0,
+      "SIMULATION": 0
+    }
+  },
+  "canonical_domains": [
+    "COLD_CHAIN",
+    "IOT_TEMPERATURE",
+    "ENERGY",
+    "PREDICTIVE_MAINTENANCE",
+    "ELECTRICITY",
+    "SIMULATION"
+  ],
+  "canonical_benchmark_catalog": [
+    {
+      "identifier": "simulated_cold_chain.csv",
+      "relative_path": "data/raw/simulated_cold_chain.csv",
+      "primary_domain": "COLD_CHAIN",
+      "provenance": "SIMULATION",
+      "expected_records": 12000,
+      "expected_columns": 10,
+      "description": "Multi-sensor cold rooms (CC-01..03), food [0, 5] deg C, compressor cycles, door events"
+    },
+    {
+      "identifier": "iot_temperature_readings.csv",
+      "relative_path": "Datasets/02_iot_temperature_readings/iot_temperature_readings.csv",
+      "primary_domain": "IOT_TEMPERATURE",
+      "provenance": "PUBLIC_DATASET",
+      "expected_records": 97606,
+      "expected_columns": 5,
+      "description": "ESP8266 living space telemetry (21-51 deg C ambient), Manikanta Kumar (Kaggle)"
+    },
+    {
+      "identifier": "energy_consumption_prediction.csv",
+      "relative_path": "Datasets/03_energy_consumption/energy_consumption_prediction.csv",
+      "primary_domain": "ENERGY",
+      "provenance": "PUBLIC_DATASET",
+      "expected_records": 1000,
+      "expected_columns": 5,
+      "description": "Building HVAC energy consumption vs ambient temperature & occupancy (Kaggle)"
+    },
+    {
+      "identifier": "eviot_predictive_maintenance.csv",
+      "relative_path": "Datasets/04_eviot_predictive_maintenance/eviot_predictive_maintenance.csv",
+      "primary_domain": "PREDICTIVE_MAINTENANCE",
+      "provenance": "PUBLIC_DATASET",
+      "expected_records": 175393,
+      "expected_columns": 5,
+      "description": "High-frequency EV battery pack thermal/electrical telemetry for Big Data stress testing"
+    },
+    {
+      "identifier": "journey_to_zero_electricity.csv",
+      "relative_path": "Datasets/05_electricity_forecasting/journey_to_zero_electricity_train.csv",
+      "primary_domain": "ELECTRICITY",
+      "provenance": "PUBLIC_DATASET",
+      "expected_records": 8592,
+      "expected_columns": 4,
+      "description": "Macro municipal power grid electricity demand vs outdoor climate (Journey to Zero)"
+    },
+    {
+      "identifier": "synthetic_cold_chain_stream.csv",
+      "relative_path": "data/raw/synthetic_scalability_100k.csv",
+      "primary_domain": "SIMULATION",
+      "provenance": "SIMULATION",
+      "expected_records": 100000,
+      "expected_columns": 8,
+      "description": "High-throughput synthetic thermodynamic stream for scalability stress testing"
+    }
+  ],
+  "datasets": [
+    {
+      "file_name": "browser_upload.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\data\\raw\\browser_upload.csv",
+      "relative_path": "data\\raw\\browser_upload.csv",
+      "file_size_bytes": 87,
+      "file_size_formatted": "87 B",
+      "row_count": 1,
+      "column_count": 4,
+      "columns": [
+        "timestamp",
+        "sensor_id",
+        "temperature",
+        "humidity"
+      ],
+      "data_types": {
+        "timestamp": "object",
+        "sensor_id": "object",
+        "temperature": "float64",
+        "humidity": "int64"
+      },
+      "data_type_counts": {
+        "object": 2,
+        "float64": 1,
+        "int64": 1
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "timestamp": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "sensor_id": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "temperature": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "humidity": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {
+        "temperature": {
+          "min": 4.3,
+          "max": 4.3,
+          "mean": 4.3,
+          "std": 0.0,
+          "count": 1
+        },
+        "humidity": {
+          "min": 69.0,
+          "max": 69.0,
+          "mean": 69.0,
+          "std": 0.0,
+          "count": 1
+        }
+      },
+      "timestamp_info": {
+        "column_name": "timestamp",
+        "min_timestamp": "2026-02-03T00:00:00+00:00",
+        "max_timestamp": "2026-02-03T00:00:00+00:00",
+        "time_span": "0 days 00:00:00",
+        "valid_rows": 1,
+        "invalid_rows": 0
+      },
+      "sensor_id_info": {
+        "column_name": "sensor_id",
+        "unique_count": 1,
+        "unique_values": [
+          "BROWSER-01"
+        ],
+        "counts_per_sensor": {
+          "BROWSER-01": 1
+        }
+      },
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "REAL_SENSOR",
+        "rationale": "Refrigerated cold-chain food safety storage logistics (0.0 to 5.0 deg C)"
+      }
+    },
+    {
+      "file_name": "simulated_cold_chain.csv",
+      "file_path": "C:\\Projects\\Cold-Chain-Ai\\data\\raw\\simulated_cold_chain.csv",
+      "relative_path": "data\\raw\\simulated_cold_chain.csv",
+      "file_size_bytes": 1578733,
+      "file_size_formatted": "1.51 MB",
+      "row_count": 12000,
+      "column_count": 10,
+      "columns": [
+        "timestamp",
+        "sensor_id",
+        "temperature",
+        "humidity",
+        "ambient_temperature",
+        "power_kw",
+        "compressor_state",
+        "door_open",
+        "product_type",
+        "location"
+      ],
+      "data_types": {
+        "timestamp": "object",
+        "sensor_id": "object",
+        "temperature": "float64",
+        "humidity": "float64",
+        "ambient_temperature": "float64",
+        "power_kw": "float64",
+        "compressor_state": "int64",
+        "door_open": "int64",
+        "product_type": "object",
+        "location": "object"
+      },
+      "data_type_counts": {
+        "object": 4,
+        "float64": 4,
+        "int64": 2
+      },
+      "missing_values": {
+        "total_missing": 0,
+        "columns": {
+          "timestamp": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "sensor_id": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "temperature": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "humidity": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "ambient_temperature": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "power_kw": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "compressor_state": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "door_open": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "product_type": {
+            "count": 0,
+            "percentage": 0.0
+          },
+          "location": {
+            "count": 0,
+            "percentage": 0.0
+          }
+        }
+      },
+      "numeric_statistics": {
+        "temperature": {
+          "min": 3.5,
+          "max": 9.9219,
+          "mean": 6.2688,
+          "std": 2.055,
+          "count": 12000
+        },
+        "humidity": {
+          "min": 57.229,
+          "max": 82.2563,
+          "mean": 69.9809,
+          "std": 2.9939,
+          "count": 12000
+        },
+        "ambient_temperature": {
+          "min": 17.7855,
+          "max": 28.5461,
+          "mean": 23.3829,
+          "std": 2.7929,
+          "count": 12000
+        },
+        "power_kw": {
+          "min": 0.25,
+          "max": 1.12,
+          "mean": 0.9811,
+          "std": 0.1257,
+          "count": 12000
+        },
+        "compressor_state": {
+          "min": 0.0,
+          "max": 1.0,
+          "mean": 0.9718,
+          "std": 0.1657,
+          "count": 12000
+        },
+        "door_open": {
+          "min": 0.0,
+          "max": 1.0,
+          "mean": 0.0189,
+          "std": 0.1362,
+          "count": 12000
+        }
+      },
+      "timestamp_info": {
+        "column_name": "timestamp",
+        "min_timestamp": "2026-01-01T00:00:00",
+        "max_timestamp": "2026-01-03T18:39:00",
+        "time_span": "2 days 18:39:00",
+        "valid_rows": 12000,
+        "invalid_rows": 0
+      },
+      "sensor_id_info": {
+        "column_name": "sensor_id",
+        "unique_count": 3,
+        "unique_values": [
+          "CC-01",
+          "CC-02",
+          "CC-03"
+        ],
+        "counts_per_sensor": {
+          "CC-01": 4000,
+          "CC-02": 4000,
+          "CC-03": 4000
+        }
+      },
+      "domain_classification": {
+        "domain": "COLD_CHAIN",
+        "provenance": "SIMULATION",
+        "rationale": "Refrigerated cold-chain food safety storage logistics (0.0 to 5.0 deg C)"
+      }
+    }
+  ]
+}
