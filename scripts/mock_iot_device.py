@@ -12,9 +12,9 @@ import urllib.error
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-def generate_payload(sensor_id="EDGE-ESP32-01", temp_c=3.65, unit="C",
+def generate_payload(sensor_id="MOCK-ESP32-01", temp_c=3.65, unit="C",
                      humidity=68.5, ambient=22.4, power=0.48,
-                     compressor=True, door=False, data_source="REAL_SENSOR"):
+                     compressor=True, door=False, data_source="SIMULATION"):
     """Construct validated industrial IoT telemetry dictionary."""
     now = datetime.now(timezone.utc).isoformat()
     temp_val = temp_c if unit == "C" else (temp_c * 9.0 / 5.0) + 32.0
@@ -74,7 +74,7 @@ def direct_django_test():
     assert r1.status_code == 201, f"Expected 201, got {r1.status_code}: {r1.content}"
     data1 = r1.json()
     assert data1['success'] and data1['records_persisted'] == 1
-    assert data1['provenance'] == 'REAL_SENSOR'
+    assert data1['provenance'] == 'SIMULATION'
     print(f"       Persisted ID: {data1.get('latest_id')}, Provenance: {data1.get('provenance')}")
     
     # Test 2: Duplicate detection
@@ -107,7 +107,7 @@ def direct_django_test():
     # Test 5: Batch telemetry ingestion
     batch = [
         generate_payload(sensor_id="MOCK-ESP32-04", temp_c=3.2 + i * 0.1,
-                         data_source="REAL_SENSOR")
+                         data_source="SIMULATION")
         for i in range(5)
     ]
     # Ensure distinct timestamps

@@ -602,12 +602,20 @@ def iot_telemetry_api(request):
         comp_state = bool(str(rec.get('compressor_state', False)).lower() in ('1', 'true', 'yes', 'on'))
         door_state = bool(str(rec.get('door_open', False)).lower() in ('1', 'true', 'yes', 'open'))
 
-        src = str(rec.get('data_source', rec.get('source_type', 'REAL_SENSOR'))).upper()
-        if src not in ('REAL_SENSOR', 'SIMULATION', 'PUBLIC_DATASET'):
-            src = 'REAL_SENSOR'
+        user_agent = str(request.headers.get('User-Agent', '')).lower()
+        clean_sid = str(sid).strip()
+
+        src = str(rec.get('data_source', rec.get('source_type', ''))).upper()
+        # Strictly enforce SIMULATION for mock/test sensors or simulator clients
+        if (clean_sid.upper().startswith(('MOCK', 'SIM', 'TEST')) or
+            'simulator' in user_agent or 'mock' in user_agent or
+            src == 'SIMULATION'):
+            src = 'SIMULATION'
+        elif src not in ('REAL_SENSOR', 'SIMULATION', 'PUBLIC_DATASET'):
+            src = 'SIMULATION'
 
         valid_records.append({
-            'sensor_id': str(sid).strip(),
+            'sensor_id': clean_sid,
             'timestamp': ts,
             'temperature': round(temp, 4),
             'humidity': hum,
@@ -616,7 +624,7 @@ def iot_telemetry_api(request):
             'compressor_state': comp_state,
             'door_open': door_state,
             'data_source': src,
-            'location': rec.get('location', 'Real IoT Ingested Node'),
+            'location': rec.get('location', 'Cold Chain Sensor Node'),
             'product_type': rec.get('product_type', 'Food')
         })
 

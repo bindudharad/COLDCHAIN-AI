@@ -46,6 +46,16 @@ In earlier drafts, Method C reported both that an emergency override activated a
    When the chamber is within or near the Food profile ($T_0 \le 5.0\text{ }^\circ\text{C}$), evolutionary search finds non-dominated Pareto solutions satisfying Deb's constrained dominance ($G_1, G_2 \le 0$). The optimizer returns an average of **21.7 strictly feasible solutions**, from which the safest trade-off setpoint is chosen.
 2. **Emergency Fallback Override (27 Scenarios, 54.0%):**  
    In 27 scenarios, the initial chamber temperature is already in severe breach ($T_0 > 5.0\text{ }^\circ\text{C}$, up to $9.31\text{ }^\circ\text{C}$) due to prior uncontained heat infiltration. Because a 15-minute interval cannot physically cool $9.31\text{ }^\circ\text{C}$ down into the Food envelope ($\le 4.8\text{ }^\circ\text{C}$), **no mathematically feasible solution exists** in the search space ($r.X = \text{None}$).
+
+   **Analytical Thermodynamic Feasibility Derivation:**  
+   The physical differential equation governing chamber temperature is:
+   $$\frac{dT}{dt} = k_{inf} (T_{amb} - T) - k_{cool} \cdot u \cdot d$$
+   At maximum continuous cooling capacity ($u=1.0, d=1.0$) with $k_{cool} = 0.32\text{ }^\circ\text{C/min}$ and $k_{inf} = 0.018\text{ min}^{-1}$, the steady-state equilibrium temperature $T_{ss}$ is:
+   $$0 = k_{inf}(T_{amb} - T_{ss}) - k_{cool} \implies T_{ss} = T_{amb} - \frac{k_{cool}}{k_{inf}} = T_{amb} - \frac{0.32}{0.018} = T_{amb} - 17.78\text{ }^\circ\text{C}$$
+   For the chamber to achieve or maintain the Food profile limit ($T \le 5.0\text{ }^\circ\text{C}$), the ambient boundary temperature must satisfy:
+   $$T_{amb} \le 5.0 + 17.78\text{ }^\circ\text{C} = 22.78\text{ }^\circ\text{C}$$
+   Whenever outdoor ambient temperature $T_{amb} > 22.78\text{ }^\circ\text{C}$ (in the simulation dataset, $T_{amb}$ reaches up to $28.55\text{ }^\circ\text{C}$), ambient heat infiltration at $5.0\text{ }^\circ\text{C}$ physically exceeds maximum refrigeration capacity ($0.018 \cdot (28.55 - 5.0) = 0.424\text{ }^\circ\text{C/min} > 0.320\text{ }^\circ\text{C/min}$). Thus, mathematical compliance with $T \le 4.8\text{ }^\circ\text{C}$ is physically unattainable during severe heat waves, independently proving why no feasible solution can exist in these 27 scenarios.
+
 3. **Emergency Override Behavior:**  
    Rather than labeling these points as "feasible Pareto solutions", they are explicitly classified as **`is_emergency_fallback: True`** and **`feasible: False`**. In these states, the system commands **maximum emergency cooling** ($u = 1.0, d = 1.0, \delta = -0.5$) to rapidly arrest temperature rise.
 

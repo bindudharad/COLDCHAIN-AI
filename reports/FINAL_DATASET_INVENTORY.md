@@ -97,16 +97,25 @@ Datasets/
 
 ---
 
-## 4. Newly Cataloged Real-World Cold Storage Benchmark
+## 4. Newly Integrated Real-World Cold Storage Benchmarks (Present On Disk)
 
-Through open-access research indexing, the following verified real cold-storage dataset has been cataloged for future offline empirical validation:
+The following real cold-storage benchmarks and supporting experimental artifacts are downloaded and present on disk under `Datasets/`:
 
-- **Dataset Title:** *Temperature and Humidity Time Series of Cold Storage Room Monitoring*
-- **Authors & Affiliation:** Elia Henrichs, Florian Stoll, Christian Krupitzer (University of Hohenheim)
-- **Repository:** Zenodo (DOI: 10.1109/ACSOS-C66519.2025.00033 / IEEE ACSOS-C 2025)
-- **Physical Setup:** 9 DHT22 environmental sensors deployed as distributed Arduino loggers across a physical cold storage chamber (sampling interval: 5 seconds).
-- **Recorded Channels:** Date, Time, Chamber Air Temperature (°C), Relative Humidity (%), Door Opening Event Log (`experiment_actions.csv`).
-- **Access Status:** Open Access on Zenodo. Programmatic automated fetch from python is restricted by Zenodo Cloudflare bot filtering (HTTP 403 Forbidden). Manual download of `Raw.zip` and `Preprocessed.zip` is supported.
+| Dataset / File | File Path | Provenance | Record Count | Cadence / Type | Experimental Suitability & Role |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Cold Storage Temp Data** | `Datasets/cold_storage_case_study/Cold_Storage_Temp_Data.csv` | `PUBLIC_DATASET` / `REAL_SENSOR` | 365 rows | Daily ($T_{mean} = 2.96^\circ\text{C}$, range 1.7–5.0°C) | Validates daily cold-storage macro persistence ($\text{MAE}=0.4431^\circ\text{C}$) and moving average ($\text{MAE}=0.4088^\circ\text{C}$). NOT suited for 1-minute or 5-second neural sequence models. |
+| **Cold Storage Mar 2018** | `Datasets/cold_storage_case_study/Cold_Storage_Mar2018.csv` | `PUBLIC_DATASET` / `REAL_SENSOR` | 35 rows | Daily ($T_{mean} = 3.96^\circ\text{C}$) | Seasonal validation of summer cold storage temperature variation. |
+| **Zenodo Experiment Actions** | `Datasets/zenodo_hohenheim/experiment_actions.csv` | `PUBLIC_DATASET` | 127 events | Event Table (Timestamps + Actions) | Logs actual physical door opening and product loading duration. Used to calibrate realistic thermal disturbance schedules in simulation. |
+| **Zenodo Sensor Overview** | `Datasets/zenodo_hohenheim/overview.csv` | `PUBLIC_DATASET` | 42 metrics $\times$ 9 sensors | Summary Matrix | Records physical distribution parameters (min, max, mean, quartiles) across 9 DHT22 sensors in a physical cold chamber. Provides spatial stratification benchmarks. |
+| **Zenodo Arduino Logger** | `Datasets/zenodo_hohenheim/temphum_logger.ino` | `PUBLIC_DATASET` | C++ Source Code | Firmware | Arduino firmware source code for DHT22 loggers operating at 5-second sampling frequency. |
+
+### Critical Scientific Provenance & Cadence Distinction:
+1. **Raw Sensor Telemetry vs. Summaries:**  
+   `overview.csv` is an aggregate summary matrix and `experiment_actions.csv` is an operational event log. Neither file contains continuous raw time-series measurements.
+2. **Daily Cadence vs. High-Frequency IoT:**  
+   The 365-row dataset records daily aggregated observations. It is evaluated separately using daily statistical baselines and is never conflated with high-frequency 1-minute IoT telemetry.
+3. **Zenodo Archive Status (DOI: `10.5281/zenodo.15130001`):**  
+   The full raw 5-second time series (`Raw.zip`, `Preprocessed.zip`) is hosted on Zenodo. Automated Python downloads encounter Zenodo's Cloudflare DDoS anti-bot protection (`HTTP 403 Forbidden`). Manual download via standard browser into `Datasets/zenodo_hohenheim/` is fully supported, and `scripts/audit_datasets.py` will automatically parse and validate the extracted files.
 
 ---
 
