@@ -1,5 +1,5 @@
 {
-  "benchmark_timestamp": "2026-10-15T18:52:01.288941+00:00",
+  "benchmark_timestamp": "2026-10-15T19:04:19.336861+00:00",
   "dataset_metadata": {
     "source_file": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR03_preprocessed.csv",
     "raw_observations": 84444,
@@ -52,9 +52,9 @@
       "r2_score": 0.419
     },
     "real_tcn_neural": {
-      "mae_deg_c": 0.267,
-      "rmse_deg_c": 0.3657,
-      "r2_score": 0.3817
+      "mae_deg_c": 0.2714,
+      "rmse_deg_c": 0.369,
+      "r2_score": 0.3703
     }
   },
   "breach_detection_metrics": {
@@ -126,14 +126,14 @@
       "real_tcn": {
         "threshold_deg_c": 5.5,
         "ground_truth_breaches": 1038,
-        "predicted_breaches": 998,
-        "true_positives": 995,
-        "false_positives": 3,
-        "false_negatives": 43,
-        "true_negatives": 4,
-        "precision": 0.997,
-        "recall": 0.9586,
-        "f1_score": 0.9774
+        "predicted_breaches": 989,
+        "true_positives": 987,
+        "false_positives": 2,
+        "false_negatives": 51,
+        "true_negatives": 5,
+        "precision": 0.998,
+        "recall": 0.9509,
+        "f1_score": 0.9739
       }
     },
     "threshold_6_0_deg_c": {
@@ -165,14 +165,14 @@
       "real_tcn": {
         "threshold_deg_c": 6.0,
         "ground_truth_breaches": 704,
-        "predicted_breaches": 442,
-        "true_positives": 406,
-        "false_positives": 36,
-        "false_negatives": 298,
-        "true_negatives": 305,
-        "precision": 0.9186,
-        "recall": 0.5767,
-        "f1_score": 0.7086
+        "predicted_breaches": 409,
+        "true_positives": 378,
+        "false_positives": 31,
+        "false_negatives": 326,
+        "true_negatives": 310,
+        "precision": 0.9242,
+        "recall": 0.5369,
+        "f1_score": 0.6792
       }
     },
     "threshold_6_5_deg_c": {
@@ -204,14 +204,170 @@
       "real_tcn": {
         "threshold_deg_c": 6.5,
         "ground_truth_breaches": 226,
-        "predicted_breaches": 110,
-        "true_positives": 102,
-        "false_positives": 8,
-        "false_negatives": 124,
-        "true_negatives": 811,
-        "precision": 0.9273,
-        "recall": 0.4513,
-        "f1_score": 0.6071
+        "predicted_breaches": 120,
+        "true_positives": 105,
+        "false_positives": 15,
+        "false_negatives": 121,
+        "true_negatives": 804,
+        "precision": 0.875,
+        "recall": 0.4646,
+        "f1_score": 0.6069
+      }
+    }
+  },
+  "early_warning_transition_metrics": {
+    "threshold_5_0_deg_c": {
+      "note": "Only 8 safe origins (0.8% of test set); chamber operates in steady breach. Small sample size limits validation.",
+      "persistence": {
+        "threshold_deg_c": 5.0,
+        "safe_forecast_origins_evaluated": 8,
+        "true_transitions_occurred": 8,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 8,
+        "true_negatives": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      "ridge": {
+        "threshold_deg_c": 5.0,
+        "safe_forecast_origins_evaluated": 8,
+        "true_transitions_occurred": 8,
+        "true_positives": 8,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "true_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "real_tcn": {
+        "threshold_deg_c": 5.0,
+        "safe_forecast_origins_evaluated": 8,
+        "true_transitions_occurred": 8,
+        "true_positives": 8,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "true_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      }
+    },
+    "threshold_5_5_deg_c": {
+      "persistence": {
+        "threshold_deg_c": 5.5,
+        "safe_forecast_origins_evaluated": 167,
+        "true_transitions_occurred": 161,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 161,
+        "true_negatives": 6,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      "ridge": {
+        "threshold_deg_c": 5.5,
+        "safe_forecast_origins_evaluated": 167,
+        "true_transitions_occurred": 161,
+        "true_positives": 140,
+        "false_positives": 1,
+        "false_negatives": 21,
+        "true_negatives": 5,
+        "precision": 0.9929,
+        "recall": 0.8696,
+        "f1_score": 0.9272
+      },
+      "real_tcn": {
+        "threshold_deg_c": 5.5,
+        "safe_forecast_origins_evaluated": 167,
+        "true_transitions_occurred": 161,
+        "true_positives": 110,
+        "false_positives": 1,
+        "false_negatives": 51,
+        "true_negatives": 5,
+        "precision": 0.991,
+        "recall": 0.6832,
+        "f1_score": 0.8088
+      }
+    },
+    "threshold_6_0_deg_c": {
+      "note": "Primary dynamic operational benchmark (706 safe origins, 383 true impending transitions).",
+      "persistence": {
+        "threshold_deg_c": 6.0,
+        "safe_forecast_origins_evaluated": 706,
+        "true_transitions_occurred": 383,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 383,
+        "true_negatives": 323,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      "ridge": {
+        "threshold_deg_c": 6.0,
+        "safe_forecast_origins_evaluated": 706,
+        "true_transitions_occurred": 383,
+        "true_positives": 143,
+        "false_positives": 45,
+        "false_negatives": 240,
+        "true_negatives": 278,
+        "precision": 0.7606,
+        "recall": 0.3734,
+        "f1_score": 0.5009
+      },
+      "real_tcn": {
+        "threshold_deg_c": 6.0,
+        "safe_forecast_origins_evaluated": 706,
+        "true_transitions_occurred": 383,
+        "true_positives": 59,
+        "false_positives": 14,
+        "false_negatives": 324,
+        "true_negatives": 309,
+        "precision": 0.8082,
+        "recall": 0.154,
+        "f1_score": 0.2588
+      }
+    },
+    "threshold_6_5_deg_c": {
+      "persistence": {
+        "threshold_deg_c": 6.5,
+        "safe_forecast_origins_evaluated": 943,
+        "true_transitions_occurred": 130,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 130,
+        "true_negatives": 813,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      "ridge": {
+        "threshold_deg_c": 6.5,
+        "safe_forecast_origins_evaluated": 943,
+        "true_transitions_occurred": 130,
+        "true_positives": 32,
+        "false_positives": 12,
+        "false_negatives": 98,
+        "true_negatives": 801,
+        "precision": 0.7273,
+        "recall": 0.2462,
+        "f1_score": 0.3678
+      },
+      "real_tcn": {
+        "threshold_deg_c": 6.5,
+        "safe_forecast_origins_evaluated": 943,
+        "true_transitions_occurred": 130,
+        "true_positives": 13,
+        "false_positives": 10,
+        "false_negatives": 117,
+        "true_negatives": 803,
+        "precision": 0.5652,
+        "recall": 0.1,
+        "f1_score": 0.1699
       }
     }
   }

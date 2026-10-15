@@ -45,7 +45,7 @@ def compute_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
 def compute_breach_metrics(
     y_true: np.ndarray, y_pred: np.ndarray, threshold: float
 ) -> Dict[str, Any]:
-    """Compute ground-truth future excursion detection metrics."""
+    """Compute overall horizon excursion detection metrics (whether any future step > threshold)."""
     gt_breach = np.any(y_true > threshold, axis=1)
     pred_breach = np.any(y_pred > threshold, axis=1)
 
@@ -62,6 +62,47 @@ def compute_breach_metrics(
         "threshold_deg_c": threshold,
         "ground_truth_breaches": int(np.sum(gt_breach)),
         "predicted_breaches": int(np.sum(pred_breach)),
+        "true_positives": tp,
+        "false_positives": fp,
+        "false_negatives": fn,
+        "true_negatives": tn,
+        "precision": round(precision, 4),
+        "recall": round(recall, 4),
+        "f1_score": round(f1, 4),
+    }
+
+
+def compute_transition_metrics(
+    y_true: np.ndarray, y_pred: np.ndarray, t_origin: np.ndarray, threshold: float
+) -> Dict[str, Any]:
+    """Compute true impending safe-to-unsafe transition detection metrics.
+    
+    Evaluated strictly over sequences where chamber is within safety limits at forecast origin (T_0 <= threshold).
+    A positive event is an actual subsequent excursion into breach (> threshold) during the 15-minute horizon.
+    """
+    safe_origin_mask = (t_origin <= threshold)
+    actual_future_cross = np.any(y_true > threshold, axis=1)
+    pred_future_cross = np.any(y_pred > threshold, axis=1)
+
+    actual_event = actual_future_cross[safe_origin_mask]
+    pred_event = pred_future_cross[safe_origin_mask]
+
+    safe_count = int(np.sum(safe_origin_mask))
+    true_event_count = int(np.sum(actual_event))
+
+    tp = int(np.sum(actual_event & pred_event))
+    fp = int(np.sum(~actual_event & pred_event))
+    fn = int(np.sum(actual_event & ~pred_event))
+    tn = int(np.sum(~actual_event & ~pred_event))
+
+    precision = float(tp / (tp + fp)) if (tp + fp) > 0 else 0.0
+    recall = float(tp / (tp + fn)) if (tp + fn) > 0 else 0.0
+    f1 = float(2 * precision * recall / (precision + recall)) if (precision + recall) > 0 else 0.0
+
+    return {
+        "threshold_deg_c": threshold,
+        "safe_forecast_origins_evaluated": safe_count,
+        "true_transitions_occurred": true_event_count,
         "true_positives": tp,
         "false_positives": fp,
         "false_negatives": fn,
@@ -240,6 +281,24 @@ def run_benchmark(
     breach_65_ridge = compute_breach_metrics(y_test, pred_ridge, 6.5)
     breach_65_tcn = compute_breach_metrics(y_test, pred_tcn, 6.5)
 
+    # True Impending Transition Metrics (Chamber safe at origin T_0 <= threshold, subsequent excursion occurs)
+    t_origin_test = X_test[:, -1]
+    trans_50_pers = compute_transition_metrics(y_test, pred_pers, t_origin_test, 5.0)
+    trans_50_ridge = compute_transition_metrics(y_test, pred_ridge, t_origin_test, 5.0)
+    trans_50_tcn = compute_transition_metrics(y_test, pred_tcn, t_origin_test, 5.0)
+
+    trans_55_pers = compute_transition_metrics(y_test, pred_pers, t_origin_test, 5.5)
+    trans_55_ridge = compute_transition_metrics(y_test, pred_ridge, t_origin_test, 5.5)
+    trans_55_tcn = compute_transition_metrics(y_test, pred_tcn, t_origin_test, 5.5)
+
+    trans_60_pers = compute_transition_metrics(y_test, pred_pers, t_origin_test, 6.0)
+    trans_60_ridge = compute_transition_metrics(y_test, pred_ridge, t_origin_test, 6.0)
+    trans_60_tcn = compute_transition_metrics(y_test, pred_tcn, t_origin_test, 6.0)
+
+    trans_65_pers = compute_transition_metrics(y_test, pred_pers, t_origin_test, 6.5)
+    trans_65_ridge = compute_transition_metrics(y_test, pred_ridge, t_origin_test, 6.5)
+    trans_65_tcn = compute_transition_metrics(y_test, pred_tcn, t_origin_test, 6.5)
+
     # Print Formatted Comparison Table
     print(f"{'Method / Model':<35} {'MAE (°C)':<12} {'RMSE (°C)':<12} {'R² Score':<10} {'F1 (>5.0°C)':<12} {'F1 (>6.0°C)':<12} {'F1 (>6.5°C)':<12}")
     print("-" * 105)
@@ -249,6 +308,14 @@ def run_benchmark(
     print(f"{'4. Ridge Autoregression AR(60)':<35} {m_ridge['mae_deg_c']:<12.4f} {m_ridge['rmse_deg_c']:<12.4f} {m_ridge['r2_score']:<10.4f} {breach_50_ridge['f1_score']:<12.4f} {breach_60_ridge['f1_score']:<12.4f} {breach_65_ridge['f1_score']:<12.4f}")
     print(f"{'5. Real-TCN (Learned Neural)':<35} {m_tcn['mae_deg_c']:<12.4f} {m_tcn['rmse_deg_c']:<12.4f} {m_tcn['r2_score']:<10.4f} {breach_50_tcn['f1_score']:<12.4f} {breach_60_tcn['f1_score']:<12.4f} {breach_65_tcn['f1_score']:<12.4f}")
     print("-" * 105)
+
+    print("\n[STRICT IMPENDING EARLY-WARNING TRANSITION METRICS (Evaluated only when T_0 <= Threshold)]")
+    print(f"{'Method / Threshold':<35} {'Safe Origins':<15} {'Transitions':<15} {'Precision':<12} {'Recall':<12} {'F1-Score':<10}")
+    print("-" * 99)
+    print(f"{'Persistence (>6.0°C)':<35} {trans_60_pers['safe_forecast_origins_evaluated']:<15} {trans_60_pers['true_transitions_occurred']:<15} {trans_60_pers['precision']:<12.4f} {trans_60_pers['recall']:<12.4f} {trans_60_pers['f1_score']:<10.4f}")
+    print(f"{'Ridge AR(60) (>6.0°C)':<35} {trans_60_ridge['safe_forecast_origins_evaluated']:<15} {trans_60_ridge['true_transitions_occurred']:<15} {trans_60_ridge['precision']:<12.4f} {trans_60_ridge['recall']:<12.4f} {trans_60_ridge['f1_score']:<10.4f}")
+    print(f"{'Real-TCN (>6.0°C)':<35} {trans_60_tcn['safe_forecast_origins_evaluated']:<15} {trans_60_tcn['true_transitions_occurred']:<15} {trans_60_tcn['precision']:<12.4f} {trans_60_tcn['recall']:<12.4f} {trans_60_tcn['f1_score']:<10.4f}")
+    print("-" * 99)
 
     benchmark_results = {
         "benchmark_timestamp": datetime.now(timezone.utc).isoformat(),
@@ -301,6 +368,30 @@ def run_benchmark(
                 "persistence": breach_65_pers,
                 "ridge": breach_65_ridge,
                 "real_tcn": breach_65_tcn,
+            },
+        },
+        "early_warning_transition_metrics": {
+            "threshold_5_0_deg_c": {
+                "note": "Only 8 safe origins (0.8% of test set); chamber operates in steady breach. Small sample size limits validation.",
+                "persistence": trans_50_pers,
+                "ridge": trans_50_ridge,
+                "real_tcn": trans_50_tcn,
+            },
+            "threshold_5_5_deg_c": {
+                "persistence": trans_55_pers,
+                "ridge": trans_55_ridge,
+                "real_tcn": trans_55_tcn,
+            },
+            "threshold_6_0_deg_c": {
+                "note": "Primary dynamic operational benchmark (706 safe origins, 383 true impending transitions).",
+                "persistence": trans_60_pers,
+                "ridge": trans_60_ridge,
+                "real_tcn": trans_60_tcn,
+            },
+            "threshold_6_5_deg_c": {
+                "persistence": trans_65_pers,
+                "ridge": trans_65_ridge,
+                "real_tcn": trans_65_tcn,
             },
         },
     }
