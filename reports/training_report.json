@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-10-15T13:51:52.032133+00:00",
+  "dataset": "data/raw/simulated_cold_chain.csv",
+  "sensor_id": "CC-01",
+  "features": [
+    "temperature",
+    "humidity",
+    "ambient_temperature",
+    "power_kw",
+    "compressor_state",
+    "door_open",
+    "temperature_delta",
+    "rolling_mean",
+    "rolling_std",
+    "temperature_slope",
+    "ambient_difference",
+    "power_delta"
+  ],
+  "split_summary": {
+    "total_sequences": 3925,
+    "train_sequences": 2747,
+    "val_sequences": 588,
+    "test_sequences": 590,
+    "split_ratios": "70% Train, 15% Val, 15% Test (Chronological)"
+  },
+  "training_config": {
+    "max_epochs": 10,
+    "batch_size": 64,
+    "initial_lr": 0.001,
+    "patience": 15,
+    "loss_function": "MSELoss",
+    "optimizer": "Adam",
+    "scheduler": "ReduceLROnPlateau (factor=0.5, patience=5)"
+  },
+  "training_summary": {
+    "epochs_trained": 10,
+    "best_epoch": 8,
+    "best_val_mae": 0.1546,
+    "stopped_early": false
+  },
+  "test_metrics": {
+    "mae": 0.1672,
+    "rmse": 0.2131,
+    "r2": 0.9875
+  },
+  "baseline_comparison": {
+    "baseline_metrics": {
+      "mae": 1.2500958442687988,
+      "rmse": 1.467206597328186,
+      "dataset": "SIMULATION"
+    },
+    "mae_delta": -1.0829,
+    "rmse_delta": -1.2541,
+    "mae_improvement_pct": 86.63,
+    "rmse_improvement_pct": 85.48
+  },
+  "artifacts": {
+    "model_checkpoint": "models\\mad_tcn_retrained.pt",
+    "scaler": "models\\scaler_retrained.pkl"
+  }
+}

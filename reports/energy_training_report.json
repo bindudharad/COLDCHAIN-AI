@@ -1,6 +1,6 @@
 {
   "status": "ESTIMATED / SIMULATED",
-  "timestamp_utc": "2026-10-15T05:36:15.369794+00:00",
+  "timestamp_utc": "2026-10-15T13:52:45.217449+00:00",
   "disclaimer": "All power and energy metrics are ESTIMATED and SIMULATED based on thermodynamic cold-chain simulation models. No hardware wattmeter or physical sensor validation is claimed.",
   "hardware_validation": false,
   "dataset": {

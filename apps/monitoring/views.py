@@ -190,7 +190,15 @@ def pipeline(request):
     cursor = None
     if cache.get('simulation_state') == 'running':
         cursor = cache.get('simulation_cursor', 0)
-    result = decision_for_sensor(sensor, offset=cursor)
+    try:
+        result = decision_for_sensor(sensor, offset=cursor)
+    except ValueError as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e),
+            'sensor': sensor.sensor_id,
+            'reading_count': sensor.readings.count()
+        }, status=400)
     row = result.pop('latest_reading')
     return JsonResponse({
         'success': True,

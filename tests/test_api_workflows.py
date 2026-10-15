@@ -4,6 +4,10 @@ from datetime import timedelta
 import numpy as np
 import torch
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+import django
+django.setup()
+
 from django.test import TestCase
 from django.utils import timezone
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -440,3 +444,50 @@ class ApiWorkflowTests(TestCase):
         self.assertTrue(0.0 <= rec['expected_temperature'] <= 5.0)
         self.assertTrue(rec['cooling_intensity'] >= 0.1)
         self.assertTrue(rec['compressor_duty_cycle'] >= 0.2)
+
+    # 33. Pipeline Handles Sensor With Zero Readings Gracefully
+    def test_33_pipeline_missing_sensor_history(self):
+        empty_sensor = Sensor.objects.create(
+            sensor_id='EMPTY-SENSOR-99',
+            location='Chamber with no telemetry',
+            product_type='Food'
+        )
+        res = self.client.get(f'/api/pipeline/?sensor={empty_sensor.sensor_id}')
+        self.assertEqual(res.status_code, 400)
+        data = res.json()
+        self.assertFalse(data['success'])
+        self.assertEqual(data['sensor'], 'EMPTY-SENSOR-99')
+        self.assertIn('At least 60 readings are required', data['error'])
+        self.assertEqual(data['reading_count'], 0)
+
+    # 34. Profile API and Fallback on Unknown Product Profile
+    def test_34_unknown_product_profile_fallback(self):
+        res = self.client.get('/api/profile/?profile=NonExistentCargo')
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        # Defaults to Generic (0.0 to 5.0 °C)
+        self.assertEqual(data['active_profile'], 'NonExistentCargo')
+        self.assertEqual(data['limits'], {'min_c': 0.0, 'max_c': 5.0})
+
+    # 35. Constrained NSGA-II Under Extreme Ambient Heat Shock
+    def test_35_nsga2_extreme_heat_shock_feasibility(self):
+        # Extreme ambient 45.0 °C, current chamber 4.9 °C, critical risk 85.0
+        pareto, rec = run_nsga2(current=4.9, ambient=45.0, future_risk=85.0, profile='Food')
+        self.assertTrue(len(pareto) >= 1)
+        # Should aggressively activate high cooling (at least 0.70 duty and intensity)
+        self.assertGreaterEqual(rec['cooling_intensity'], 0.70)
+        self.assertGreaterEqual(rec['compressor_duty_cycle'], 0.70)
+
+    # 36. IoT Ingestion Rejects Malformed Timestamps & Missing Keys
+    def test_36_iot_telemetry_malformed_payload(self):
+        # Missing sensor_id
+        res1 = self.client.post('/api/iot/telemetry/', data=json.dumps({'temperature': 3.5}),
+                                content_type='application/json')
+        self.assertEqual(res1.status_code, 400)
+
+        # Invalid timestamp string
+        res2 = self.client.post('/api/iot/telemetry/',
+                                data=json.dumps({'sensor_id': 'BAD-TS-01', 'temperature': 3.5, 'timestamp': 'not-a-timestamp'}),
+                                content_type='application/json')
+        self.assertEqual(res2.status_code, 400)
+

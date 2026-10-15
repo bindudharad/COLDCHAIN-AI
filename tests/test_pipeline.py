@@ -1,3 +1,7 @@
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+import django
+django.setup()
 from django.test import SimpleTestCase
 import torch
 from ml.mad_tcn import MADTCN
