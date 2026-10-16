@@ -3,7 +3,7 @@
 **Project:** COLDCHAIN-AI: Intelligent Multi-Objective Cold-Chain Optimization & Predictive Quality Management  
 **Working Directory:** `C:\Projects\Cold-Chain-Ai`  
 **Git Branch:** `completion-dev`  
-**Authoritative Commit:** `4dcf68c` (Scientific Consistency Audit: Multi-Threshold Physical Breach Early Warning & 66 Tests)  
+**Authoritative Commit:** `343b503` (Statistical Consistency Patch: Holdout Split Reconciliation, Sample Support, & Wilson CI Disclosures)  
 **Date:** 2026-10-16  
 **Document Status:** FINAL — EVIDENCE-RECONCILED & SCIENTIFICALLY AUDITED  
 
@@ -338,11 +338,11 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
 - **Active Workspace:** `C:\Projects\Cold-Chain-Ai`
 - **Active Git Branch:** `completion-dev`
 - **Latest Local Commits:**
+  - `343b503`: *Statistical Consistency: reconcile 15.01% held-out test split (idx 5917-6961), define sample support, and disclose Wilson CI non-i.i.d. assumptions*
+  - `ff0efab`: *Align Authoritative Commit in FINAL_COMPLETION_REPORT to 4dcf68c*
   - `4dcf68c`: *Scientific Audit: add multi-threshold physical breach evaluation (5.0, 5.5, 6.0, 6.5 C) with Wilson CIs, expand test suite to 66 tests, and disclose 5.0 C statistical limits*
   - `9087841`: *Align Authoritative Commit in FINAL_COMPLETION_REPORT to 40131aa*
   - `40131aa`: *Scientific Audit: add contiguous physical breach event early-warning metrics, expand test suite to 55 tests, and reconcile full 23-dataset inventory*
-  - `b2f76b3`: *Align Authoritative Commit in FINAL_COMPLETION_REPORT to b346ff2*
-  - `b346ff2`: *Scientific Audit: reconcile 5s sampling interval across 1.08M raw rows, resolve Scenario 4 9.36 C trajectory dynamics, report transition missed-event rates, and align validation reports*
 - **Scientific Audit Verification:** 5-second sampling cadence reconciled across 1,083,195 raw clean rows and 1,411,515 preprocessed grid cells (328,893 downtime NaNs); Scenario 4 thermal trajectory (9.36 °C) mathematically derived as a still-warming 15-minute endpoint toward 9.53 °C asymptotic equilibrium under maximum cooling; 479 violation-minutes empirical reduction confirmed; sequence-level and physical event-level (95.5% Ridge, 88.6% Real-TCN) early warning metrics audited; multi-threshold spectrum (5.0 °C, 5.5 °C, 6.0 °C, 6.5 °C) evaluated with 95% Wilson CIs, lead times, and clustered false alarms; 66/66 automated regression tests passing; working tree clean.
 - **Remote Policy:** Remote push to `origin` (`https://github.com/Swathi185-T/Cold-Chain-Ai.git`) remains unperformed, strictly honoring local-only development safety instructions.
 
