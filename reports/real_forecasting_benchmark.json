@@ -1,5 +1,5 @@
 {
-  "benchmark_timestamp": "2026-10-15T19:49:25.597126+00:00",
+  "benchmark_timestamp": "2026-10-16T06:14:27.317436+00:00",
   "dataset_metadata": {
     "source_file": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR03_preprocessed.csv",
     "raw_observations": 84444,
@@ -372,46 +372,523 @@
     }
   },
   "event_level_breach_metrics": {
+    "threshold_5_0_deg_c": {
+      "description": "Standard Food Profile Critical Limit (0.0 to 5.0 deg C). Chamber operates above 5.0 deg C at baseline; evaluation is STATISTICALLY INCONCLUSIVE due to extreme scarcity of safe origins.",
+      "conclusive_status": "STATISTICALLY INCONCLUSIVE (insufficient safe origins or breach events in test series)",
+      "safe_origins_count": 8,
+      "total_unique_physical_events": 5,
+      "persistence": {
+        "threshold_deg_c": 5.0,
+        "conclusive_status": "STATISTICALLY INCONCLUSIVE (insufficient safe origins or breach events in test series)",
+        "safe_origins_count": 8,
+        "safe_origins_pct": 0.8,
+        "total_unique_physical_events": 5,
+        "unique_events_detected": 0,
+        "unique_events_missed": 5,
+        "event_detection_rate_pct": 0.0,
+        "event_missed_rate_pct": 100.0,
+        "detection_rate_95ci_wilson": [
+          0.0,
+          43.4
+        ],
+        "mean_warning_lead_time_min": 0.0,
+        "median_warning_lead_time_min": 0.0,
+        "lead_time_distribution_min": {
+          "min": 0.0,
+          "p25": 0.0,
+          "median": 0.0,
+          "mean": 0.0,
+          "p75": 0.0,
+          "max": 0.0
+        },
+        "overlap_matched_events": 0,
+        "total_sequence_warnings_on_events": 0,
+        "duplicate_warnings_per_detected_event": 0.0,
+        "false_alarm_sequences": 0,
+        "false_alarm_clustered_episodes": 0,
+        "false_alarm_rate_per_hour": 0.0,
+        "false_alarm_rate_per_day": 0.0,
+        "clustered_fa_rate_per_day": 0.0,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
+      },
+      "ridge": {
+        "threshold_deg_c": 5.0,
+        "conclusive_status": "STATISTICALLY INCONCLUSIVE (insufficient safe origins or breach events in test series)",
+        "safe_origins_count": 8,
+        "safe_origins_pct": 0.8,
+        "total_unique_physical_events": 5,
+        "unique_events_detected": 3,
+        "unique_events_missed": 2,
+        "event_detection_rate_pct": 60.0,
+        "event_missed_rate_pct": 40.0,
+        "detection_rate_95ci_wilson": [
+          23.1,
+          88.2
+        ],
+        "mean_warning_lead_time_min": 2.7,
+        "median_warning_lead_time_min": 1.0,
+        "lead_time_distribution_min": {
+          "min": 1.0,
+          "p25": 1.0,
+          "median": 1.0,
+          "mean": 2.7,
+          "p75": 3.5,
+          "max": 6.0
+        },
+        "overlap_matched_events": 3,
+        "total_sequence_warnings_on_events": 8,
+        "duplicate_warnings_per_detected_event": 2.67,
+        "false_alarm_sequences": 0,
+        "false_alarm_clustered_episodes": 0,
+        "false_alarm_rate_per_hour": 0.0,
+        "false_alarm_rate_per_day": 0.0,
+        "clustered_fa_rate_per_day": 0.0,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
+      },
+      "real_tcn": {
+        "threshold_deg_c": 5.0,
+        "conclusive_status": "STATISTICALLY INCONCLUSIVE (insufficient safe origins or breach events in test series)",
+        "safe_origins_count": 8,
+        "safe_origins_pct": 0.8,
+        "total_unique_physical_events": 5,
+        "unique_events_detected": 3,
+        "unique_events_missed": 2,
+        "event_detection_rate_pct": 60.0,
+        "event_missed_rate_pct": 40.0,
+        "detection_rate_95ci_wilson": [
+          23.1,
+          88.2
+        ],
+        "mean_warning_lead_time_min": 2.7,
+        "median_warning_lead_time_min": 1.0,
+        "lead_time_distribution_min": {
+          "min": 1.0,
+          "p25": 1.0,
+          "median": 1.0,
+          "mean": 2.7,
+          "p75": 3.5,
+          "max": 6.0
+        },
+        "overlap_matched_events": 3,
+        "total_sequence_warnings_on_events": 8,
+        "duplicate_warnings_per_detected_event": 2.67,
+        "false_alarm_sequences": 0,
+        "false_alarm_clustered_episodes": 0,
+        "false_alarm_rate_per_hour": 0.0,
+        "false_alarm_rate_per_day": 0.0,
+        "clustered_fa_rate_per_day": 0.0,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
+      },
+      "scientific_distinction": "With only 8 safe origins (0.8% of test set), sample size is insufficient to statistically validate prevention of 5.0 deg C excursions on this physical dataset."
+    },
+    "threshold_5_5_deg_c": {
+      "description": "Secondary Precautionary Warning Threshold (+0.5 deg C above critical limit).",
+      "conclusive_status": "CONCLUSIVE",
+      "safe_origins_count": 167,
+      "total_unique_physical_events": 39,
+      "persistence": {
+        "threshold_deg_c": 5.5,
+        "conclusive_status": "CONCLUSIVE",
+        "safe_origins_count": 167,
+        "safe_origins_pct": 16.0,
+        "total_unique_physical_events": 39,
+        "unique_events_detected": 0,
+        "unique_events_missed": 39,
+        "event_detection_rate_pct": 0.0,
+        "event_missed_rate_pct": 100.0,
+        "detection_rate_95ci_wilson": [
+          0.0,
+          9.0
+        ],
+        "mean_warning_lead_time_min": 0.0,
+        "median_warning_lead_time_min": 0.0,
+        "lead_time_distribution_min": {
+          "min": 0.0,
+          "p25": 0.0,
+          "median": 0.0,
+          "mean": 0.0,
+          "p75": 0.0,
+          "max": 0.0
+        },
+        "overlap_matched_events": 0,
+        "total_sequence_warnings_on_events": 0,
+        "duplicate_warnings_per_detected_event": 0.0,
+        "false_alarm_sequences": 0,
+        "false_alarm_clustered_episodes": 0,
+        "false_alarm_rate_per_hour": 0.0,
+        "false_alarm_rate_per_day": 0.0,
+        "clustered_fa_rate_per_day": 0.0,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
+      },
+      "ridge": {
+        "threshold_deg_c": 5.5,
+        "conclusive_status": "CONCLUSIVE",
+        "safe_origins_count": 167,
+        "safe_origins_pct": 16.0,
+        "total_unique_physical_events": 39,
+        "unique_events_detected": 38,
+        "unique_events_missed": 1,
+        "event_detection_rate_pct": 97.4,
+        "event_missed_rate_pct": 2.6,
+        "detection_rate_95ci_wilson": [
+          86.8,
+          99.5
+        ],
+        "mean_warning_lead_time_min": 7.6,
+        "median_warning_lead_time_min": 5.0,
+        "lead_time_distribution_min": {
+          "min": 1.0,
+          "p25": 4.0,
+          "median": 5.0,
+          "mean": 7.6,
+          "p75": 13.75,
+          "max": 15.0
+        },
+        "overlap_matched_events": 38,
+        "total_sequence_warnings_on_events": 178,
+        "duplicate_warnings_per_detected_event": 4.68,
+        "false_alarm_sequences": 1,
+        "false_alarm_clustered_episodes": 1,
+        "false_alarm_rate_per_hour": 0.06,
+        "false_alarm_rate_per_day": 1.4,
+        "clustered_fa_rate_per_day": 1.4,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
+      },
+      "real_tcn": {
+        "threshold_deg_c": 5.5,
+        "conclusive_status": "CONCLUSIVE",
+        "safe_origins_count": 167,
+        "safe_origins_pct": 16.0,
+        "total_unique_physical_events": 39,
+        "unique_events_detected": 37,
+        "unique_events_missed": 2,
+        "event_detection_rate_pct": 94.9,
+        "event_missed_rate_pct": 5.1,
+        "detection_rate_95ci_wilson": [
+          83.1,
+          98.6
+        ],
+        "mean_warning_lead_time_min": 6.9,
+        "median_warning_lead_time_min": 5.0,
+        "lead_time_distribution_min": {
+          "min": 1.0,
+          "p25": 4.0,
+          "median": 5.0,
+          "mean": 6.9,
+          "p75": 11.0,
+          "max": 15.0
+        },
+        "overlap_matched_events": 36,
+        "total_sequence_warnings_on_events": 151,
+        "duplicate_warnings_per_detected_event": 4.08,
+        "false_alarm_sequences": 1,
+        "false_alarm_clustered_episodes": 1,
+        "false_alarm_rate_per_hour": 0.06,
+        "false_alarm_rate_per_day": 1.4,
+        "clustered_fa_rate_per_day": 1.4,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
+      }
+    },
     "threshold_6_0_deg_c": {
-      "description": "Unique physical breach episode detection evaluated on contiguous excursions >6.0 deg C in held-out test series.",
+      "description": "Dynamic Regime Excursion Threshold (chamber operating median ~6.0 deg C). Primary statistical benchmark for dynamic transition prediction.",
+      "conclusive_status": "CONCLUSIVE",
+      "safe_origins_count": 706,
       "total_unique_physical_events": 44,
       "persistence": {
         "threshold_deg_c": 6.0,
+        "conclusive_status": "CONCLUSIVE",
+        "safe_origins_count": 706,
+        "safe_origins_pct": 67.6,
         "total_unique_physical_events": 44,
         "unique_events_detected": 0,
         "unique_events_missed": 44,
         "event_detection_rate_pct": 0.0,
         "event_missed_rate_pct": 100.0,
+        "detection_rate_95ci_wilson": [
+          0.0,
+          8.0
+        ],
         "mean_warning_lead_time_min": 0.0,
+        "median_warning_lead_time_min": 0.0,
+        "lead_time_distribution_min": {
+          "min": 0.0,
+          "p25": 0.0,
+          "median": 0.0,
+          "mean": 0.0,
+          "p75": 0.0,
+          "max": 0.0
+        },
+        "overlap_matched_events": 0,
         "total_sequence_warnings_on_events": 0,
         "duplicate_warnings_per_detected_event": 0.0,
-        "false_alarm_sequences": 0
+        "false_alarm_sequences": 0,
+        "false_alarm_clustered_episodes": 0,
+        "false_alarm_rate_per_hour": 0.0,
+        "false_alarm_rate_per_day": 0.0,
+        "clustered_fa_rate_per_day": 0.0,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
       },
       "ridge": {
         "threshold_deg_c": 6.0,
+        "conclusive_status": "CONCLUSIVE",
+        "safe_origins_count": 706,
+        "safe_origins_pct": 67.6,
         "total_unique_physical_events": 44,
         "unique_events_detected": 42,
         "unique_events_missed": 2,
         "event_detection_rate_pct": 95.5,
         "event_missed_rate_pct": 4.5,
+        "detection_rate_95ci_wilson": [
+          84.9,
+          98.7
+        ],
         "mean_warning_lead_time_min": 9.9,
+        "median_warning_lead_time_min": 11.5,
+        "lead_time_distribution_min": {
+          "min": 2.0,
+          "p25": 6.0,
+          "median": 11.5,
+          "mean": 9.9,
+          "p75": 14.5,
+          "max": 15.0
+        },
+        "overlap_matched_events": 41,
         "total_sequence_warnings_on_events": 189,
         "duplicate_warnings_per_detected_event": 4.5,
-        "false_alarm_sequences": 45
+        "false_alarm_sequences": 45,
+        "false_alarm_clustered_episodes": 14,
+        "false_alarm_rate_per_hour": 2.58,
+        "false_alarm_rate_per_day": 62.0,
+        "clustered_fa_rate_per_day": 19.3,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
       },
       "real_tcn": {
         "threshold_deg_c": 6.0,
+        "conclusive_status": "CONCLUSIVE",
+        "safe_origins_count": 706,
+        "safe_origins_pct": 67.6,
         "total_unique_physical_events": 44,
         "unique_events_detected": 39,
         "unique_events_missed": 5,
         "event_detection_rate_pct": 88.6,
         "event_missed_rate_pct": 11.4,
+        "detection_rate_95ci_wilson": [
+          76.0,
+          95.0
+        ],
         "mean_warning_lead_time_min": 9.1,
+        "median_warning_lead_time_min": 11.0,
+        "lead_time_distribution_min": {
+          "min": 1.0,
+          "p25": 5.5,
+          "median": 11.0,
+          "mean": 9.1,
+          "p75": 14.0,
+          "max": 15.0
+        },
+        "overlap_matched_events": 30,
         "total_sequence_warnings_on_events": 120,
         "duplicate_warnings_per_detected_event": 3.08,
-        "false_alarm_sequences": 18
+        "false_alarm_sequences": 18,
+        "false_alarm_clustered_episodes": 12,
+        "false_alarm_rate_per_hour": 1.03,
+        "false_alarm_rate_per_day": 24.8,
+        "clustered_fa_rate_per_day": 16.5,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
       },
-      "scientific_distinction": "Reconciles sequence-level transition recall with physical event detection: while sliding windows generate multiple warnings per event, 88.6% - 95.5% of unique physical breach episodes are successfully anticipated 9+ minutes in advance."
+      "scientific_distinction": "Reconciles sequence-level transition recall with physical event detection: while sliding windows generate multiple warnings per event, 88.6% - 95.5% of unique physical breach episodes are successfully anticipated 9+ minutes in advance with 60% fewer false alarms from Real-TCN."
+    },
+    "threshold_6_5_deg_c": {
+      "description": "Severe Dynamic Thermal Excursion Threshold (75th percentile ~6.5 deg C).",
+      "conclusive_status": "CONCLUSIVE",
+      "safe_origins_count": 943,
+      "total_unique_physical_events": 14,
+      "persistence": {
+        "threshold_deg_c": 6.5,
+        "conclusive_status": "CONCLUSIVE",
+        "safe_origins_count": 943,
+        "safe_origins_pct": 90.2,
+        "total_unique_physical_events": 14,
+        "unique_events_detected": 0,
+        "unique_events_missed": 14,
+        "event_detection_rate_pct": 0.0,
+        "event_missed_rate_pct": 100.0,
+        "detection_rate_95ci_wilson": [
+          0.0,
+          21.5
+        ],
+        "mean_warning_lead_time_min": 0.0,
+        "median_warning_lead_time_min": 0.0,
+        "lead_time_distribution_min": {
+          "min": 0.0,
+          "p25": 0.0,
+          "median": 0.0,
+          "mean": 0.0,
+          "p75": 0.0,
+          "max": 0.0
+        },
+        "overlap_matched_events": 0,
+        "total_sequence_warnings_on_events": 0,
+        "duplicate_warnings_per_detected_event": 0.0,
+        "false_alarm_sequences": 0,
+        "false_alarm_clustered_episodes": 0,
+        "false_alarm_rate_per_hour": 0.0,
+        "false_alarm_rate_per_day": 0.0,
+        "clustered_fa_rate_per_day": 0.0,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
+      },
+      "ridge": {
+        "threshold_deg_c": 6.5,
+        "conclusive_status": "CONCLUSIVE",
+        "safe_origins_count": 943,
+        "safe_origins_pct": 90.2,
+        "total_unique_physical_events": 14,
+        "unique_events_detected": 13,
+        "unique_events_missed": 1,
+        "event_detection_rate_pct": 92.9,
+        "event_missed_rate_pct": 7.1,
+        "detection_rate_95ci_wilson": [
+          68.5,
+          98.7
+        ],
+        "mean_warning_lead_time_min": 6.5,
+        "median_warning_lead_time_min": 6.0,
+        "lead_time_distribution_min": {
+          "min": 1.0,
+          "p25": 3.0,
+          "median": 6.0,
+          "mean": 6.5,
+          "p75": 9.0,
+          "max": 15.0
+        },
+        "overlap_matched_events": 13,
+        "total_sequence_warnings_on_events": 38,
+        "duplicate_warnings_per_detected_event": 2.92,
+        "false_alarm_sequences": 12,
+        "false_alarm_clustered_episodes": 4,
+        "false_alarm_rate_per_hour": 0.69,
+        "false_alarm_rate_per_day": 16.5,
+        "clustered_fa_rate_per_day": 5.5,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
+      },
+      "real_tcn": {
+        "threshold_deg_c": 6.5,
+        "conclusive_status": "CONCLUSIVE",
+        "safe_origins_count": 943,
+        "safe_origins_pct": 90.2,
+        "total_unique_physical_events": 14,
+        "unique_events_detected": 8,
+        "unique_events_missed": 6,
+        "event_detection_rate_pct": 57.1,
+        "event_missed_rate_pct": 42.9,
+        "detection_rate_95ci_wilson": [
+          32.6,
+          78.6
+        ],
+        "mean_warning_lead_time_min": 6.1,
+        "median_warning_lead_time_min": 5.5,
+        "lead_time_distribution_min": {
+          "min": 1.0,
+          "p25": 1.0,
+          "median": 5.5,
+          "mean": 6.1,
+          "p75": 9.0,
+          "max": 15.0
+        },
+        "overlap_matched_events": 7,
+        "total_sequence_warnings_on_events": 18,
+        "duplicate_warnings_per_detected_event": 2.25,
+        "false_alarm_sequences": 7,
+        "false_alarm_clustered_episodes": 3,
+        "false_alarm_rate_per_hour": 0.4,
+        "false_alarm_rate_per_day": 9.6,
+        "clustered_fa_rate_per_day": 4.1,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
+      }
     }
   }
 }

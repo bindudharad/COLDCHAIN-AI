@@ -253,40 +253,277 @@ class PerDeviceIoTAuthTests(TestCase):
 
 
 class PhysicalEventMetricsTests(TestCase):
-    """Group 4: Tests for physical breach event detection metrics."""
+    """Group 4: Comprehensive adversarial unit tests for physical breach event detection."""
 
-    def test_compute_event_metrics_synthetic(self):
-        """Test compute_event_metrics on synthetic sequences."""
+    def test_correctly_detected_event_with_positive_actionable_lead_time(self):
+        """Test a clear impending breach is correctly credited with positive actionable lead time."""
         import numpy as np
         from scripts.evaluate_real_forecasting import compute_event_metrics
 
-        # Create 100 timesteps of synthetic temperature
-        # Event 1: at step 20-25 (crosses > 6.0)
-        # Event 2: at step 60-70 (crosses > 6.0)
-        series = np.full(100, 5.0)
-        series[20:26] = 6.5
-        series[60:71] = 6.8
-
-        window = 10
-        horizon = 5
+        # 50-step series: safe at 5.0 °C, breaches at step 20 (stays 6.5 °C for 5 steps)
+        series = np.full(50, 5.0)
+        series[20:25] = 6.5
+        window, horizon = 5, 5
         X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
         y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
         t_origin = X[:, -1]
 
-        # Persistence prediction (flatline at origin)
-        pred_pers = np.tile(t_origin[:, np.newaxis], (1, horizon))
-        res_pers = compute_event_metrics(y, pred_pers, t_origin, horizon=horizon, threshold=6.0)
+        # Model predicts safe everywhere except at sequence 12 (origin index 16, which is 4 steps before step 20)
+        pred = np.tile(t_origin[:, np.newaxis], (1, horizon))
+        pred[12] = 6.8  # Alarm raised at origin step 16, lead time = 20 - 16 = 4 min
 
-        self.assertEqual(res_pers['total_unique_physical_events'], 2)
-        self.assertEqual(res_pers['unique_events_detected'], 0)
-        self.assertEqual(res_pers['event_detection_rate_pct'], 0.0)
-        self.assertEqual(res_pers['event_missed_rate_pct'], 100.0)
+        res = compute_event_metrics(y, pred, t_origin, horizon=horizon, threshold=6.0, min_lead_time_min=1)
+        self.assertEqual(res['total_unique_physical_events'], 1)
+        self.assertEqual(res['unique_events_detected'], 1)
+        self.assertEqual(res['unique_events_missed'], 0)
+        self.assertEqual(res['event_detection_rate_pct'], 100.0)
+        self.assertEqual(res['mean_warning_lead_time_min'], 4.0)
 
-        # Oracle/Perfect prediction
-        res_oracle = compute_event_metrics(y, y, t_origin, horizon=horizon, threshold=6.0)
-        self.assertEqual(res_oracle['total_unique_physical_events'], 2)
-        self.assertEqual(res_oracle['unique_events_detected'], 2)
-        self.assertEqual(res_oracle['event_detection_rate_pct'], 100.0)
-        self.assertEqual(res_oracle['unique_events_missed'], 0)
-        self.assertGreater(res_oracle['mean_warning_lead_time_min'], 0.0)
+    def test_alarm_only_after_event_begins_is_rejected_as_advance_warning(self):
+        """Test an alarm raised only after the breach is underway is NOT credited as an advance warning."""
+        import numpy as np
+        from scripts.evaluate_real_forecasting import compute_event_metrics
+
+        series = np.full(50, 5.0)
+        series[20:25] = 6.5  # Event starts at step 20
+        window, horizon = 5, 5
+        X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
+        y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
+        t_origin = X[:, -1]
+
+        # Model raises alarm ONLY at sequence 16 (origin step 20, where T=6.5 is ALREADY breached)
+        pred = np.tile(t_origin[:, np.newaxis], (1, horizon))
+        pred[16] = 7.0  # Alarm at or after breach start
+
+        res = compute_event_metrics(y, pred, t_origin, horizon=horizon, threshold=6.0, min_lead_time_min=1)
+        self.assertEqual(res['total_unique_physical_events'], 1)
+        self.assertEqual(res['unique_events_detected'], 0)  # Must NOT credit in-breach alarms as advance warning
+        self.assertEqual(res['unique_events_missed'], 1)
+        self.assertEqual(res['mean_warning_lead_time_min'], 0.0)
+
+    def test_duplicate_alarms_counted_at_most_once_per_physical_event(self):
+        """Test multiple consecutive warning sequences for one physical breach count as ONE detected event."""
+        import numpy as np
+        from scripts.evaluate_real_forecasting import compute_event_metrics
+
+        series = np.full(50, 5.0)
+        series[20:25] = 6.5
+        window, horizon = 5, 5
+        X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
+        y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
+        t_origin = X[:, -1]
+
+        # Model alarms at 4 consecutive safe origin sequences (origins 16, 17, 18, 19)
+        pred = np.tile(t_origin[:, np.newaxis], (1, horizon))
+        pred[12:16] = 6.8
+
+        res = compute_event_metrics(y, pred, t_origin, horizon=horizon, threshold=6.0)
+        self.assertEqual(res['total_unique_physical_events'], 1)
+        self.assertEqual(res['unique_events_detected'], 1)  # Strictly counted at most once
+        self.assertEqual(res['total_sequence_warnings_on_events'], 4)
+        self.assertEqual(res['duplicate_warnings_per_detected_event'], 4.0)
+        self.assertEqual(res['mean_warning_lead_time_min'], 4.0)  # Earliest advance lead time
+
+    def test_two_distinct_events_separated_by_genuine_safe_interval(self):
+        """Test two distinct breach events separated by a safe period are both evaluated independently."""
+        import numpy as np
+        from scripts.evaluate_real_forecasting import compute_event_metrics
+
+        series = np.full(80, 5.0)
+        series[15:20] = 6.5  # Event 1: steps 15-19
+        # Steps 20-39: safe at 5.0 °C
+        series[40:45] = 6.8  # Event 2: steps 40-44
+        window, horizon = 5, 5
+        X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
+        y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
+        t_origin = X[:, -1]
+
+        # Oracle predictions (detects both events)
+        res = compute_event_metrics(y, y, t_origin, horizon=horizon, threshold=6.0)
+        self.assertEqual(res['total_unique_physical_events'], 2)
+        self.assertEqual(res['unique_events_detected'], 2)
+        self.assertEqual(res['unique_events_missed'], 0)
+        self.assertEqual(res['event_detection_rate_pct'], 100.0)
+
+    def test_event_at_beginning_of_series_pre_existing_breach_handled(self):
+        """Test that a breach event active at t=0 (pre-existing breach) is counted and cannot be falsely claimed as anticipated."""
+        import numpy as np
+        from scripts.evaluate_real_forecasting import compute_event_metrics
+
+        series = np.full(50, 5.0)
+        series[0:8] = 6.8   # Event 1: starts at t=0 (pre-existing breach)
+        series[30:35] = 6.5 # Event 2: starts at step 30
+        window, horizon = 5, 5
+        X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
+        y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
+        t_origin = X[:, -1]
+
+        # Model alarms before Event 2, but cannot alarm before Event 1 (starts at t=0)
+        pred = np.tile(t_origin[:, np.newaxis], (1, horizon))
+        # Alarm for event 2 at origin step 27 (seq 23)
+        pred[23] = 6.8
+
+        res = compute_event_metrics(y, pred, t_origin, horizon=horizon, threshold=6.0)
+        self.assertEqual(res['total_unique_physical_events'], 2)
+        self.assertEqual(res['unique_events_detected'], 1)  # Only Event 2 detected
+        self.assertEqual(res['unique_events_missed'], 1)    # Event 1 missed (no prior safe warning possible)
+
+    def test_event_at_end_of_series_handled(self):
+        """Test an event starting near the very end of the series is properly identified."""
+        import numpy as np
+        from scripts.evaluate_real_forecasting import compute_event_metrics
+
+        series = np.full(50, 5.0)
+        series[38:40] = 6.6  # Event at end of series
+        window, horizon = 5, 5
+        X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
+        y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
+        t_origin = X[:, -1]
+
+        pred = np.tile(t_origin[:, np.newaxis], (1, horizon))
+        # start_k in test_eval_series is 34 (series[38]). Advance alarm at sequence 32 (lead time 2 steps)
+        pred[32] = 6.7  # Advance alarm
+
+        res = compute_event_metrics(y, pred, t_origin, horizon=horizon, threshold=6.0)
+        self.assertEqual(res['total_unique_physical_events'], 1)
+        self.assertEqual(res['unique_events_detected'], 1)
+
+    def test_missing_observations_and_timestamp_gaps_prevent_event_merging(self):
+        """Test that sensor downtime gaps split breach episodes rather than artificially merging them."""
+        import numpy as np
+        import pandas as pd
+        from scripts.evaluate_real_forecasting import compute_event_metrics
+
+        # Reconstructed test series has high temp at k=1..4 (series[2..5]), then safe
+        series = np.array([5.0, 5.0, 6.5, 6.5, 6.5, 6.5, 5.0, 5.0, 5.0, 5.0, 5.0])
+        window, horizon = 2, 2
+        X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
+        y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
+        t_origin = X[:, -1]
+
+        # len(test_eval_series) = len(t_origin) + horizon = 7 + 2 = 9
+        # Construct exactly 9 timestamps with a 3-hour downtime gap between k=2 and k=3
+        ts_eval = pd.to_datetime([
+            '2026-01-01 00:00',
+            '2026-01-01 00:01',
+            '2026-01-01 00:02',
+            '2026-01-01 03:00',  # 3-hour downtime gap!
+            '2026-01-01 03:01',
+            '2026-01-01 03:02',
+            '2026-01-01 03:03',
+            '2026-01-01 03:04',
+            '2026-01-01 03:05',
+        ])
+        pred_flat = np.tile(t_origin[:, np.newaxis], (1, horizon))
+
+        res_gapped = compute_event_metrics(y, pred_flat, t_origin, timestamps=ts_eval, horizon=horizon, threshold=6.0, max_gap_minutes=10.0)
+        # Without gap splitting it would be 1 merged event; with gap splitting it must be 2 events
+        self.assertEqual(res_gapped['total_unique_physical_events'], 2)
+
+    def test_misaligned_forecast_timestamp_rejected(self):
+        """Test that alarms predicting breach at misaligned timestamps outside the event are identified."""
+        import numpy as np
+        from scripts.evaluate_real_forecasting import compute_event_metrics
+
+        series = np.full(50, 5.0)
+        series[25:30] = 6.5  # Event from step 25 to 29
+        window, horizon = 5, 5
+        X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
+        y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
+        t_origin = X[:, -1]
+
+        # Model predicts breach at horizon step 0 (step 16), which is BEFORE step 25, but safe at step 25
+        pred = np.tile(t_origin[:, np.newaxis], (1, horizon))
+        pred[11, 0] = 6.8  # Target step 16 (safe in ground truth), but step 25 is safe
+        pred[11, 1:] = 5.0
+
+        res = compute_event_metrics(y, pred, t_origin, horizon=horizon, threshold=6.0)
+        # Event is not overlap matched because the predicted breach was misaligned
+        self.assertEqual(res['overlap_matched_events'], 0)
+
+    def test_no_eligible_safe_origins_flagged_inconclusive(self):
+        """Test that evaluating when chamber is constantly above threshold is flagged as STATISTICALLY INCONCLUSIVE."""
+        import numpy as np
+        from scripts.evaluate_real_forecasting import compute_event_metrics
+
+        # All observations at 7.0 °C (chamber continuously breached against 5.0 °C limit)
+        series = np.full(50, 7.0)
+        window, horizon = 5, 5
+        X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
+        y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
+        t_origin = X[:, -1]
+        pred = np.full_like(y, 7.0)
+
+        res = compute_event_metrics(y, pred, t_origin, horizon=horizon, threshold=5.0)
+        self.assertEqual(res['safe_origins_count'], 0)
+        self.assertIn("INCONCLUSIVE", res['conclusive_status'])
+
+    def test_false_alarm_with_no_subsequently_matched_event(self):
+        """Test false alarms on sequences where no breach occurs in ground truth are tracked and counted."""
+        import numpy as np
+        from scripts.evaluate_real_forecasting import compute_event_metrics
+
+        # Temperature stays safe at 5.0 °C for all 50 steps
+        series = np.full(50, 5.0)
+        window, horizon = 5, 5
+        X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
+        y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
+        t_origin = X[:, -1]
+
+        # Model triggers false alarms on 3 consecutive sequences (seq 10, 11, 12)
+        pred = np.tile(t_origin[:, np.newaxis], (1, horizon))
+        pred[10:13] = 6.5
+
+        res = compute_event_metrics(y, pred, t_origin, horizon=horizon, threshold=6.0)
+        self.assertEqual(res['total_unique_physical_events'], 0)
+        self.assertEqual(res['unique_events_detected'], 0)
+        self.assertEqual(res['false_alarm_sequences'], 3)
+        self.assertEqual(res['false_alarm_clustered_episodes'], 1)  # Grouped within 15-min cooldown
+        self.assertGreater(res['false_alarm_rate_per_day'], 0.0)
+
+    def test_reproducibility_on_same_input(self):
+        """Test compute_event_metrics produces perfectly deterministic, reproducible metrics."""
+        import numpy as np
+        from scripts.evaluate_real_forecasting import compute_event_metrics
+
+        series = np.full(60, 5.0)
+        series[20:25] = 6.5
+        series[40:48] = 6.8
+        window, horizon = 5, 5
+        X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
+        y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
+        t_origin = X[:, -1]
+
+        pred = np.tile(t_origin[:, np.newaxis], (1, horizon))
+        pred[12:15] = 6.6
+
+        run1 = compute_event_metrics(y, pred, t_origin, horizon=horizon, threshold=6.0)
+        run2 = compute_event_metrics(y, pred, t_origin, horizon=horizon, threshold=6.0)
+        self.assertEqual(run1, run2)
+
+    def test_lookahead_leakage_adversarial_rejection(self):
+        """Test that an alarm raised without a safe origin or outside the actionable window is rejected."""
+        import numpy as np
+        from scripts.evaluate_real_forecasting import compute_event_metrics
+
+        series = np.full(50, 5.0)
+        series[30:35] = 6.5
+        window, horizon = 5, 5
+        X = np.array([series[i : i + window] for i in range(len(series) - window - horizon)])
+        y = np.array([series[i + window : i + window + horizon] for i in range(len(series) - window - horizon)])
+        t_origin = X[:, -1]
+
+        # Adversary attempts to warn from sequence 5 (origin index 9, 21 minutes before event onset at 30)
+        # Advance window is [30 - horizon, 30 - 1] = [25, 29]
+        # Origin index 9 is OUTSIDE the lookahead horizon (too early to be a valid actionable forecast for step 30)
+        pred = np.tile(t_origin[:, np.newaxis], (1, horizon))
+        pred[5] = 6.8
+
+        res = compute_event_metrics(y, pred, t_origin, horizon=horizon, threshold=6.0)
+        # Because sequence 5 does not cover step 30, it is NOT an advance warning for step 30
+        self.assertEqual(res['unique_events_detected'], 0)
+        self.assertEqual(res['unique_events_missed'], 1)
+        # Instead, it is properly counted as a false alarm sequence!
+        self.assertEqual(res['false_alarm_sequences'], 1)
+
 
