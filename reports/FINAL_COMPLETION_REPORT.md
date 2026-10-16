@@ -3,7 +3,7 @@
 **Project:** COLDCHAIN-AI: Intelligent Multi-Objective Cold-Chain Optimization & Predictive Quality Management  
 **Working Directory:** `C:\Projects\Cold-Chain-Ai`  
 **Git Branch:** `completion-dev`  
-**Authoritative Commit:** `343b503` (Statistical Consistency Patch: Holdout Split Reconciliation, Sample Support, & Wilson CI Disclosures)  
+**Authoritative Commit:** `5a85e51` (Scientific Audit: Temporal Split Boundary Purging, Zero Target Overlap, Retrained Real-Data Models, & 72 Automated Tests)  
 **Date:** 2026-10-16  
 **Document Status:** FINAL — EVIDENCE-RECONCILED & SCIENTIFICALLY AUDITED  
 
@@ -341,6 +341,7 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
 - **Active Workspace:** `C:\Projects\Cold-Chain-Ai`
 - **Active Git Branch:** `completion-dev`
 - **Latest Local Commits:**
+  - `5a85e51`: *Scientific Audit: implement temporal split boundary purging, eliminate target-timestamp overlap, retrain real-data models, and expand test suite to 72 tests*
   - `343b503`: *Statistical Consistency: reconcile 15.01% held-out test split (idx 5917-6961), define sample support, and disclose Wilson CI non-i.i.d. assumptions*
   - `ff0efab`: *Align Authoritative Commit in FINAL_COMPLETION_REPORT to 4dcf68c*
   - `4dcf68c`: *Scientific Audit: add multi-threshold physical breach evaluation (5.0, 5.5, 6.0, 6.5 C) with Wilson CIs, expand test suite to 66 tests, and disclose 5.0 C statistical limits*
