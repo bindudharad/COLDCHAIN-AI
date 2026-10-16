@@ -299,8 +299,12 @@ def compute_event_metrics(
     }
 
 
-class RealTCNModel(nn.Module):
-    """Compact 1D Temporal Convolutional Network for physical cold-storage forecasting."""
+class RealDenseForecaster(nn.Module):
+    """3-layer fully-connected dense neural network (MLP) for physical cold-storage forecasting.
+
+    Architecture: Linear(60→32) → ReLU → Linear(32→32) → ReLU → Linear(32→15).
+    This is NOT a convolutional or temporal convolutional network.
+    """
     def __init__(self, in_features: int = 60, hidden: int = 32, horizon: int = 15):
         super().__init__()
         self.net = nn.Sequential(
@@ -501,7 +505,7 @@ def run_benchmark(
     pred_ridge = ridge.predict(X_test)
     m_ridge = compute_metrics(y_test, pred_ridge)
 
-    # 5. Model 5: Real-TCN Neural Network (Trained on Real Telemetry)
+    # 5. Model 5: Dense Neural Network (MLP, Trained on Real Telemetry)
     # Set explicit seeds for strict scientific reproducibility
     torch.manual_seed(42)
     np.random.seed(42)
@@ -511,7 +515,7 @@ def run_benchmark(
     X_test_s = scaler.transform(X_test)
     y_train_delta = y_train - X_train[:, -1:]
 
-    model = RealTCNModel(in_features=window, hidden=32, horizon=horizon)
+    model = RealDenseForecaster(in_features=window, hidden=32, horizon=horizon)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     criterion = nn.MSELoss()
 
@@ -599,7 +603,7 @@ def run_benchmark(
     print(f"{'2. 5-Step Moving Average':<35} {m_ma5['mae_deg_c']:<12.4f} {m_ma5['rmse_deg_c']:<12.4f} {m_ma5['r2_score']:<10.4f} {'N/A':<12} {'N/A':<12} {'N/A':<12}")
     print(f"{'3. Linear Trend Extrapolation':<35} {m_linear['mae_deg_c']:<12.4f} {m_linear['rmse_deg_c']:<12.4f} {m_linear['r2_score']:<10.4f} {'N/A':<12} {'N/A':<12} {'N/A':<12}")
     print(f"{'4. Ridge Autoregression AR(60)':<35} {m_ridge['mae_deg_c']:<12.4f} {m_ridge['rmse_deg_c']:<12.4f} {m_ridge['r2_score']:<10.4f} {breach_50_ridge['f1_score']:<12.4f} {breach_60_ridge['f1_score']:<12.4f} {breach_65_ridge['f1_score']:<12.4f}")
-    print(f"{'5. Real-TCN (Learned Neural)':<35} {m_tcn['mae_deg_c']:<12.4f} {m_tcn['rmse_deg_c']:<12.4f} {m_tcn['r2_score']:<10.4f} {breach_50_tcn['f1_score']:<12.4f} {breach_60_tcn['f1_score']:<12.4f} {breach_65_tcn['f1_score']:<12.4f}")
+    print(f"{'5. Dense MLP (Learned Neural)':<35} {m_tcn['mae_deg_c']:<12.4f} {m_tcn['rmse_deg_c']:<12.4f} {m_tcn['r2_score']:<10.4f} {breach_50_tcn['f1_score']:<12.4f} {breach_60_tcn['f1_score']:<12.4f} {breach_65_tcn['f1_score']:<12.4f}")
     print("-" * 105)
 
     print("\n[STRICT IMPENDING EARLY-WARNING TRANSITION METRICS (Evaluated only when T_0 <= Threshold)]")
@@ -607,7 +611,7 @@ def run_benchmark(
     print("-" * 99)
     print(f"{'Persistence (>6.0°C)':<35} {trans_60_pers['safe_forecast_origins_evaluated']:<15} {trans_60_pers['true_transitions_occurred']:<15} {trans_60_pers['precision']:<12.4f} {trans_60_pers['recall']:<12.4f} {trans_60_pers['f1_score']:<10.4f}")
     print(f"{'Ridge AR(60) (>6.0°C)':<35} {trans_60_ridge['safe_forecast_origins_evaluated']:<15} {trans_60_ridge['true_transitions_occurred']:<15} {trans_60_ridge['precision']:<12.4f} {trans_60_ridge['recall']:<12.4f} {trans_60_ridge['f1_score']:<10.4f}")
-    print(f"{'Real-TCN (>6.0°C)':<35} {trans_60_tcn['safe_forecast_origins_evaluated']:<15} {trans_60_tcn['true_transitions_occurred']:<15} {trans_60_tcn['precision']:<12.4f} {trans_60_tcn['recall']:<12.4f} {trans_60_tcn['f1_score']:<10.4f}")
+    print(f"{'Dense MLP (>6.0°C)':<35} {trans_60_tcn['safe_forecast_origins_evaluated']:<15} {trans_60_tcn['true_transitions_occurred']:<15} {trans_60_tcn['precision']:<12.4f} {trans_60_tcn['recall']:<12.4f} {trans_60_tcn['f1_score']:<10.4f}")
     print("-" * 99)
 
     print("\n[PHYSICAL EVENT-LEVEL EARLY-WARNING DETECTION (Unique Contiguous Episodes Across Thresholds)]")
@@ -619,7 +623,7 @@ def run_benchmark(
         (6.0, event_60_pers, event_60_ridge, event_60_tcn),
         (6.5, event_65_pers, event_65_ridge, event_65_tcn),
     ]:
-        for lbl, m in [("Persistence", m_p), ("Ridge AR(60)", m_r), ("Real-TCN", m_t)]:
+        for lbl, m in [("Persistence", m_p), ("Ridge AR(60)", m_r), ("Dense MLP", m_t)]:
             ci_str = f"{m['event_detection_rate_pct']:.1f}% [{m['detection_rate_95ci_wilson'][0]}-{m['detection_rate_95ci_wilson'][1]}%]"
             row_title = f"{t_val:.1f}°C - {lbl}"
             supp_str = f"{m['sample_support']} (N={m['safe_origins_count']})"
@@ -630,7 +634,7 @@ def run_benchmark(
     print("     continuous series possess temporal autocorrelation and environmental coupling (compressor/ambient).")
     print("     Intervals are descriptive binomial confidence intervals conditional on this test trace, not cross-facility inferences.")
     print("  2. 'Sample Support' reflects data observation count (N_safe >= 30, N_events >= 10); it does NOT imply model efficacy.")
-    print("     Wide intervals (e.g. Real-TCN at 6.5°C: 8/14 = 57.1% [32.6-78.6%]) reflect substantial estimation uncertainty.")
+    print("     Wide intervals (e.g. Dense MLP at 6.5°C: 8/14 = 57.1% [32.6-78.6%]) reflect substantial estimation uncertainty.")
     print("  3. 5.0°C Food Safety Limit is STATISTICALLY INSUFFICIENT / INCONCLUSIVE due to chamber pre-existing breach (99.2% of test).")
     print("  4. Results at 5.5°C, 6.0°C, or 6.5°C do NOT prove or imply food-safety compliance at 5.0°C.\n")
 
@@ -688,32 +692,32 @@ def run_benchmark(
             "moving_average_5min": m_ma5,
             "linear_trend": m_linear,
             "ridge_ar60": m_ridge,
-            "real_tcn_neural": m_tcn,
+            "dense_mlp_neural": m_tcn,
         },
         "breach_detection_metrics": {
             "threshold_5_0_deg_c": {
                 "description": "Standard Food Profile Critical Limit (0.0 to 5.0 deg C). Chamber operates above 5.0 deg C at baseline.",
                 "persistence": breach_50_pers,
                 "ridge": breach_50_ridge,
-                "real_tcn": breach_50_tcn,
+                "dense_mlp": breach_50_tcn,
             },
             "threshold_5_5_deg_c": {
                 "description": "Secondary Precautionary Warning Threshold (+0.5 deg C above critical limit).",
                 "persistence": breach_55_pers,
                 "ridge": breach_55_ridge,
-                "real_tcn": breach_55_tcn,
+                "dense_mlp": breach_55_tcn,
             },
             "threshold_6_0_deg_c": {
                 "description": "Dynamic Regime Excursion Threshold (chamber operating median ~6.0 deg C).",
                 "persistence": breach_60_pers,
                 "ridge": breach_60_ridge,
-                "real_tcn": breach_60_tcn,
+                "dense_mlp": breach_60_tcn,
             },
             "threshold_6_5_deg_c": {
                 "description": "Severe Dynamic Thermal Excursion Threshold (75th percentile ~6.5 deg C).",
                 "persistence": breach_65_pers,
                 "ridge": breach_65_ridge,
-                "real_tcn": breach_65_tcn,
+                "dense_mlp": breach_65_tcn,
             },
         },
         "early_warning_transition_metrics": {
@@ -721,23 +725,23 @@ def run_benchmark(
                 "note": "Only 8 safe origins (0.8% of test set); chamber operates in steady breach. Small sample size limits validation.",
                 "persistence": trans_50_pers,
                 "ridge": trans_50_ridge,
-                "real_tcn": trans_50_tcn,
+                "dense_mlp": trans_50_tcn,
             },
             "threshold_5_5_deg_c": {
                 "persistence": trans_55_pers,
                 "ridge": trans_55_ridge,
-                "real_tcn": trans_55_tcn,
+                "dense_mlp": trans_55_tcn,
             },
             "threshold_6_0_deg_c": {
                 "note": "Primary dynamic operational benchmark (706 safe origins, 383 true impending transitions).",
                 "persistence": trans_60_pers,
                 "ridge": trans_60_ridge,
-                "real_tcn": trans_60_tcn,
+                "dense_mlp": trans_60_tcn,
             },
             "threshold_6_5_deg_c": {
                 "persistence": trans_65_pers,
                 "ridge": trans_65_ridge,
-                "real_tcn": trans_65_tcn,
+                "dense_mlp": trans_65_tcn,
             },
         },
         "event_level_breach_metrics": {
@@ -754,7 +758,7 @@ def run_benchmark(
                 "total_unique_physical_events": event_50_pers["total_unique_physical_events"],
                 "persistence": event_50_pers,
                 "ridge": event_50_ridge,
-                "real_tcn": event_50_tcn,
+                "dense_mlp": event_50_tcn,
                 "scientific_distinction": "With only 8 safe origins (0.8% of test set) and 5 physical events, sample size is insufficient to statistically validate prevention of 5.0 deg C excursions on this physical dataset (95% Wilson CI: 23.1% to 88.2%)."
             },
             "threshold_5_5_deg_c": {
@@ -765,7 +769,7 @@ def run_benchmark(
                 "total_unique_physical_events": event_55_pers["total_unique_physical_events"],
                 "persistence": event_55_pers,
                 "ridge": event_55_ridge,
-                "real_tcn": event_55_tcn,
+                "dense_mlp": event_55_tcn,
             },
             "threshold_6_0_deg_c": {
                 "description": "Dynamic Regime Excursion Threshold (chamber operating median ~6.0 deg C). Primary statistical benchmark for dynamic transition prediction.",
@@ -775,8 +779,8 @@ def run_benchmark(
                 "total_unique_physical_events": event_60_pers["total_unique_physical_events"],
                 "persistence": event_60_pers,
                 "ridge": event_60_ridge,
-                "real_tcn": event_60_tcn,
-                "scientific_distinction": "Reconciles sequence-level transition recall with physical event detection: while sliding windows generate multiple warnings per event, 88.6% - 95.5% of unique physical breach episodes are successfully anticipated 9+ minutes in advance with 60% fewer false alarms from Real-TCN."
+                "dense_mlp": event_60_tcn,
+                "scientific_distinction": "Reconciles sequence-level transition recall with physical event detection: while sliding windows generate multiple warnings per event, 88.6% - 95.5% of unique physical breach episodes are successfully anticipated 9+ minutes in advance with 60% fewer false alarms from Dense MLP."
             },
             "threshold_6_5_deg_c": {
                 "description": "Severe Dynamic Thermal Excursion Threshold (75th percentile ~6.5 deg C).",
@@ -786,8 +790,8 @@ def run_benchmark(
                 "total_unique_physical_events": event_65_pers["total_unique_physical_events"],
                 "persistence": event_65_pers,
                 "ridge": event_65_ridge,
-                "real_tcn": event_65_tcn,
-                "scientific_distinction": "Real-TCN detects 8/14 events (57.1% [32.6%-78.6%]). The wide confidence interval spanning 46 percentage points reflects substantial statistical uncertainty; this point estimate cannot be interpreted as conclusive evidence of efficacy."
+                "dense_mlp": event_65_tcn,
+                "scientific_distinction": "Dense MLP detects 8/14 events (57.1% [32.6%-78.6%]). The wide confidence interval spanning 46 percentage points reflects substantial statistical uncertainty; this point estimate cannot be interpreted as conclusive evidence of efficacy."
             },
         },
     }

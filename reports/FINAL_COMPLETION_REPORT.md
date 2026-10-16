@@ -16,7 +16,7 @@ The COLDCHAIN-AI platform has reached a fully operational, scientifically audite
 ```
 COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 ├─ [IMPLEMENTED]          Django 5.2 backend, 12 browser views, SQLite DB, REST APIs
-├─ [AUTOMATED-TESTED]     72/72 passing unit/integration tests (9.69s), 0 Django check issues
+├─ [AUTOMATED-TESTED]     74/74 passing unit/integration tests (9.97s), 0 Django check issues
 ├─ [EXPERIMENTALLY-VALID] 590-sample MAD-TCN vs Persistence test split, 50-scenario NSGA-II comparison
 ├─ [SIMULATED]            Calibrated thermodynamic chamber physics (k_inf=0.018, k_cool=0.32)
 └─ [PHYSICALLY-AWAITING]  Factory-floor RS485/Modbus RTU, 3-phase CT wattmeters, industrial PLC relays
@@ -70,7 +70,7 @@ Across iterative engineering and audit cycles, all critical scientific and softw
    *Resolution:* Summing clean observations across all 9 raw Hohenheim files (`SENSOR01.CSV` through `SENSOR09.CSV`) yields exactly **1,083,195 clean rows** (1,083,199 total lines minus 4 repeated header lines across the files). Both raw and preprocessed data are physically sampled at **5-second intervals** (`mode_step = 5 seconds`), NOT a 1-minute grid. SENSOR03 has **84,450 clean rows** over 4.88 continuous days after its 4.19-day recording gap. The 1,411,515 preprocessed grid count reflects 9 uniform 5-second calendar grids of 156,835 timestamps, containing **328,893 `NaN` values** representing physical sensor downtime (leaving **1,082,622 valid 5-second observations**; the 573 difference from raw clean is due to calendar grid common window alignment). Downsampling to 1-minute intervals is performed exclusively in [`scripts/evaluate_real_forecasting.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/evaluate_real_forecasting.py) for 60/15-minute forecasting. Total physical rows across all 24 CSV files on disk is **2,507,284**.
 9. **Retraction of 0.089 °C MAD-TCN MAE Claim:**  
    *Problem:* Earlier reports referenced a MAD-TCN MAE of 0.089 °C. No code, experiment output, or checkpoint produces this value.  
-   *Resolution:* This claim is retracted as a phantom metric. The actual verified MAD-TCN metrics are: **Retrained MAE = 0.1672 °C** (simulation, 590 test sequences), **Original checkpoint MAE = 1.0142 °C** (due to training without normalization). On real Hohenheim data, the separately trained Real-TCN achieves **MAE = 0.2707 °C** under deterministic Seed 42.
+   *Resolution:* This claim is retracted as a phantom metric. The actual verified MAD-TCN metrics are: **Retrained MAE = 0.1672 °C** (simulation, 590 test sequences), **Original checkpoint MAE = 1.0142 °C** (due to training without normalization). On real Hohenheim data, the separately trained Dense MLP achieves **MAE = 0.2707 °C** under deterministic Seed 42.
 10. **Per-Device IoT Hardware Authorization:**  
     *Problem:* The IoT telemetry endpoint used a single shared bearer secret; any client presenting the master key could claim `REAL_SENSOR` provenance for any device ID.  
     *Resolution:* [`config/settings.py`](file:///C:/Projects/Cold-Chain-Ai/config/settings.py) now contains a `REGISTERED_IOT_HARDWARE_DEVICES` registry mapping device IDs to per-device secrets. The telemetry view ([`apps/monitoring/views.py`](file:///C:/Projects/Cold-Chain-Ai/apps/monitoring/views.py)) requires the device to be explicitly registered AND present a valid per-device token or master key. Unregistered devices are demoted to `SIMULATION` regardless of claims. Device IDs starting with `MOCK`, `SIM`, or `TEST` are always demoted.
@@ -143,19 +143,19 @@ Evaluated strictly via [`scripts/evaluate_real_forecasting.py`](file:///C:/Proje
 | **5-Step Moving Average** | 0.3185 °C | 0.4194 °C | 0.1867 | — | — | — | — |
 | **Linear Trend Extrapolation** | 0.4989 °C | 0.6721 °C | -1.0885 | — | — | — | — |
 | **Ridge AR(60) Autoregression** | **0.2528 °C** | **0.3549 °C** | **0.4178** | **1.0000** | **0.9893** | **0.7445** | **0.6759** |
-| **Real-TCN (Learned Neural, Seed 42)**| 0.2710 °C | 0.3713 °C | 0.3627 | **1.0000** | 0.9809 | 0.7108 | 0.6361 |
+| **Dense MLP (Learned Neural, Seed 42)**| 0.2710 °C | 0.3713 °C | 0.3627 | **1.0000** | 0.9809 | 0.7108 | 0.6361 |
 
 ### 6. Threshold Justification, Event Definitions & Physical Context
 1. **Critical Food Limit ($5.0\text{ }^{\circ}\text{C}$):** Primary cold-chain profile threshold. In the Hohenheim research facility, SENSOR03 operated under a commercial cooling regime with a baseline mean temperature of $6.54\text{ }^{\circ}\text{C}$. In the 1,045 held-out test sequences, only **8 sequences (0.8%)** originated within safe limits ($T_0 \le 5.0\text{ }^{\circ}\text{C}$), while **1,037 sequences (99.2%)** were already in breach at $t_0$. Early breach detection at $5.0\text{ }^{\circ}\text{C}$ is **statistically inconclusive** on this test slice due to the near-total absence of safe baseline operations (8 sample size). Evaluating whether an already-breached sequence remains breached is simple exceedance classification, not advance warning.
-2. **Precautionary Warning Threshold ($5.5\text{ }^{\circ}\text{C}$):** $167$ sequences originated with $T_0 \le 5.5\text{ }^{\circ}\text{C}$, of which $161$ transitioned into breach during the subsequent 15 minutes. Ridge AR(60) achieves transition $F_1 = 0.9307$ ($141$ TP, $1$ FP, $20$ FN) and Real-TCN achieves transition $F_1 = 0.8671$ ($124$ TP, $1$ FP, $37$ FN), whereas naive persistence achieves $F_1 = 0.0000$ (0 TP, 161 FN) because it cannot predict future warming.
-3. **Dynamic Median Excursion Threshold ($6.0\text{ }^{\circ}\text{C}$):** The primary operational benchmark for dynamic transition prediction. $706$ test sequences originated at or below $6.0\text{ }^{\circ}\text{C}$, with $383$ subsequent transitions crossing above $6.0\text{ }^{\circ}\text{C}$. Ridge AR(60) achieves transition precision of $75.9\%$ and recall of $37.1\%$ ($F_1 = 0.4982$, Missed Event Rate = $62.9\%$), and Real-TCN achieves precision of $82.9\%$ and recall of $22.7\%$ ($F_1 = 0.3566$, Missed Event Rate = $77.3\%$), whereas naive persistence achieves $F_1 = 0.0000$ (0 TP, 383 FN, Missed Event Rate = $100.0\%$).
-4. **Severe Dynamic Excursion Threshold ($6.5\text{ }^{\circ}\text{C}$):** $943$ safe origins with $130$ subsequent transitions. Ridge AR(60) achieves $F_1 = 0.3678$ ($32$ TP, $12$ FP, $98$ FN, Missed Event Rate = $75.4\%$) and Real-TCN achieves $F_1 = 0.1987$ ($15$ TP, $6$ FP, $115$ FN, Missed Event Rate = $88.5\%$), outperforming persistence ($F_1 = 0.0000$).
+2. **Precautionary Warning Threshold ($5.5\text{ }^{\circ}\text{C}$):** $167$ sequences originated with $T_0 \le 5.5\text{ }^{\circ}\text{C}$, of which $161$ transitioned into breach during the subsequent 15 minutes. Ridge AR(60) achieves transition $F_1 = 0.9307$ ($141$ TP, $1$ FP, $20$ FN) and Dense MLP achieves transition $F_1 = 0.8671$ ($124$ TP, $1$ FP, $37$ FN), whereas naive persistence achieves $F_1 = 0.0000$ (0 TP, 161 FN) because it cannot predict future warming.
+3. **Dynamic Median Excursion Threshold ($6.0\text{ }^{\circ}\text{C}$):** The primary operational benchmark for dynamic transition prediction. $706$ test sequences originated at or below $6.0\text{ }^{\circ}\text{C}$, with $383$ subsequent transitions crossing above $6.0\text{ }^{\circ}\text{C}$. Ridge AR(60) achieves transition precision of $75.9\%$ and recall of $37.1\%$ ($F_1 = 0.4982$, Missed Event Rate = $62.9\%$), and Dense MLP achieves precision of $82.9\%$ and recall of $22.7\%$ ($F_1 = 0.3566$, Missed Event Rate = $77.3\%$), whereas naive persistence achieves $F_1 = 0.0000$ (0 TP, 383 FN, Missed Event Rate = $100.0\%$).
+4. **Severe Dynamic Excursion Threshold ($6.5\text{ }^{\circ}\text{C}$):** $943$ safe origins with $130$ subsequent transitions. Ridge AR(60) achieves $F_1 = 0.3678$ ($32$ TP, $12$ FP, $98$ FN, Missed Event Rate = $75.4\%$) and Dense MLP achieves $F_1 = 0.1987$ ($15$ TP, $6$ FP, $115$ FN, Missed Event Rate = $88.5\%$), outperforming persistence ($F_1 = 0.0000$).
 
 | Impending Transition (>6.0 °C) | Safe Origins ($T_0 \le 6.0$) | True Transitions | True Positives (TP) | False Positives (FP) | False Negatives (FN) | Precision | Recall | Missed Event Rate (FNR) | Transition $F_1$ |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Naive Persistence** | 706 | 383 | 0 | 0 | 383 | 0.0% | 0.0% | **100.0%** | **0.0000** |
 | **Ridge AR(60)** | 706 | 383 | 142 | 45 | 241 | 75.9% | 37.1% | **62.9%** | **0.4982** |
-| **Real-TCN (Learned Neural, Seed 42)**| 706 | 383 | 87 | 18 | 296 | 82.9% | 22.7% | **77.3%** | **0.3566** |
+| **Dense MLP (Learned Neural, Seed 42)**| 706 | 383 | 87 | 18 | 296 | 82.9% | 22.7% | **77.3%** | **0.3566** |
 
 #### Physical Event-Level Early-Warning Detection Across Multi-Threshold Spectrum
 
@@ -173,16 +173,16 @@ To bridge the gap between sliding-window sequence recall and real-world warehous
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **5.0 °C** *(Food Safety Limit)* | **Naive Persistence** | **INSUFFICIENT (N=8)** | 5 | 0 | **0.0%** [0.0% – 43.4%] | 0.0 min | 0 | 0 | 0.0 ep/day |
 | (8 Safe Origins / 0.8% baseline) | **Ridge AR(60)** | **INSUFFICIENT (N=8)** | 5 | 3 | **60.0%** [23.1% – 88.2%] | 2.7 min | 0 | 0 | 0.0 ep/day |
-| *(Chamber pre-breached 99.2% of test)* | **Real-TCN (Seed 42)**| **INSUFFICIENT (N=8)** | 5 | 3 | **60.0%** [23.1% – 88.2%] | 2.7 min | 0 | 0 | 0.0 ep/day |
+| *(Chamber pre-breached 99.2% of test)* | **Dense MLP (Seed 42)**| **INSUFFICIENT (N=8)** | 5 | 3 | **60.0%** [23.1% – 88.2%] | 2.7 min | 0 | 0 | 0.0 ep/day |
 | **5.5 °C** *(Precautionary Bound)* | **Naive Persistence** | **SUFFICIENT (N=167)**| 39 | 0 | **0.0%** [0.0% – 9.0%] | 0.0 min | 0 | 0 | 0.0 ep/day |
 | (167 Safe Origins / 16.0% baseline) | **Ridge AR(60)** | **SUFFICIENT (N=167)**| 39 | **38** | **97.4%** [86.8% – 99.5%] | **7.6 min** | 1 | 1 | 1.4 ep/day |
-| *(Rapid boundary crossings)* | **Real-TCN (Seed 42)**| **SUFFICIENT (N=167)**| 39 | **37** | **94.9%** [83.1% – 98.6%] | **6.9 min** | 1 | 1 | 1.4 ep/day |
+| *(Rapid boundary crossings)* | **Dense MLP (Seed 42)**| **SUFFICIENT (N=167)**| 39 | **37** | **94.9%** [83.1% – 98.6%] | **6.9 min** | 1 | 1 | 1.4 ep/day |
 | **6.0 °C** *(Chamber Median Regime)* | **Naive Persistence** | **SUFFICIENT (N=706)**| 44 | 0 | **0.0%** [0.0% – 8.0%] | 0.0 min | 0 | 0 | 0.0 ep/day |
 | (706 Safe Origins / 67.6% baseline) | **Ridge AR(60)** | **SUFFICIENT (N=706)**| 44 | **42** | **95.5%** [84.9% – 98.7%] | **9.9 min** | 45 | 14 | 19.3 ep/day |
-| *(Primary dynamic validation)* | **Real-TCN (Seed 42)**| **SUFFICIENT (N=706)**| 44 | **39** | **88.6%** [76.0% – 95.0%] | **9.1 min** | **18 (60% fewer)**| **12** | **16.5 ep/day** |
+| *(Primary dynamic validation)* | **Dense MLP (Seed 42)**| **SUFFICIENT (N=706)**| 44 | **39** | **88.6%** [76.0% – 95.0%] | **9.1 min** | **18 (60% fewer)**| **12** | **16.5 ep/day** |
 | **6.5 °C** *(Severe Thermal Incursion)* | **Naive Persistence** | **SUFFICIENT (N=943)**| 14 | 0 | **0.0%** [0.0% – 21.5%] | 0.0 min | 0 | 0 | 0.0 ep/day |
 | (943 Safe Origins / 90.2% baseline) | **Ridge AR(60)** | **SUFFICIENT (N=943)**| 14 | **13** | **92.9%** [68.5% – 98.7%] | **6.5 min** | 12 | 6 | 8.3 ep/day |
-| *(Deep heat intrusion events)* | **Real-TCN (Seed 42)**| **SUFFICIENT (N=943)**| 14 | **8** | **57.1%** [32.6% – 78.6%] | **6.1 min** | **6** | **3** | **4.1 ep/day** |
+| *(Deep heat intrusion events)* | **Dense MLP (Seed 42)**| **SUFFICIENT (N=943)**| 14 | **8** | **57.1%** [32.6% – 78.6%] | **6.1 min** | **6** | **3** | **4.1 ep/day** |
 
 ##### Rigorous Statistical Interpretation & Regulatory Disclosures:
 
@@ -192,8 +192,8 @@ To bridge the gap between sliding-window sequence recall and real-world warehous
    - Consequently, distinct physical warming episodes **cannot be proven to be statistically independent identically distributed (i.i.d.) observations**.
    - These Wilson confidence intervals are reported as **descriptive binomial intervals conditional on this specific sensor trace**, rather than formal statistical guarantees that generalize across other commercial cold-chain facilities.
 
-2. **Audit of Real-TCN at 6.5 °C — Statistical Uncertainty vs Efficacy:**
-   - At 6.5 °C, Real-TCN detects 8 out of 14 physical events ($57.1\%$).
+2. **Audit of Dense MLP at 6.5 °C — Statistical Uncertainty vs Efficacy:**
+   - At 6.5 °C, Dense MLP detects 8 out of 14 physical events ($57.1\%$).
    - The corresponding 95% Wilson confidence interval spans **[32.6% – 78.6%]** — an uncertainty width of **46.0 percentage points**.
    - Because the lower bound ($32.6\%$) falls substantially below an uninformative coin-toss prior ($50\%$), and because the sample size is only 14 events, this result **CANNOT be claimed as conclusive evidence of model efficacy**.
    - Having sufficient sample support ($N_{\text{events}} = 14 \ge 10$) merely permitted calculating the interval; it revealed that estimation uncertainty is large. Categorical labels of "conclusive" have been removed.
@@ -202,22 +202,22 @@ To bridge the gap between sliding-window sequence recall and real-world warehous
    - The 5.0 °C threshold is the regulatory food-safety benchmark for refrigerated perishables.
    - However, the University of Hohenheim research cold storage facility operated at a mean temperature of $6.54\text{ }^{\circ}\text{C}$ (test slice mean $5.90\text{ }^{\circ}\text{C}$).
    - For **99.2% of the test duration**, the chamber was already in pre-existing breach ($T_0 > 5.0\text{ }^{\circ}\text{C}$), leaving only **8 safe sequence origins** and **5 physical warming transitions** across the entire 17.42-hour test period.
-   - While Ridge and Real-TCN both anticipate 3 of the 5 events (60.0%), the 95% Wilson confidence interval spans **[23.1% – 88.2%]**, which is **STATISTICALLY INSUFFICIENT AND INCONCLUSIVE**.
+   - While Ridge and Dense MLP both anticipate 3 of the 5 events (60.0%), the 95% Wilson confidence interval spans **[23.1% – 88.2%]**, which is **STATISTICALLY INSUFFICIENT AND INCONCLUSIVE**.
    - We explicitly state: **Results at 5.5 °C, 6.0 °C, or 6.5 °C do NOT prove or imply food-safety compliance at 5.0 °C**. Physical verification of 5.0 °C early-warning capability requires an actively chilled 2–4 °C cold storage unit.
 
 4. **Descriptive Empirical Performance at 5.5 °C and 6.0 °C:**
    - At 5.5 °C and 6.0 °C, the chamber exhibits active cycling: 167 and 706 safe origins with 39 and 44 unique contiguous warming events, respectively.
    - **Naive Persistence completely fails:** Persistence achieves **0.0% detection rate** ($0/39$ and $0/44$ detected; 95% CI upper bound $\le 8.0\%$). In high-inertia cold rooms, persistence cannot predict upcoming boundary crossings because it assumes zero derivative.
-   - **Ridge AR(60) & Real-TCN provide substantial advance warning:** Ridge AR(60) detects $95.5\%$ of events ($9.9\text{ min}$ mean lead time), and Real-TCN detects $88.6\%$ of events ($9.1\text{ min}$ mean lead time). Both models provide operators with actionable advance notice before physical breach onset.
-   - **Operational False Alarm Suppression:** In industrial cold storage, continuous false alarms cause operator alert fatigue and unnecessary compressor wear. At 6.0 °C, Real-TCN generates **60% fewer false alarm sequences** than Ridge AR(60) ($18$ vs. $45$). When clustered into operational episodes with a 15-minute cooldown, Real-TCN generates $16.5\text{ episodes/day}$ compared to Ridge's $19.3\text{ episodes/day}$ (and at 6.5 °C, $5.5$ vs $8.3\text{ episodes/day}$). Real-TCN provides a cleaner, more reliable operational signal.
+   - **Ridge AR(60) & Dense MLP provide substantial advance warning:** Ridge AR(60) detects $95.5\%$ of events ($9.9\text{ min}$ mean lead time), and Dense MLP detects $88.6\%$ of events ($9.1\text{ min}$ mean lead time). Both models provide operators with actionable advance notice before physical breach onset.
+   - **Operational False Alarm Suppression:** In industrial cold storage, continuous false alarms cause operator alert fatigue and unnecessary compressor wear. At 6.0 °C, Dense MLP generates **60% fewer false alarm sequences** than Ridge AR(60) ($18$ vs. $45$). When clustered into operational episodes with a 15-minute cooldown, Dense MLP generates $16.5\text{ episodes/day}$ compared to Ridge's $19.3\text{ episodes/day}$ (and at 6.5 °C, $5.5$ vs $8.3\text{ episodes/day}$). Dense MLP provides a cleaner, more reliable operational signal.
 
 5. **Sequence Recall vs Physical Event Detection:**
    - While sequence-level recall on individual 1-minute sliding windows is modest ($23.5\%$ to $37.3\%$) because models do not trigger on every single overlapping window preceding an event, **$88.6\%$ to $95.5\%$ of distinct physical warming episodes are successfully anticipated** with an average of 9+ minutes of advance warning.
 
-6. **Data Provenance Boundary:**
-   - Neural weights for Section C (MAD-TCN) are trained and tested strictly on `SIMULATION` data. The Real-TCN network is a separate compact model evaluated on public Hohenheim SENSOR03 real data. These datasets and model weights are cleanly segregated.
+6. **Data Provenance Boundary & Architecture Disclosure:**
+   - Neural weights for Section C (MAD-TCN) are trained and tested strictly on `SIMULATION` data using the full multi-scale dilated convolutional architecture. The Dense MLP network is a separate compact 3-layer fully-connected model evaluated on public Hohenheim SENSOR03 real data. These datasets and model architectures are cleanly segregated and accurately labeled.
 
-**Conclusion:** Naive persistence remains the baseline for zero-cost near-instantaneous tracking ($h \le 5$ min). For operational early warning and proactive temperature defense, Ridge AR(60) and Real-TCN deliver robust physical breach anticipation on the observed test trace (88.6%–95.5% point detection rate, >9 min lead time), with Real-TCN demonstrating superior false alarm suppression. All metrics reflect descriptive evaluations on this specific continuous sensor trace; cross-facility validation requires multi-chamber deployments.
+**Conclusion:** Naive persistence remains the baseline for zero-cost near-instantaneous tracking ($h \le 5$ min). For operational early warning and proactive temperature defense, Ridge AR(60) and Dense MLP deliver robust physical breach anticipation on the observed test trace (88.6%–95.5% point detection rate, >9 min lead time), with Dense MLP demonstrating superior false alarm suppression. All metrics reflect descriptive evaluations on this specific continuous sensor trace; cross-facility validation requires multi-chamber deployments.
 ---
 
 ## SECTION D — Constrained Optimization Scientific Findings
@@ -309,7 +309,7 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
 
 ### 2. Comprehensive Test Suite
 - Command: `.\.venv\Scripts\python.exe manage.py test`
-- Output: `Ran 72 tests in 9.263s — OK` (39 workflow/regression + 27 feature, contract & event detection tests + 6 temporal split purging tests)
+- Output: `Ran 74 tests in 9.971s — OK` (39 workflow/regression + 27 feature, contract & event detection tests + 6 temporal split purging tests + 2 model architecture & provenance tests)
 - Coverage includes:
   - Database telemetry ingestion and sensor models (`ColdChainTelemetry`, `OptimizationRecommendation`, `SensorProfile`)
   - Feature engineering and window extraction (`core_preprocessing.py`)
@@ -321,6 +321,7 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
   - Semicolon vs comma CSV delimiter detection
   - Physical contiguous breach event early-warning metric evaluation suite (`scripts/evaluate_real_forecasting.py`)
   - Temporal split boundary horizon purging and zero target-timestamp overlap contract (`tests/test_new_features.py`)
+  - Model architecture verification: strictly enforces that `RealDenseForecaster` is an MLP (0 Conv1d) and `MADTCN` has genuine dilated Conv1d layers
 
 ### 3. End-to-End Pipeline Verification
 - Command: `.\.venv\Scripts\python.exe scripts/end_to_end.py`
@@ -347,7 +348,7 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
   - `4dcf68c`: *Scientific Audit: add multi-threshold physical breach evaluation (5.0, 5.5, 6.0, 6.5 C) with Wilson CIs, expand test suite to 66 tests, and disclose 5.0 C statistical limits*
   - `9087841`: *Align Authoritative Commit in FINAL_COMPLETION_REPORT to 40131aa*
   - `40131aa`: *Scientific Audit: add contiguous physical breach event early-warning metrics, expand test suite to 55 tests, and reconcile full 23-dataset inventory*
-- **Scientific Audit Verification:** 5-second sampling cadence reconciled across 1,083,195 raw clean rows and 1,411,515 preprocessed grid cells (328,893 downtime NaNs); Scenario 4 thermal trajectory (9.36 °C) mathematically derived as a still-warming 15-minute endpoint toward 9.53 °C asymptotic equilibrium under maximum cooling; 479 violation-minutes empirical reduction confirmed; sequence-level and physical event-level (95.5% Ridge, 88.6% Real-TCN) early warning metrics audited; multi-threshold spectrum (5.0 °C, 5.5 °C, 6.0 °C, 6.5 °C) evaluated with 95% Wilson CIs, lead times, and clustered false alarms; 72/72 automated regression tests passing; working tree clean.
+- **Scientific Audit Verification:** 5-second sampling cadence reconciled across 1,083,195 raw clean rows and 1,411,515 preprocessed grid cells (328,893 downtime NaNs); Scenario 4 thermal trajectory (9.36 °C) mathematically derived as a still-warming 15-minute endpoint toward 9.53 °C asymptotic equilibrium under maximum cooling; 479 violation-minutes empirical reduction confirmed; sequence-level and physical event-level (95.5% Ridge, 88.6% Dense MLP) early warning metrics audited; multi-threshold spectrum (5.0 °C, 5.5 °C, 6.0 °C, 6.5 °C) evaluated with 95% Wilson CIs, lead times, and clustered false alarms; 74/74 automated regression tests passing; working tree clean.
 - **Remote Policy:** Remote push to `origin` (`https://github.com/Swathi185-T/Cold-Chain-Ai.git`) remains unperformed, strictly honoring local-only development safety instructions.
 
 ---
@@ -437,5 +438,5 @@ Set-Location C:\Projects\Cold-Chain-Ai
 - Use the data in [`reports/nsga2_comparison/nsga2_comparison_data.json`](file:///C:/Projects/Cold-Chain-Ai/reports/nsga2_comparison/nsga2_comparison_data.json) to plot per-scenario temperature trajectories and Pareto frontiers.
 - Present the horizon-by-horizon error breakdown ($h=1\dots 15$) and breach anticipation table ($F_1 = 0.775$ vs $0.0$) to explain the trade-offs between naive persistence and MAD-TCN.
 - Cite the single-node scalability benchmark ($568{,}106\text{ rows/s}$, $< 252\text{ MB}$ RAM) to demonstrate computational feasibility for industrial edge deployments.
-- Present the real-data neural forecasting benchmark (Ridge AR(60) MAE = 0.2524 °C, Real-TCN MAE = 0.2710 °C on Hohenheim SENSOR03) to demonstrate generalization beyond simulation.
+- Present the real-data neural forecasting benchmark (Ridge AR(60) MAE = 0.2528 °C, Dense MLP MAE = 0.2710 °C on Hohenheim SENSOR03) to demonstrate generalization beyond simulation.
 - Document the 0.089 °C MAD-TCN claim retraction and use the corrected metrics (simulation MAE = 0.1672 °C, real-data MAE = 0.2710 °C).

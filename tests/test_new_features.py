@@ -635,4 +635,42 @@ class TemporalSplitPurgingTests(TestCase):
         self.assertEqual(self.splits["test_sequence_indices"], splits2["test_sequence_indices"])
 
 
+class ModelArchitectureAndProvenanceTestCase(TestCase):
+    """Scientific verification of neural architecture claims and data provenance contracts."""
+
+    def test_real_dense_forecaster_architecture(self):
+        """Assert RealDenseForecaster is strictly an MLP (Linear layers) and contains NO Conv1d layers."""
+        import torch.nn as nn
+        from scripts.evaluate_real_forecasting import RealDenseForecaster
+
+        model = RealDenseForecaster(in_features=60, hidden=32, horizon=15)
+        modules = list(model.modules())
+        linear_layers = [m for m in modules if isinstance(m, nn.Linear)]
+        conv_layers = [m for m in modules if isinstance(m, (nn.Conv1d, nn.Conv2d))]
+
+        self.assertEqual(len(linear_layers), 3, "RealDenseForecaster must have exactly 3 Linear layers")
+        self.assertEqual(len(conv_layers), 0, "RealDenseForecaster must NOT contain any Convolutional layers")
+        self.assertEqual(linear_layers[0].in_features, 60)
+        self.assertEqual(linear_layers[0].out_features, 32)
+        self.assertEqual(linear_layers[1].in_features, 32)
+        self.assertEqual(linear_layers[1].out_features, 32)
+        self.assertEqual(linear_layers[2].in_features, 32)
+        self.assertEqual(linear_layers[2].out_features, 15)
+
+    def test_mad_tcn_genuine_convolutional_architecture(self):
+        """Assert MADTCN is a genuine dilated causal convolutional neural network."""
+        import torch.nn as nn
+        from ml.mad_tcn import MADTCN
+
+        model = MADTCN(features=12, hidden=32, horizon=15)
+        modules = list(model.modules())
+        conv1d_layers = [m for m in modules if isinstance(m, nn.Conv1d)]
+
+        self.assertGreater(len(conv1d_layers), 0, "MADTCN must contain genuine Conv1d layers")
+        dilations = [c.dilation[0] for c in conv1d_layers]
+        self.assertIn(1, dilations)
+        self.assertTrue(any(d > 1 for d in dilations), "MADTCN must contain dilated convolutions (dilation > 1)")
+
+
+
 
