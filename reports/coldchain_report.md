@@ -5,7 +5,7 @@
   "data_provenance": "DEMONSTRATION / SIMULATION DATA",
   "energy_notice": "ENERGY VALUES ARE ESTIMATED/SIMULATED",
   "sensor": "TEST-01",
-  "timestamp": "2026-10-16T07:47:11.830681+00:00",
+  "timestamp": "2026-10-16T08:09:59.862940+00:00",
   "current_temperature": 3.4942607593108406,
   "forecast": [
     4.14397668838501,

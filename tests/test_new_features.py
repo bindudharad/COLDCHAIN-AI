@@ -527,3 +527,112 @@ class PhysicalEventMetricsTests(TestCase):
         self.assertEqual(res['false_alarm_sequences'], 1)
 
 
+class TemporalSplitPurgingTests(TestCase):
+    """Regression test suite for strict chronological target separation and boundary purging."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        import pandas as pd
+        import numpy as np
+        from pathlib import Path
+        from scripts.evaluate_real_forecasting import load_real_sensor_series, create_purged_chronological_splits
+
+        csv_path = Path("Datasets/zenodo_hohenheim/preprocessed_extracted/SENSOR03_preprocessed.csv")
+        if csv_path.exists():
+            cls.series, _ = load_real_sensor_series(csv_path)
+        else:
+            # Fallback synthetic 1-minute series of 7037 timestamps
+            idx = pd.date_range("2024-09-06 14:08:00", periods=7037, freq="1min")
+            cls.series = pd.Series(5.0 + np.sin(np.linspace(0, 50, 7037)), index=idx)
+        cls.splits = create_purged_chronological_splits(cls.series, window=60, horizon=15)
+
+    def test_no_training_target_timestamp_overlaps_validation_target_timestamp(self):
+        """Test that train and validation target timestamp sets have zero intersection."""
+        train_targets = self.splits["train_target_timestamps"]
+        val_targets = self.splits["val_target_timestamps"]
+        overlap = train_targets.intersection(val_targets)
+        self.assertEqual(len(overlap), 0, f"Expected 0 target timestamp overlap between train and val, got {len(overlap)}")
+
+    def test_no_validation_target_timestamp_overlaps_test_target_timestamp(self):
+        """Test that validation and held-out test target timestamp sets have zero intersection."""
+        val_targets = self.splits["val_target_timestamps"]
+        test_targets = self.splits["test_target_timestamps"]
+        overlap = val_targets.intersection(test_targets)
+        self.assertEqual(len(overlap), 0, f"Expected 0 target timestamp overlap between val and test, got {len(overlap)}")
+
+    def test_no_train_or_val_target_inside_held_out_test_target_period(self):
+        """Test that no training or validation target falls inside the held-out test target period."""
+        train_targets = self.splits["train_target_timestamps"]
+        val_targets = self.splits["val_target_timestamps"]
+        test_targets = self.splits["test_target_timestamps"]
+
+        max_train_ts = max(train_targets)
+        min_val_ts = min(val_targets)
+        max_val_ts = max(val_targets)
+        min_test_ts = min(test_targets)
+
+        self.assertLess(max_train_ts, min_val_ts, "Train target horizon must strictly precede validation targets")
+        self.assertLess(max_val_ts, min_test_ts, "Validation target horizon must strictly precede test targets")
+        self.assertEqual(len(train_targets.intersection(test_targets)), 0)
+
+    def test_test_input_history_strictly_precedes_forecast_origin(self):
+        """Test that test input history uses only past observations preceding each sequence forecast origin."""
+        import numpy as np
+        vals = self.series.to_numpy(dtype=float)
+        W, H = 60, 15
+        test_start = self.splits["test_sequence_indices"][0]
+        total_seq = self.splits["total_sequences_raw"]
+
+        # For the very first test sequence (test_start)
+        first_test_x = self.splits["X_test"][0]
+        expected_x = vals[test_start : test_start + W]
+        np.testing.assert_array_equal(first_test_x, expected_x)
+
+        # Forecast origin for first test sequence is at test_start + W - 1
+        origin_idx = test_start + W - 1
+        # Target period starts at test_start + W
+        first_target_idx = test_start + W
+        self.assertLess(origin_idx, first_target_idx)
+
+    def test_forecast_timestamps_and_target_arrays_strictly_aligned(self):
+        """Test that target arrays y match the underlying continuous series values at identical timestamps."""
+        import numpy as np
+        vals = self.series.to_numpy(dtype=float)
+        W, H = 60, 15
+
+        # Check alignment across random train, val, and test sequences
+        y_train = self.splits["y_train"]
+        np.testing.assert_array_equal(y_train[0], vals[W : W + H])
+        np.testing.assert_array_equal(y_train[-1], vals[len(y_train) - 1 + W : len(y_train) - 1 + W + H])
+
+        val_start = self.splits["val_sequence_indices"][0]
+        y_val = self.splits["y_val"]
+        np.testing.assert_array_equal(y_val[0], vals[val_start + W : val_start + W + H])
+
+        test_start = self.splits["test_sequence_indices"][0]
+        y_test = self.splits["y_test"]
+        np.testing.assert_array_equal(y_test[0], vals[test_start + W : test_start + W + H])
+        last_test_idx = (len(vals) - W - H) - 1
+        np.testing.assert_array_equal(y_test[-1], vals[last_test_idx + W : last_test_idx + W + H])
+
+    def test_boundary_purging_counts_and_reproducibility(self):
+        """Test that boundary purging removes exactly H-1=14 sequences at boundaries and is deterministic."""
+        from scripts.evaluate_real_forecasting import create_purged_chronological_splits
+        splits2 = create_purged_chronological_splits(self.series, window=60, horizon=15)
+
+        self.assertEqual(self.splits["train_purged_sequences_count"], 14)
+        self.assertEqual(self.splits["val_purged_sequences_count"], 14)
+        self.assertEqual(self.splits["total_purged_sequences_count"], 28)
+
+        self.assertEqual(self.splits["train_sequences_count"], 4859)
+        self.assertEqual(self.splits["val_sequences_count"], 1030)
+        self.assertEqual(self.splits["test_sequences_count"], 1045)
+
+        # Assert determinism between runs
+        self.assertEqual(self.splits["train_sequence_indices"], splits2["train_sequence_indices"])
+        self.assertEqual(self.splits["val_sequence_indices"], splits2["val_sequence_indices"])
+        self.assertEqual(self.splits["test_sequence_indices"], splits2["test_sequence_indices"])
+
+
+

@@ -16,7 +16,7 @@ The COLDCHAIN-AI platform has reached a fully operational, scientifically audite
 ```
 COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 ├─ [IMPLEMENTED]          Django 5.2 backend, 12 browser views, SQLite DB, REST APIs
-├─ [AUTOMATED-TESTED]     66/66 passing unit/integration tests (10.46s), 0 Django check issues
+├─ [AUTOMATED-TESTED]     72/72 passing unit/integration tests (9.69s), 0 Django check issues
 ├─ [EXPERIMENTALLY-VALID] 590-sample MAD-TCN vs Persistence test split, 50-scenario NSGA-II comparison
 ├─ [SIMULATED]            Calibrated thermodynamic chamber physics (k_inf=0.018, k_cool=0.32)
 └─ [PHYSICALLY-AWAITING]  Factory-floor RS485/Modbus RTU, 3-phase CT wattmeters, industrial PLC relays
@@ -25,7 +25,7 @@ COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 | Operational Layer | System Maturity Label | Verification Evidence |
 | :--- | :--- | :--- |
 | **Backend & Web Application** | `IMPLEMENTED` | Django 5.2.18, 12 template routes, RESTful API endpoints |
-| **Automated Test Suite** | `AUTOMATED_TESTED` | 66 test cases passing in 10.46s (`manage.py test`) |
+| **Automated Test Suite** | `AUTOMATED_TESTED` | 72 test cases passing in 9.69s (`manage.py test`) |
 | **End-to-End Control Pipeline** | `AUTOMATED_TESTED` | `scripts/end_to_end.py` executes full pipeline to `PASS` |
 | **Interactive UI & Visuals** | `AUTOMATED_TESTED` | 12/12 routes return HTTP 200 with 0 console errors in Microsoft Edge Playwright |
 | **Forecasting Model (MAD-TCN)** | `EXPERIMENTALLY_VALIDATED` | Evaluated on common 590-sequence test split (15-step MAE = 0.1672 °C, t+15 MAE = 0.1597 °C) |
@@ -129,31 +129,33 @@ Evaluated strictly via [`scripts/evaluate_real_forecasting.py`](file:///C:/Proje
 
 - **Forecasting Configuration:** Input history $W = 60\text{ min}$, lookahead horizon $H = 15\text{ min}$.
 - **Total Forecasting Sequences:** $7{,}037 - 60 - 15 = \mathbf{6{,}962\text{ sequences}}$.
-- **Chronological Split Allocation (Zero Lookahead Leakage):**
-  - **Train Set (69.994%):** **4,873 sequences** (0-indexed sequence slice `0` to `4872`). Sequence origins span `2024-09-06 15:07:00` to `2024-09-10 00:19:00` (horizon ends `2024-09-10 00:34:00`).
-  - **Validation Set (14.996%):** **1,044 sequences** (0-indexed sequence slice `4873` to `5916`). Sequence origins span `2024-09-10 00:20:00` to `2024-09-10 17:43:00` (horizon ends `2024-09-10 17:58:00`).
-  - **Held-Out Test Set (15.010%):** **1,045 sequences** (0-indexed sequence slice `5917` to `6961`). Sequence origins span `2024-09-10 17:44:00` to `2024-09-11 11:08:00` (horizon ends `2024-09-11 11:23:00`). Evaluated continuous duration: **17.42 hours** (1,045 origin minutes) to **17.67 hours** ($1{,}045 + 15 = 1{,}060\text{ minutes}$ across the final horizon).
-  - *Documentation Reconciliation:* Any earlier draft or summary noting "4873–5917" was referencing the *validation* sequence slice boundaries (`train_end` to `val_end`). The held-out test set evaluated by all models is strictly sequences `5917` to `6961` (length $1{,}045$). Chronological ordering and zero-leakage boundaries are mathematically preserved.
+- **Chronological Split Allocation with Boundary Horizon Purging ($H - 1 = 14$ sequences purged):**
+  - **Purged Boundary Sequences:** Exactly **28 sequences (0.402%)** purged to eliminate target-timestamp boundary overlap: 14 sequences purged at train-val boundary (indices `4859`..`4872`), 14 sequences purged at val-test boundary (indices `5903`..`5916`).
+  - **Purged Train Set (69.793%):** **4,859 sequences** (0-indexed slice `0` to `4858`). Target observations `60` to `4932`, target timestamps `2024-09-06 15:08:00` to `2024-09-10 00:20:00`.
+  - **Purged Validation Set (14.795%):** **1,030 sequences** (0-indexed slice `4873` to `5902`). Target observations `4933` to `5976`, target timestamps `2024-09-10 00:21:00` to `2024-09-10 17:44:00`.
+  - **Held-Out Test Set (15.010%):** **1,045 sequences** (0-indexed slice `5917` to `6961`). Target observations `5977` to `7035`, target timestamps `2024-09-10 17:45:00` to `2024-09-11 11:23:00`. Evaluated continuous duration: **17.42 hours** (1,045 origin minutes) to **17.67 hours** ($1{,}045 + 15 = 1{,}060\text{ minutes}$ across final horizon).
+  - **Strict Chronological Target Separation:** Target-timestamp overlaps: Train vs Val = **0**, Val vs Test = **0**, Train vs Test = **0**. Mathematical disjointness $\mathcal{T}_{\text{train}} \cap \mathcal{T}_{\text{val}} = \emptyset$ and $\mathcal{T}_{\text{val}} \cap \mathcal{T}_{\text{test}} = \emptyset$ is formally proven and programmatically asserted in test suite.
+  - *Documentation Reconciliation:* Earlier drafts citing 4,873 train and 1,044 val sequences used index-based slicing without horizon purging. With 14-sequence purging, models are trained strictly on non-overlapping targets.
 
 | Model / Baseline | 15-Step MAE (°C) | 15-Step RMSE (°C) | Test $R^2$ Score | F1 (>5.0 °C Exceedance) | F1 (>5.5 °C Exceedance) | F1 (>6.0 °C Exceedance) | F1 (>6.5 °C Exceedance) |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Naive Persistence** | 0.3048 °C | 0.4012 °C | 0.2557 | 0.9962 | 0.9154 | 0.6155 | 0.5854 |
 | **5-Step Moving Average** | 0.3185 °C | 0.4194 °C | 0.1867 | — | — | — | — |
 | **Linear Trend Extrapolation** | 0.4989 °C | 0.6721 °C | -1.0885 | — | — | — | — |
-| **Ridge AR(60) Autoregression** | **0.2524 °C** | **0.3545 °C** | **0.4190** | **1.0000** | **0.9888** | **0.7461** | **0.6759** |
-| **Real-TCN (Learned Neural, Seed 42)**| 0.2707 °C | 0.3711 °C | 0.3634 | **1.0000** | 0.9774 | 0.7142 | 0.6343 |
+| **Ridge AR(60) Autoregression** | **0.2528 °C** | **0.3549 °C** | **0.4178** | **1.0000** | **0.9893** | **0.7445** | **0.6759** |
+| **Real-TCN (Learned Neural, Seed 42)**| 0.2710 °C | 0.3713 °C | 0.3627 | **1.0000** | 0.9809 | 0.7108 | 0.6361 |
 
 ### 6. Threshold Justification, Event Definitions & Physical Context
 1. **Critical Food Limit ($5.0\text{ }^{\circ}\text{C}$):** Primary cold-chain profile threshold. In the Hohenheim research facility, SENSOR03 operated under a commercial cooling regime with a baseline mean temperature of $6.54\text{ }^{\circ}\text{C}$. In the 1,045 held-out test sequences, only **8 sequences (0.8%)** originated within safe limits ($T_0 \le 5.0\text{ }^{\circ}\text{C}$), while **1,037 sequences (99.2%)** were already in breach at $t_0$. Early breach detection at $5.0\text{ }^{\circ}\text{C}$ is **statistically inconclusive** on this test slice due to the near-total absence of safe baseline operations (8 sample size). Evaluating whether an already-breached sequence remains breached is simple exceedance classification, not advance warning.
-2. **Precautionary Warning Threshold ($5.5\text{ }^{\circ}\text{C}$):** $167$ sequences originated with $T_0 \le 5.5\text{ }^{\circ}\text{C}$, of which $161$ transitioned into breach during the subsequent 15 minutes. Ridge AR(60) achieves transition $F_1 = 0.9272$ ($140$ TP, $1$ FP, $21$ FN) and Real-TCN achieves transition $F_1 = 0.9061$, whereas naive persistence achieves $F_1 = 0.0000$ (0 TP, 161 FN) because it cannot predict future warming.
-3. **Dynamic Median Excursion Threshold ($6.0\text{ }^{\circ}\text{C}$):** The primary operational benchmark for dynamic transition prediction. $706$ test sequences originated at or below $6.0\text{ }^{\circ}\text{C}$, with $383$ subsequent transitions crossing above $6.0\text{ }^{\circ}\text{C}$. Ridge AR(60) achieves transition precision of $76.1\%$ and recall of $37.3\%$ ($F_1 = 0.5009$, Missed Event Rate = $62.7\%$), and Real-TCN achieves precision of $83.3\%$ and recall of $23.5\%$ ($F_1 = 0.3666$, Missed Event Rate = $76.5\%$), whereas naive persistence achieves $F_1 = 0.0000$ (0 TP, 383 FN, Missed Event Rate = $100.0\%$).
-4. **Severe Dynamic Excursion Threshold ($6.5\text{ }^{\circ}\text{C}$):** $943$ safe origins with $130$ subsequent transitions. Ridge AR(60) achieves $F_1 = 0.3678$ ($32$ TP, $12$ FP, $98$ FN, Missed Event Rate = $75.4\%$) and Real-TCN achieves $F_1 = 0.1974$ ($15$ TP, $7$ FP, $115$ FN, Missed Event Rate = $88.5\%$), outperforming persistence ($F_1 = 0.0000$).
+2. **Precautionary Warning Threshold ($5.5\text{ }^{\circ}\text{C}$):** $167$ sequences originated with $T_0 \le 5.5\text{ }^{\circ}\text{C}$, of which $161$ transitioned into breach during the subsequent 15 minutes. Ridge AR(60) achieves transition $F_1 = 0.9307$ ($141$ TP, $1$ FP, $20$ FN) and Real-TCN achieves transition $F_1 = 0.8671$ ($124$ TP, $1$ FP, $37$ FN), whereas naive persistence achieves $F_1 = 0.0000$ (0 TP, 161 FN) because it cannot predict future warming.
+3. **Dynamic Median Excursion Threshold ($6.0\text{ }^{\circ}\text{C}$):** The primary operational benchmark for dynamic transition prediction. $706$ test sequences originated at or below $6.0\text{ }^{\circ}\text{C}$, with $383$ subsequent transitions crossing above $6.0\text{ }^{\circ}\text{C}$. Ridge AR(60) achieves transition precision of $75.9\%$ and recall of $37.1\%$ ($F_1 = 0.4982$, Missed Event Rate = $62.9\%$), and Real-TCN achieves precision of $82.9\%$ and recall of $22.7\%$ ($F_1 = 0.3566$, Missed Event Rate = $77.3\%$), whereas naive persistence achieves $F_1 = 0.0000$ (0 TP, 383 FN, Missed Event Rate = $100.0\%$).
+4. **Severe Dynamic Excursion Threshold ($6.5\text{ }^{\circ}\text{C}$):** $943$ safe origins with $130$ subsequent transitions. Ridge AR(60) achieves $F_1 = 0.3678$ ($32$ TP, $12$ FP, $98$ FN, Missed Event Rate = $75.4\%$) and Real-TCN achieves $F_1 = 0.1987$ ($15$ TP, $6$ FP, $115$ FN, Missed Event Rate = $88.5\%$), outperforming persistence ($F_1 = 0.0000$).
 
 | Impending Transition (>6.0 °C) | Safe Origins ($T_0 \le 6.0$) | True Transitions | True Positives (TP) | False Positives (FP) | False Negatives (FN) | Precision | Recall | Missed Event Rate (FNR) | Transition $F_1$ |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Naive Persistence** | 706 | 383 | 0 | 0 | 383 | 0.0% | 0.0% | **100.0%** | **0.0000** |
-| **Ridge AR(60)** | 706 | 383 | 143 | 45 | 240 | 76.1% | 37.3% | **62.7%** | **0.5009** |
-| **Real-TCN (Learned Neural, Seed 42)**| 706 | 383 | 90 | 18 | 293 | 83.3% | 23.5% | **76.5%** | **0.3666** |
+| **Ridge AR(60)** | 706 | 383 | 142 | 45 | 241 | 75.9% | 37.1% | **62.9%** | **0.4982** |
+| **Real-TCN (Learned Neural, Seed 42)**| 706 | 383 | 87 | 18 | 296 | 82.9% | 22.7% | **77.3%** | **0.3566** |
 
 #### Physical Event-Level Early-Warning Detection Across Multi-Threshold Spectrum
 
@@ -180,7 +182,7 @@ To bridge the gap between sliding-window sequence recall and real-world warehous
 | *(Primary dynamic validation)* | **Real-TCN (Seed 42)**| **SUFFICIENT (N=706)**| 44 | **39** | **88.6%** [76.0% – 95.0%] | **9.1 min** | **18 (60% fewer)**| **12** | **16.5 ep/day** |
 | **6.5 °C** *(Severe Thermal Incursion)* | **Naive Persistence** | **SUFFICIENT (N=943)**| 14 | 0 | **0.0%** [0.0% – 21.5%] | 0.0 min | 0 | 0 | 0.0 ep/day |
 | (943 Safe Origins / 90.2% baseline) | **Ridge AR(60)** | **SUFFICIENT (N=943)**| 14 | **13** | **92.9%** [68.5% – 98.7%] | **6.5 min** | 12 | 6 | 8.3 ep/day |
-| *(Deep heat intrusion events)* | **Real-TCN (Seed 42)**| **SUFFICIENT (N=943)**| 14 | **8** | **57.1%** [32.6% – 78.6%] | **6.1 min** | **7** | **4** | **5.5 ep/day** |
+| *(Deep heat intrusion events)* | **Real-TCN (Seed 42)**| **SUFFICIENT (N=943)**| 14 | **8** | **57.1%** [32.6% – 78.6%] | **6.1 min** | **6** | **3** | **4.1 ep/day** |
 
 ##### Rigorous Statistical Interpretation & Regulatory Disclosures:
 
@@ -307,7 +309,7 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
 
 ### 2. Comprehensive Test Suite
 - Command: `.\.venv\Scripts\python.exe manage.py test`
-- Output: `Ran 55 tests in 8.547s — OK` (39 workflow/regression + 16 feature, contract & event detection tests)
+- Output: `Ran 72 tests in 9.263s — OK` (39 workflow/regression + 27 feature, contract & event detection tests + 6 temporal split purging tests)
 - Coverage includes:
   - Database telemetry ingestion and sensor models (`ColdChainTelemetry`, `OptimizationRecommendation`, `SensorProfile`)
   - Feature engineering and window extraction (`core_preprocessing.py`)
@@ -318,6 +320,7 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
   - Energy unit contract (`estimated_power_kw` / `estimated_energy_kwh`)
   - Semicolon vs comma CSV delimiter detection
   - Physical contiguous breach event early-warning metric evaluation suite (`scripts/evaluate_real_forecasting.py`)
+  - Temporal split boundary horizon purging and zero target-timestamp overlap contract (`tests/test_new_features.py`)
 
 ### 3. End-to-End Pipeline Verification
 - Command: `.\.venv\Scripts\python.exe scripts/end_to_end.py`
@@ -343,7 +346,7 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
   - `4dcf68c`: *Scientific Audit: add multi-threshold physical breach evaluation (5.0, 5.5, 6.0, 6.5 C) with Wilson CIs, expand test suite to 66 tests, and disclose 5.0 C statistical limits*
   - `9087841`: *Align Authoritative Commit in FINAL_COMPLETION_REPORT to 40131aa*
   - `40131aa`: *Scientific Audit: add contiguous physical breach event early-warning metrics, expand test suite to 55 tests, and reconcile full 23-dataset inventory*
-- **Scientific Audit Verification:** 5-second sampling cadence reconciled across 1,083,195 raw clean rows and 1,411,515 preprocessed grid cells (328,893 downtime NaNs); Scenario 4 thermal trajectory (9.36 °C) mathematically derived as a still-warming 15-minute endpoint toward 9.53 °C asymptotic equilibrium under maximum cooling; 479 violation-minutes empirical reduction confirmed; sequence-level and physical event-level (95.5% Ridge, 88.6% Real-TCN) early warning metrics audited; multi-threshold spectrum (5.0 °C, 5.5 °C, 6.0 °C, 6.5 °C) evaluated with 95% Wilson CIs, lead times, and clustered false alarms; 66/66 automated regression tests passing; working tree clean.
+- **Scientific Audit Verification:** 5-second sampling cadence reconciled across 1,083,195 raw clean rows and 1,411,515 preprocessed grid cells (328,893 downtime NaNs); Scenario 4 thermal trajectory (9.36 °C) mathematically derived as a still-warming 15-minute endpoint toward 9.53 °C asymptotic equilibrium under maximum cooling; 479 violation-minutes empirical reduction confirmed; sequence-level and physical event-level (95.5% Ridge, 88.6% Real-TCN) early warning metrics audited; multi-threshold spectrum (5.0 °C, 5.5 °C, 6.0 °C, 6.5 °C) evaluated with 95% Wilson CIs, lead times, and clustered false alarms; 72/72 automated regression tests passing; working tree clean.
 - **Remote Policy:** Remote push to `origin` (`https://github.com/Swathi185-T/Cold-Chain-Ai.git`) remains unperformed, strictly honoring local-only development safety instructions.
 
 ---
@@ -433,5 +436,5 @@ Set-Location C:\Projects\Cold-Chain-Ai
 - Use the data in [`reports/nsga2_comparison/nsga2_comparison_data.json`](file:///C:/Projects/Cold-Chain-Ai/reports/nsga2_comparison/nsga2_comparison_data.json) to plot per-scenario temperature trajectories and Pareto frontiers.
 - Present the horizon-by-horizon error breakdown ($h=1\dots 15$) and breach anticipation table ($F_1 = 0.775$ vs $0.0$) to explain the trade-offs between naive persistence and MAD-TCN.
 - Cite the single-node scalability benchmark ($568{,}106\text{ rows/s}$, $< 252\text{ MB}$ RAM) to demonstrate computational feasibility for industrial edge deployments.
-- Present the real-data neural forecasting benchmark (Ridge AR(60) MAE = 0.2524 °C, Real-TCN MAE = 0.2592 °C on Hohenheim SENSOR03) to demonstrate generalization beyond simulation.
-- Document the 0.089 °C MAD-TCN claim retraction and use the corrected metrics (simulation MAE = 0.1672 °C, real-data MAE = 0.2592 °C).
+- Present the real-data neural forecasting benchmark (Ridge AR(60) MAE = 0.2524 °C, Real-TCN MAE = 0.2710 °C on Hohenheim SENSOR03) to demonstrate generalization beyond simulation.
+- Document the 0.089 °C MAD-TCN claim retraction and use the corrected metrics (simulation MAE = 0.1672 °C, real-data MAE = 0.2710 °C).

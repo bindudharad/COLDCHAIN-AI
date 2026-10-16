@@ -359,6 +359,86 @@ def load_real_sensor_series(
     return series_1m, meta
 
 
+def create_purged_chronological_splits(
+    series: pd.Series,
+    window: int = 60,
+    horizon: int = 15,
+    train_ratio: float = 0.70,
+    val_ratio: float = 0.15,
+) -> Dict[str, Any]:
+    """Construct chronological forecasting sequences with strict target timestamp purging.
+    
+    Guarantees that target timestamp sets for train, validation, and test are pairwise disjoint:
+    - Train target horizons strictly precede Validation targets.
+    - Validation target horizons strictly precede Test targets.
+    - Exactly (horizon - 1) sequences are purged at each boundary to eliminate target overlap.
+    """
+    vals = series.to_numpy(dtype=float)
+    timestamps = series.index
+    total_seq = len(vals) - window - horizon
+
+    X = np.array([vals[i : i + window] for i in range(total_seq)])
+    y = np.array([vals[i + window : i + window + horizon] for i in range(total_seq)])
+
+    train_end_orig = int(total_seq * train_ratio)
+    val_end_orig = int(total_seq * (train_ratio + val_ratio))
+    purge_len = horizon - 1  # 14 sequences for horizon = 15
+
+    train_end = train_end_orig - purge_len  # 4873 - 14 = 4859
+    val_start = train_end_orig              # 4873
+    val_end = val_end_orig - purge_len      # 5917 - 14 = 5903
+    test_start = val_end_orig               # 5917
+
+    X_train, y_train = X[:train_end], y[:train_end]
+    X_val, y_val = X[val_start:val_end], y[val_start:val_end]
+    X_test, y_test = X[test_start:], y[test_start:]
+
+    # Target observation indices
+    train_target_indices = set(idx for i in range(train_end) for idx in range(i + window, i + window + horizon))
+    val_target_indices = set(idx for i in range(val_start, val_end) for idx in range(i + window, i + window + horizon))
+    test_target_indices = set(idx for i in range(test_start, total_seq) for idx in range(i + window, i + window + horizon))
+
+    # Assert strict pairwise disjoint target sets
+    assert len(train_target_indices.intersection(val_target_indices)) == 0, "Train and Val target timestamps overlap!"
+    assert len(val_target_indices.intersection(test_target_indices)) == 0, "Val and Test target timestamps overlap!"
+    assert len(train_target_indices.intersection(test_target_indices)) == 0, "Train and Test target timestamps overlap!"
+
+    # Target timestamp sets
+    train_target_timestamps = set(timestamps[idx] for idx in train_target_indices)
+    val_target_timestamps = set(timestamps[idx] for idx in val_target_indices)
+    test_target_timestamps = set(timestamps[idx] for idx in test_target_indices)
+
+    return {
+        "X_train": X_train,
+        "y_train": y_train,
+        "X_val": X_val,
+        "y_val": y_val,
+        "X_test": X_test,
+        "y_test": y_test,
+        "total_sequences_raw": total_seq,
+        "train_sequences_count": len(X_train),
+        "val_sequences_count": len(X_val),
+        "test_sequences_count": len(X_test),
+        "train_purged_sequences_count": purge_len,
+        "val_purged_sequences_count": purge_len,
+        "total_purged_sequences_count": purge_len * 2,
+        "train_sequence_indices": [0, train_end - 1],
+        "val_sequence_indices": [val_start, val_end - 1],
+        "test_sequence_indices": [test_start, total_seq - 1],
+        "train_target_obs_range": [min(train_target_indices), max(train_target_indices)],
+        "val_target_obs_range": [min(val_target_indices), max(val_target_indices)],
+        "test_target_obs_range": [min(test_target_indices), max(test_target_indices)],
+        "train_target_timestamps_range": [str(timestamps[min(train_target_indices)]), str(timestamps[max(train_target_indices)])],
+        "val_target_timestamps_range": [str(timestamps[min(val_target_indices)]), str(timestamps[max(val_target_indices)])],
+        "test_target_timestamps_range": [str(timestamps[min(test_target_indices)]), str(timestamps[max(test_target_indices)])],
+        "train_target_timestamps": train_target_timestamps,
+        "val_target_timestamps": val_target_timestamps,
+        "test_target_timestamps": test_target_timestamps,
+        "train_end_orig": train_end_orig,
+        "val_end_orig": val_end_orig,
+    }
+
+
 def run_benchmark(
     sensor_file: str = "SENSOR03_preprocessed.csv",
     window: int = 60,
@@ -379,27 +459,26 @@ def run_benchmark(
     print(f"Temperature:      {meta['temperature_min']} to {meta['temperature_max']} °C (Mean: {meta['temperature_mean']} °C)")
     print(f"Forecast Config:  {window} min history (window) -> {horizon} min future lookahead (horizon)\n")
 
-    vals = series.to_numpy(dtype=float)
-    X = np.array([vals[i : i + window] for i in range(len(vals) - window - horizon)])
-    y = np.array([vals[i + window : i + window + horizon] for i in range(len(vals) - window - horizon)])
-
-    total_seq = len(X)
-    train_end = int(total_seq * 0.70)
-    val_end = int(total_seq * 0.85)
-
-    X_train, y_train = X[:train_end], y[:train_end]
-    X_val, y_val = X[train_end:val_end], y[train_end:val_end]
-    X_test, y_test = X[val_end:], y[val_end:]
+    splits = create_purged_chronological_splits(series, window=window, horizon=horizon)
+    X_train, y_train = splits["X_train"], splits["y_train"]
+    X_val, y_val = splits["X_val"], splits["y_val"]
+    X_test, y_test = splits["X_test"], splits["y_test"]
     last_temp_test = X_test[:, -1:]
+    t_origin = last_temp_test.squeeze()
 
+    total_seq = splits["total_sequences_raw"]
     train_pct = len(X_train) / total_seq * 100
     val_pct = len(X_val) / total_seq * 100
     test_pct = len(X_test) / total_seq * 100
+    purged_pct = splits["total_purged_sequences_count"] / total_seq * 100
 
-    print(f"Chronological Splits (Zero Lookahead Leakage):")
-    print(f"  Train: {train_pct:.2f}% ({len(X_train)} sequences, idx 0..{train_end - 1}) [{series.index[window - 1]} to {series.index[train_end + window - 1]}]")
-    print(f"  Val:   {val_pct:.2f}% ({len(X_val)} sequences, idx {train_end}..{val_end - 1}) [{series.index[train_end + window - 1]} to {series.index[val_end + window - 1]}]")
-    print(f"  Test:  {test_pct:.2f}% ({len(X_test)} sequences, idx {val_end}..{total_seq - 1}, Held-Out) [{series.index[val_end + window - 1]} to {series.index[total_seq + window - 1]}]\n")
+    print("Strict Chronological Target Separation (Disjoint Target Timestamps):")
+    print(f"  Train:  {train_pct:.2f}% ({len(X_train)} sequences, idx {splits['train_sequence_indices'][0]}..{splits['train_sequence_indices'][1]}) Targets: [{splits['train_target_timestamps_range'][0]} to {splits['train_target_timestamps_range'][1]}]")
+    print(f"  Purge:  {splits['train_purged_sequences_count']} sequences purged at Train/Val boundary (idx {splits['train_sequence_indices'][1] + 1}..{splits['val_sequence_indices'][0] - 1})")
+    print(f"  Val:    {val_pct:.2f}% ({len(X_val)} sequences, idx {splits['val_sequence_indices'][0]}..{splits['val_sequence_indices'][1]}) Targets: [{splits['val_target_timestamps_range'][0]} to {splits['val_target_timestamps_range'][1]}]")
+    print(f"  Purge:  {splits['val_purged_sequences_count']} sequences purged at Val/Test boundary (idx {splits['val_sequence_indices'][1] + 1}..{splits['test_sequence_indices'][0] - 1})")
+    print(f"  Test:   {test_pct:.2f}% ({len(X_test)} sequences, idx {splits['test_sequence_indices'][0]}..{splits['test_sequence_indices'][1]}, Held-Out) Targets: [{splits['test_target_timestamps_range'][0]} to {splits['test_target_timestamps_range'][1]}]")
+    print(f"  Total Purged: {splits['total_purged_sequences_count']} sequences ({purged_pct:.2f}%) | Target Overlaps: 0\n")
 
     # 1. Baseline 1: Naive Persistence (Last Observed Reading)
     pred_pers = np.tile(last_temp_test, (1, horizon))
@@ -494,7 +573,8 @@ def run_benchmark(
     trans_65_tcn = compute_transition_metrics(y_test, pred_tcn, t_origin_test, 6.5)
 
     # Unique Physical Breach Event Early-Warning Detection (Contiguous Episodes across all thresholds)
-    test_ts = series.index[val_end + window - 1 : val_end + window + len(y_test) + horizon - 1]
+    test_start = splits["test_sequence_indices"][0]
+    test_ts = series.index[test_start + window - 1 : test_start + window + len(y_test) + horizon - 1]
 
     event_50_pers = compute_event_metrics(y_test, pred_pers, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=5.0)
     event_50_ridge = compute_event_metrics(y_test, pred_ridge, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=5.0)
@@ -560,7 +640,11 @@ def run_benchmark(
         "experimental_setup": {
             "window_size_minutes": window,
             "horizon_minutes": horizon,
-            "total_sequences": total_seq,
+            "total_sequences_raw": total_seq,
+            "purging_strategy": "Chronological target horizon purging (H - 1 = 14 sequences purged at train-val and val-test boundaries)",
+            "purged_sequences_total": splits["total_purged_sequences_count"],
+            "train_purged_sequences": splits["train_purged_sequences_count"],
+            "val_purged_sequences": splits["val_purged_sequences_count"],
             "train_sequences": len(X_train),
             "val_sequences": len(X_val),
             "test_sequences": len(X_test),
@@ -568,16 +652,27 @@ def run_benchmark(
                 "train_pct": round(train_pct, 3),
                 "val_pct": round(val_pct, 3),
                 "test_pct": round(test_pct, 3),
+                "purged_pct": round(purged_pct, 3),
             },
             "sequence_index_ranges_0_indexed": {
-                "train": [0, train_end - 1],
-                "val": [train_end, val_end - 1],
-                "test": [val_end, total_seq - 1],
+                "train": splits["train_sequence_indices"],
+                "val": splits["val_sequence_indices"],
+                "test": splits["test_sequence_indices"],
             },
-            "split_origin_timestamps": {
-                "train": [str(series.index[window - 1]), str(series.index[train_end + window - 1])],
-                "val": [str(series.index[train_end + window - 1]), str(series.index[val_end + window - 1])],
-                "test": [str(series.index[val_end + window - 1]), str(series.index[total_seq + window - 1])],
+            "target_observation_index_ranges": {
+                "train": splits["train_target_obs_range"],
+                "val": splits["val_target_obs_range"],
+                "test": splits["test_target_obs_range"],
+            },
+            "target_timestamp_ranges": {
+                "train": splits["train_target_timestamps_range"],
+                "val": splits["val_target_timestamps_range"],
+                "test": splits["test_target_timestamps_range"],
+            },
+            "target_timestamp_overlaps": {
+                "train_vs_val": 0,
+                "val_vs_test": 0,
+                "train_vs_test": 0,
             },
             "channels_used": ["Temperature (observed physical series)"],
             "features_excluded": [
