@@ -123,8 +123,17 @@ Evaluated strictly across the 50 chronologically distributed operational scenari
 - **Macro Daily Cold Storage Benchmark (Cold_Storage_Temp_Data.csv):** 365 daily observations ($3.7\text{--}5.0\text{ }^{\circ}\text{C}$). Daily persistence $\text{MAE} = 0.4431\text{ }^{\circ}\text{C}$ ($N=364$), 5-day moving average $\text{MAE} = 0.4088\text{ }^{\circ}\text{C}$ ($N=360$). Exactly 0 readings exceed $5.0\text{ }^{\circ}\text{C}$; this dataset contains zero positive breach events.
 - **Physical 1-Minute Downsampled Telemetry (University of Hohenheim, Zenodo 15130001):** SENSOR03 from the 9-sensor refrigerated cold room. Raw file contains 84,453 rows (not 156,835 — the preprocessed version fills a 4-day data gap via interpolation to produce the uniform 156,835 grid). After resampling to 1-minute intervals, SENSOR03 yields $N = 7{,}037$ continuous readings from the second contiguous segment (~4.88 days, Sept 6–11). Temperature range $3.8\text{--}12.3\text{ }^{\circ}\text{C}$, mean $5.54\text{ }^{\circ}\text{C}$.
 
-### 5. Real-Data Neural Forecasting Benchmark
-Evaluated strictly via [`scripts/evaluate_real_forecasting.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/evaluate_real_forecasting.py) on Hohenheim SENSOR03 (1-min resampled, $N_{test} = 1{,}045$ sequences):
+#### 5. Real-Data Neural Forecasting Benchmark & Chronological Split Reconciliation
+
+Evaluated strictly via [`scripts/evaluate_real_forecasting.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/evaluate_real_forecasting.py) on Hohenheim SENSOR03 (1-min resampled, $N = 7{,}037$ observations from $84{,}444$ raw 5-second readings):
+
+- **Forecasting Configuration:** Input history $W = 60\text{ min}$, lookahead horizon $H = 15\text{ min}$.
+- **Total Forecasting Sequences:** $7{,}037 - 60 - 15 = \mathbf{6{,}962\text{ sequences}}$.
+- **Chronological Split Allocation (Zero Lookahead Leakage):**
+  - **Train Set (69.994%):** **4,873 sequences** (0-indexed sequence slice `0` to `4872`). Sequence origins span `2024-09-06 15:07:00` to `2024-09-10 00:19:00` (horizon ends `2024-09-10 00:34:00`).
+  - **Validation Set (14.996%):** **1,044 sequences** (0-indexed sequence slice `4873` to `5916`). Sequence origins span `2024-09-10 00:20:00` to `2024-09-10 17:43:00` (horizon ends `2024-09-10 17:58:00`).
+  - **Held-Out Test Set (15.010%):** **1,045 sequences** (0-indexed sequence slice `5917` to `6961`). Sequence origins span `2024-09-10 17:44:00` to `2024-09-11 11:08:00` (horizon ends `2024-09-11 11:23:00`). Evaluated continuous duration: **17.42 hours** (1,045 origin minutes) to **17.67 hours** ($1{,}045 + 15 = 1{,}060\text{ minutes}$ across the final horizon).
+  - *Documentation Reconciliation:* Any earlier draft or summary noting "4873–5917" was referencing the *validation* sequence slice boundaries (`train_end` to `val_end`). The held-out test set evaluated by all models is strictly sequences `5917` to `6961` (length $1{,}045$). Chronological ordering and zero-leakage boundaries are mathematically preserved.
 
 | Model / Baseline | 15-Step MAE (°C) | 15-Step RMSE (°C) | Test $R^2$ Score | F1 (>5.0 °C Exceedance) | F1 (>5.5 °C Exceedance) | F1 (>6.0 °C Exceedance) | F1 (>6.5 °C Exceedance) |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -148,42 +157,65 @@ Evaluated strictly via [`scripts/evaluate_real_forecasting.py`](file:///C:/Proje
 
 #### Physical Event-Level Early-Warning Detection Across Multi-Threshold Spectrum
 
-To bridge the gap between sliding-window sequence recall and real-world warehouse operations, metrics were independently audited over **unique contiguous physical breach episodes** in the held-out test series ($N = 1{,}045$ sequences, 17.42 hours):
+To bridge the gap between sliding-window sequence recall and real-world warehouse operations, metrics were audited over **unique contiguous physical breach episodes** in the held-out test series ($N = 1{,}045$ sequences, 17.42 hours):
 
 - **Event Construction & Segmentation:** Contiguous intervals where observed chamber temperature exceeds the threshold ($T > \text{Threshold}$). Downtime gaps greater than 10 minutes split episodes to prevent artificial merging across sensor disconnections.
 - **Strict Advance Warning Rule:** An event is counted as **detected** if and only if at least one forecast from an eligible safe sequence origin ($T_0 \le \text{Threshold}$) within the actionable advance window $[start\_k - 15, start\_k - 1]$ predicts an impending breach. Forecast alarms issued *after* the breach has already started ($t \ge start\_k$) are strictly rejected as advance warnings.
 - **Single Credit Contract:** Multiple alerts generated for the same contiguous physical episode are credited at most once, and the earliest advance warning defines the lead time ($start\_k - i$).
 - **False Alarm Clustering (Cooldown = 15 min):** Isolated false alarm sequences are clustered into operational false alarm episodes when separated by less than 15 minutes, measuring the real-world burden of operator distraction and compressor cycling.
-- **Statistical Significance Gate:** An evaluation is classified as **CONCLUSIVE** if at least 30 safe origins and 10 physical events occur; otherwise, it is labeled **STATISTICALLY INCONCLUSIVE** due to small sample size and wide binomial confidence intervals.
+- **Sample Support Definition:** A dataset condition is defined as having **SUFFICIENT SAMPLE SUPPORT** if at least 30 safe origins and 10 physical events occur in the test slice, allowing descriptive sample metrics to be computed without degenerate small-sample edge cases. It is classified as **INSUFFICIENT SAMPLE SUPPORT** otherwise. Sample support is an observation count criterion; it does NOT constitute proof of model efficacy or statistical conclusiveness.
 
 ##### Comparative Multi-Threshold Physical Detection Table (Held-Out Test Set)
 
-| Threshold & Operational Meaning | Method / Model | Status | Events | Detected | Detection Rate (95% Wilson CI) | Mean Lead Time | FA Seqs | FA Episodes | FA Rate / Day |
+| Threshold & Operational Meaning | Method / Model | Sample Support | Events | Detected | Detection Rate (95% Wilson CI) | Mean Lead Time | FA Seqs | FA Episodes | FA Rate / Day |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **5.0 °C** *(Food Safety Limit)* | **Naive Persistence** | **INCONCLUSIVE** | 5 | 0 | **0.0%** [0.0% – 43.4%] | 0.0 min | 0 | 0 | 0.0 ep/day |
-| (8 Safe Origins / 0.8% baseline) | **Ridge AR(60)** | **INCONCLUSIVE** | 5 | 3 | **60.0%** [23.1% – 88.2%] | 2.7 min | 0 | 0 | 0.0 ep/day |
-| *(Chamber pre-breached 99.2% of test)* | **Real-TCN (Seed 42)**| **INCONCLUSIVE** | 5 | 3 | **60.0%** [23.1% – 88.2%] | 2.7 min | 0 | 0 | 0.0 ep/day |
-| **5.5 °C** *(Precautionary Bound)* | **Naive Persistence** | **CONCLUSIVE** | 39 | 0 | **0.0%** [0.0% – 9.0%] | 0.0 min | 0 | 0 | 0.0 ep/day |
-| (167 Safe Origins / 16.0% baseline) | **Ridge AR(60)** | **CONCLUSIVE** | 39 | **38** | **97.4%** [86.8% – 99.5%] | **7.6 min** | 1 | 1 | 1.4 ep/day |
-| *(Rapid boundary crossings)* | **Real-TCN (Seed 42)**| **CONCLUSIVE** | 39 | **37** | **94.9%** [83.1% – 98.6%] | **6.9 min** | 1 | 1 | 1.4 ep/day |
-| **6.0 °C** *(Chamber Median Regime)* | **Naive Persistence** | **CONCLUSIVE** | 44 | 0 | **0.0%** [0.0% – 8.0%] | 0.0 min | 0 | 0 | 0.0 ep/day |
-| (706 Safe Origins / 67.6% baseline) | **Ridge AR(60)** | **CONCLUSIVE** | 44 | **42** | **95.5%** [84.9% – 98.7%] | **9.9 min** | 45 | 14 | 19.3 ep/day |
-| *(Primary dynamic validation)* | **Real-TCN (Seed 42)**| **CONCLUSIVE** | 44 | **39** | **88.6%** [76.0% – 95.0%] | **9.1 min** | **18 (60% fewer)**| **12** | **16.5 ep/day** |
-| **6.5 °C** *(Severe Thermal Incursion)* | **Naive Persistence** | **CONCLUSIVE** | 14 | 0 | **0.0%** [0.0% – 21.5%] | 0.0 min | 0 | 0 | 0.0 ep/day |
-| (943 Safe Origins / 90.2% baseline) | **Ridge AR(60)** | **CONCLUSIVE** | 14 | **13** | **92.9%** [68.5% – 98.7%] | **6.5 min** | 12 | 6 | 8.3 ep/day |
-| *(Deep heat intrusion events)* | **Real-TCN (Seed 42)**| **CONCLUSIVE** | 14 | **8** | **57.1%** [32.6% – 78.6%] | **6.1 min** | **7** | **4** | **5.5 ep/day** |
+| **5.0 °C** *(Food Safety Limit)* | **Naive Persistence** | **INSUFFICIENT (N=8)** | 5 | 0 | **0.0%** [0.0% – 43.4%] | 0.0 min | 0 | 0 | 0.0 ep/day |
+| (8 Safe Origins / 0.8% baseline) | **Ridge AR(60)** | **INSUFFICIENT (N=8)** | 5 | 3 | **60.0%** [23.1% – 88.2%] | 2.7 min | 0 | 0 | 0.0 ep/day |
+| *(Chamber pre-breached 99.2% of test)* | **Real-TCN (Seed 42)**| **INSUFFICIENT (N=8)** | 5 | 3 | **60.0%** [23.1% – 88.2%] | 2.7 min | 0 | 0 | 0.0 ep/day |
+| **5.5 °C** *(Precautionary Bound)* | **Naive Persistence** | **SUFFICIENT (N=167)**| 39 | 0 | **0.0%** [0.0% – 9.0%] | 0.0 min | 0 | 0 | 0.0 ep/day |
+| (167 Safe Origins / 16.0% baseline) | **Ridge AR(60)** | **SUFFICIENT (N=167)**| 39 | **38** | **97.4%** [86.8% – 99.5%] | **7.6 min** | 1 | 1 | 1.4 ep/day |
+| *(Rapid boundary crossings)* | **Real-TCN (Seed 42)**| **SUFFICIENT (N=167)**| 39 | **37** | **94.9%** [83.1% – 98.6%] | **6.9 min** | 1 | 1 | 1.4 ep/day |
+| **6.0 °C** *(Chamber Median Regime)* | **Naive Persistence** | **SUFFICIENT (N=706)**| 44 | 0 | **0.0%** [0.0% – 8.0%] | 0.0 min | 0 | 0 | 0.0 ep/day |
+| (706 Safe Origins / 67.6% baseline) | **Ridge AR(60)** | **SUFFICIENT (N=706)**| 44 | **42** | **95.5%** [84.9% – 98.7%] | **9.9 min** | 45 | 14 | 19.3 ep/day |
+| *(Primary dynamic validation)* | **Real-TCN (Seed 42)**| **SUFFICIENT (N=706)**| 44 | **39** | **88.6%** [76.0% – 95.0%] | **9.1 min** | **18 (60% fewer)**| **12** | **16.5 ep/day** |
+| **6.5 °C** *(Severe Thermal Incursion)* | **Naive Persistence** | **SUFFICIENT (N=943)**| 14 | 0 | **0.0%** [0.0% – 21.5%] | 0.0 min | 0 | 0 | 0.0 ep/day |
+| (943 Safe Origins / 90.2% baseline) | **Ridge AR(60)** | **SUFFICIENT (N=943)**| 14 | **13** | **92.9%** [68.5% – 98.7%] | **6.5 min** | 12 | 6 | 8.3 ep/day |
+| *(Deep heat intrusion events)* | **Real-TCN (Seed 42)**| **SUFFICIENT (N=943)**| 14 | **8** | **57.1%** [32.6% – 78.6%] | **6.1 min** | **7** | **4** | **5.5 ep/day** |
 
-##### Scientific Analysis & Regulatory Disclosures:
-1. **The 5.0 °C Food-Safety Scarcity Disclosure:** The 5.0 °C threshold is the regulatory food-safety benchmark for cold chain perishables. However, the University of Hohenheim research cold storage facility operated at a mean temperature of $6.54\text{ }^{\circ}\text{C}$ ($T_{test, mean} = 5.90\text{ }^{\circ}\text{C}$). Consequently, for $99.2\%$ of the test duration, the chamber was *already* in pre-existing breach ($T_0 > 5.0\text{ }^{\circ}\text{C}$). Only **8 safe sequence origins** and **5 physical warming transitions** exist across the entire 17.42-hour test period. While Ridge and Real-TCN both anticipate 3 of the 5 events (60.0%), the 95% Wilson confidence interval spans $[23.1\% \dots 88.2\%]$, which is **STATISTICALLY INCONCLUSIVE**. We explicitly do NOT claim that high scores at 6.0 °C prove early-warning safety compliance at 5.0 °C without further empirical testing in an actively chilled 2–4 °C room.
-2. **Conclusive Empirical Validation at 5.5 °C and 6.0 °C:** At 5.5 °C and 6.0 °C, the chamber exhibits balanced cycling: 167 and 706 safe origins with 39 and 44 unique contiguous warming events, respectively. Here, early-warning efficacy is statistically conclusive:
+##### Rigorous Statistical Interpretation & Regulatory Disclosures:
+
+1. **Audit of Confidence Intervals & Bernoulli Independence Assumption:**
+   - Standard binomial Wilson intervals assume independent Bernoulli trials.
+   - In this single continuous 17.42-hour test trace from one refrigeration unit, distinct physical breach events are driven by shared physical variables: room insulation, compressor cycling dynamics, thermal capacitance, and diurnal ambient heating.
+   - Consequently, distinct physical warming episodes **cannot be proven to be statistically independent identically distributed (i.i.d.) observations**.
+   - These Wilson confidence intervals are reported as **descriptive binomial intervals conditional on this specific sensor trace**, rather than formal statistical guarantees that generalize across other commercial cold-chain facilities.
+
+2. **Audit of Real-TCN at 6.5 °C — Statistical Uncertainty vs Efficacy:**
+   - At 6.5 °C, Real-TCN detects 8 out of 14 physical events ($57.1\%$).
+   - The corresponding 95% Wilson confidence interval spans **[32.6% – 78.6%]** — an uncertainty width of **46.0 percentage points**.
+   - Because the lower bound ($32.6\%$) falls substantially below an uninformative coin-toss prior ($50\%$), and because the sample size is only 14 events, this result **CANNOT be claimed as conclusive evidence of model efficacy**.
+   - Having sufficient sample support ($N_{\text{events}} = 14 \ge 10$) merely permitted calculating the interval; it revealed that estimation uncertainty is large. Categorical labels of "conclusive" have been removed.
+
+3. **The 5.0 °C Food-Safety Scarcity Disclosure:**
+   - The 5.0 °C threshold is the regulatory food-safety benchmark for refrigerated perishables.
+   - However, the University of Hohenheim research cold storage facility operated at a mean temperature of $6.54\text{ }^{\circ}\text{C}$ (test slice mean $5.90\text{ }^{\circ}\text{C}$).
+   - For **99.2% of the test duration**, the chamber was already in pre-existing breach ($T_0 > 5.0\text{ }^{\circ}\text{C}$), leaving only **8 safe sequence origins** and **5 physical warming transitions** across the entire 17.42-hour test period.
+   - While Ridge and Real-TCN both anticipate 3 of the 5 events (60.0%), the 95% Wilson confidence interval spans **[23.1% – 88.2%]**, which is **STATISTICALLY INSUFFICIENT AND INCONCLUSIVE**.
+   - We explicitly state: **Results at 5.5 °C, 6.0 °C, or 6.5 °C do NOT prove or imply food-safety compliance at 5.0 °C**. Physical verification of 5.0 °C early-warning capability requires an actively chilled 2–4 °C cold storage unit.
+
+4. **Descriptive Empirical Performance at 5.5 °C and 6.0 °C:**
+   - At 5.5 °C and 6.0 °C, the chamber exhibits active cycling: 167 and 706 safe origins with 39 and 44 unique contiguous warming events, respectively.
    - **Naive Persistence completely fails:** Persistence achieves **0.0% detection rate** ($0/39$ and $0/44$ detected; 95% CI upper bound $\le 8.0\%$). In high-inertia cold rooms, persistence cannot predict upcoming boundary crossings because it assumes zero derivative.
    - **Ridge AR(60) & Real-TCN provide substantial advance warning:** Ridge AR(60) detects $95.5\%$ of events ($9.9\text{ min}$ mean lead time), and Real-TCN detects $88.6\%$ of events ($9.1\text{ min}$ mean lead time). Both models provide operators with actionable advance notice before physical breach onset.
-3. **Operational False Alarm Suppression:** In industrial cold storage, continuous false alarms cause operator alert fatigue and unnecessary compressor wear. At 6.0 °C, Real-TCN generates **60% fewer false alarm sequences** than Ridge AR(60) ($18$ vs. $45$). When clustered into operational episodes with a 15-minute cooldown, Real-TCN generates $16.5\text{ episodes/day}$ compared to Ridge's $19.3\text{ episodes/day}$ (and at 6.5 °C, $5.5$ vs $8.3\text{ episodes/day}$). Real-TCN provides a cleaner, more reliable operational signal.
-4. **Sequence Recall vs Physical Event Detection:** While sequence-level recall on individual 1-minute sliding windows is modest ($23.5\%$ to $37.3\%$) because models do not trigger on every single overlapping window preceding an event, **$88.6\%$ to $95.5\%$ of distinct physical warming episodes are successfully anticipated** with an average of 9+ minutes of advance warning.
-5. **Autocorrelation & Independence:** Consecutive 15-minute horizons evaluated on 1-minute steps possess strong temporal autocorrelation; they represent a continuous operational trajectory rather than independent trials.
-6. **Data Provenance Boundary:** Neural weights for Section C (MAD-TCN) are trained and tested strictly on `SIMULATION` data. The Real-TCN network is a separate compact model evaluated on public Hohenheim SENSOR03 real data. These datasets and model weights are cleanly segregated.
+   - **Operational False Alarm Suppression:** In industrial cold storage, continuous false alarms cause operator alert fatigue and unnecessary compressor wear. At 6.0 °C, Real-TCN generates **60% fewer false alarm sequences** than Ridge AR(60) ($18$ vs. $45$). When clustered into operational episodes with a 15-minute cooldown, Real-TCN generates $16.5\text{ episodes/day}$ compared to Ridge's $19.3\text{ episodes/day}$ (and at 6.5 °C, $5.5$ vs $8.3\text{ episodes/day}$). Real-TCN provides a cleaner, more reliable operational signal.
 
-**Conclusion:** Naive persistence remains the baseline for zero-cost near-instantaneous tracking ($h \le 5$ min). For operational early warning and proactive temperature defense, Ridge AR(60) and Real-TCN deliver robust physical breach anticipation (88.6%–95.5% detection, >9 min lead time), with Real-TCN demonstrating superior false alarm suppression.
+5. **Sequence Recall vs Physical Event Detection:**
+   - While sequence-level recall on individual 1-minute sliding windows is modest ($23.5\%$ to $37.3\%$) because models do not trigger on every single overlapping window preceding an event, **$88.6\%$ to $95.5\%$ of distinct physical warming episodes are successfully anticipated** with an average of 9+ minutes of advance warning.
+
+6. **Data Provenance Boundary:**
+   - Neural weights for Section C (MAD-TCN) are trained and tested strictly on `SIMULATION` data. The Real-TCN network is a separate compact model evaluated on public Hohenheim SENSOR03 real data. These datasets and model weights are cleanly segregated.
+
+**Conclusion:** Naive persistence remains the baseline for zero-cost near-instantaneous tracking ($h \le 5$ min). For operational early warning and proactive temperature defense, Ridge AR(60) and Real-TCN deliver robust physical breach anticipation on the observed test trace (88.6%–95.5% point detection rate, >9 min lead time), with Real-TCN demonstrating superior false alarm suppression. All metrics reflect descriptive evaluations on this specific continuous sensor trace; cross-facility validation requires multi-chamber deployments.
 ---
 
 ## SECTION D — Constrained Optimization Scientific Findings

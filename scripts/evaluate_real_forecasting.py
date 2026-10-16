@@ -262,7 +262,13 @@ def compute_event_metrics(
 
     return {
         "threshold_deg_c": threshold,
-        "conclusive_status": "CONCLUSIVE" if is_conclusive else "STATISTICALLY INCONCLUSIVE (insufficient safe origins or breach events in test series)",
+        "sample_support": "SUFFICIENT" if is_conclusive else "INSUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)" if is_conclusive else "STATISTICALLY INCONCLUSIVE (insufficient safe origins or breach events in test series)",
+        "sample_support_notes": (
+            "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty."
+            if is_conclusive else
+            "STATISTICALLY INSUFFICIENT / INCONCLUSIVE: test series has insufficient safe baseline origins (<30) or breach events (<10)."
+        ),
         "safe_origins_count": safe_count,
         "safe_origins_pct": round(safe_count / len(t_origin) * 100, 1),
         "total_unique_physical_events": len(events),
@@ -386,10 +392,14 @@ def run_benchmark(
     X_test, y_test = X[val_end:], y[val_end:]
     last_temp_test = X_test[:, -1:]
 
+    train_pct = len(X_train) / total_seq * 100
+    val_pct = len(X_val) / total_seq * 100
+    test_pct = len(X_test) / total_seq * 100
+
     print(f"Chronological Splits (Zero Lookahead Leakage):")
-    print(f"  Train: 70% ({len(X_train)} sequences)")
-    print(f"  Val:   15% ({len(X_val)} sequences)")
-    print(f"  Test:  15% ({len(X_test)} sequences, Held-Out)\n")
+    print(f"  Train: {train_pct:.2f}% ({len(X_train)} sequences, idx 0..{train_end - 1}) [{series.index[window - 1]} to {series.index[train_end + window - 1]}]")
+    print(f"  Val:   {val_pct:.2f}% ({len(X_val)} sequences, idx {train_end}..{val_end - 1}) [{series.index[train_end + window - 1]} to {series.index[val_end + window - 1]}]")
+    print(f"  Test:  {test_pct:.2f}% ({len(X_test)} sequences, idx {val_end}..{total_seq - 1}, Held-Out) [{series.index[val_end + window - 1]} to {series.index[total_seq + window - 1]}]\n")
 
     # 1. Baseline 1: Naive Persistence (Last Observed Reading)
     pred_pers = np.tile(last_temp_test, (1, horizon))
@@ -521,19 +531,28 @@ def run_benchmark(
     print("-" * 99)
 
     print("\n[PHYSICAL EVENT-LEVEL EARLY-WARNING DETECTION (Unique Contiguous Episodes Across Thresholds)]")
-    print(f"{'Threshold / Method':<28} {'Status':<14} {'Events':<10} {'Detected':<12} {'Rate (95% CI)':<22} {'Mean Lead':<12} {'FA Seqs':<10} {'FA / Day':<10}")
-    print("-" * 120)
-    for t_val, status_lbl, m_p, m_r, m_t in [
-        (5.0, "INCONCLUSIVE", event_50_pers, event_50_ridge, event_50_tcn),
-        (5.5, "CONCLUSIVE", event_55_pers, event_55_ridge, event_55_tcn),
-        (6.0, "CONCLUSIVE", event_60_pers, event_60_ridge, event_60_tcn),
-        (6.5, "CONCLUSIVE", event_65_pers, event_65_ridge, event_65_tcn),
+    print(f"{'Threshold / Method':<28} {'Sample Support':<18} {'Events':<8} {'Detected':<10} {'Rate (95% Wilson CI)':<24} {'Mean Lead':<12} {'FA Seqs':<10} {'FA / Day':<10}")
+    print("-" * 126)
+    for t_val, m_p, m_r, m_t in [
+        (5.0, event_50_pers, event_50_ridge, event_50_tcn),
+        (5.5, event_55_pers, event_55_ridge, event_55_tcn),
+        (6.0, event_60_pers, event_60_ridge, event_60_tcn),
+        (6.5, event_65_pers, event_65_ridge, event_65_tcn),
     ]:
         for lbl, m in [("Persistence", m_p), ("Ridge AR(60)", m_r), ("Real-TCN", m_t)]:
             ci_str = f"{m['event_detection_rate_pct']:.1f}% [{m['detection_rate_95ci_wilson'][0]}-{m['detection_rate_95ci_wilson'][1]}%]"
             row_title = f"{t_val:.1f}°C - {lbl}"
-            print(f"{row_title:<28} {status_lbl:<14} {m['total_unique_physical_events']:<10} {m['unique_events_detected']:<12} {ci_str:<22} {m['mean_warning_lead_time_min']:<5.1f} min   {m['false_alarm_sequences']:<10} {m['false_alarm_rate_per_day']:<10.1f}")
-        print("-" * 120)
+            supp_str = f"{m['sample_support']} (N={m['safe_origins_count']})"
+            print(f"{row_title:<28} {supp_str:<18} {m['total_unique_physical_events']:<8} {m['unique_events_detected']:<10} {ci_str:<24} {m['mean_warning_lead_time_min']:<5.1f} min   {m['false_alarm_sequences']:<10} {m['false_alarm_rate_per_day']:<10.1f}")
+        print("-" * 126)
+    print("\n* Statistical Interpretation Disclosures:")
+    print("  1. Standard binomial Wilson intervals assume independent Bernoulli trials. Events in this single ~17.42h")
+    print("     continuous series possess temporal autocorrelation and environmental coupling (compressor/ambient).")
+    print("     Intervals are descriptive binomial confidence intervals conditional on this test trace, not cross-facility inferences.")
+    print("  2. 'Sample Support' reflects data observation count (N_safe >= 30, N_events >= 10); it does NOT imply model efficacy.")
+    print("     Wide intervals (e.g. Real-TCN at 6.5°C: 8/14 = 57.1% [32.6-78.6%]) reflect substantial estimation uncertainty.")
+    print("  3. 5.0°C Food Safety Limit is STATISTICALLY INSUFFICIENT / INCONCLUSIVE due to chamber pre-existing breach (99.2% of test).")
+    print("  4. Results at 5.5°C, 6.0°C, or 6.5°C do NOT prove or imply food-safety compliance at 5.0°C.\n")
 
     benchmark_results = {
         "benchmark_timestamp": datetime.now(timezone.utc).isoformat(),
@@ -545,7 +564,21 @@ def run_benchmark(
             "train_sequences": len(X_train),
             "val_sequences": len(X_val),
             "test_sequences": len(X_test),
-            "split_ratio": "70% Train, 15% Val, 15% Test (Chronological)",
+            "split_fractions_actual": {
+                "train_pct": round(train_pct, 3),
+                "val_pct": round(val_pct, 3),
+                "test_pct": round(test_pct, 3),
+            },
+            "sequence_index_ranges_0_indexed": {
+                "train": [0, train_end - 1],
+                "val": [train_end, val_end - 1],
+                "test": [val_end, total_seq - 1],
+            },
+            "split_origin_timestamps": {
+                "train": [str(series.index[window - 1]), str(series.index[train_end + window - 1])],
+                "val": [str(series.index[train_end + window - 1]), str(series.index[val_end + window - 1])],
+                "test": [str(series.index[val_end + window - 1]), str(series.index[total_seq + window - 1])],
+            },
             "channels_used": ["Temperature (observed physical series)"],
             "features_excluded": [
                 "ambient_temperature",
@@ -613,18 +646,25 @@ def run_benchmark(
             },
         },
         "event_level_breach_metrics": {
+            "statistical_interpretation_disclosure": {
+                "bernoulli_independence_assumption": "Standard binomial Wilson score intervals assume independent Bernoulli trials. Physical breach events in this single ~17.42-hour continuous test series possess temporal autocorrelation and shared environmental/compressor dynamics. Intervals are descriptive conditional measures on this sensor trace and cannot be assumed to represent independent trials across multiple facilities.",
+                "sample_support_vs_efficacy": "Sample support reflects whether sufficient safe origins (>=30) and events (>=10) exist to compute descriptive metrics without extreme small-sample degeneracy. It does not establish operational effectiveness or statistical conclusiveness of the model.",
+                "food_safety_boundary": "Validation on dynamic excursion thresholds (5.5, 6.0, 6.5 deg C) does NOT prove or imply food-safety compliance at the 5.0 deg C regulatory benchmark."
+            },
             "threshold_5_0_deg_c": {
                 "description": "Standard Food Profile Critical Limit (0.0 to 5.0 deg C). Chamber operates above 5.0 deg C at baseline; evaluation is STATISTICALLY INCONCLUSIVE due to extreme scarcity of safe origins.",
+                "sample_support": event_50_pers["sample_support"],
                 "conclusive_status": event_50_pers["conclusive_status"],
                 "safe_origins_count": event_50_pers["safe_origins_count"],
                 "total_unique_physical_events": event_50_pers["total_unique_physical_events"],
                 "persistence": event_50_pers,
                 "ridge": event_50_ridge,
                 "real_tcn": event_50_tcn,
-                "scientific_distinction": "With only 8 safe origins (0.8% of test set), sample size is insufficient to statistically validate prevention of 5.0 deg C excursions on this physical dataset."
+                "scientific_distinction": "With only 8 safe origins (0.8% of test set) and 5 physical events, sample size is insufficient to statistically validate prevention of 5.0 deg C excursions on this physical dataset (95% Wilson CI: 23.1% to 88.2%)."
             },
             "threshold_5_5_deg_c": {
                 "description": "Secondary Precautionary Warning Threshold (+0.5 deg C above critical limit).",
+                "sample_support": event_55_pers["sample_support"],
                 "conclusive_status": event_55_pers["conclusive_status"],
                 "safe_origins_count": event_55_pers["safe_origins_count"],
                 "total_unique_physical_events": event_55_pers["total_unique_physical_events"],
@@ -634,6 +674,7 @@ def run_benchmark(
             },
             "threshold_6_0_deg_c": {
                 "description": "Dynamic Regime Excursion Threshold (chamber operating median ~6.0 deg C). Primary statistical benchmark for dynamic transition prediction.",
+                "sample_support": event_60_pers["sample_support"],
                 "conclusive_status": event_60_pers["conclusive_status"],
                 "safe_origins_count": event_60_pers["safe_origins_count"],
                 "total_unique_physical_events": event_60_pers["total_unique_physical_events"],
@@ -644,12 +685,14 @@ def run_benchmark(
             },
             "threshold_6_5_deg_c": {
                 "description": "Severe Dynamic Thermal Excursion Threshold (75th percentile ~6.5 deg C).",
+                "sample_support": event_65_pers["sample_support"],
                 "conclusive_status": event_65_pers["conclusive_status"],
                 "safe_origins_count": event_65_pers["safe_origins_count"],
                 "total_unique_physical_events": event_65_pers["total_unique_physical_events"],
                 "persistence": event_65_pers,
                 "ridge": event_65_ridge,
                 "real_tcn": event_65_tcn,
+                "scientific_distinction": "Real-TCN detects 8/14 events (57.1% [32.6%-78.6%]). The wide confidence interval spanning 46 percentage points reflects substantial statistical uncertainty; this point estimate cannot be interpreted as conclusive evidence of efficacy."
             },
         },
     }

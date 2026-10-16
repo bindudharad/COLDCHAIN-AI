@@ -1,5 +1,5 @@
 {
-  "benchmark_timestamp": "2026-10-16T06:14:27.317436+00:00",
+  "benchmark_timestamp": "2026-10-16T06:36:45.667254+00:00",
   "dataset_metadata": {
     "source_file": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR03_preprocessed.csv",
     "raw_observations": 84444,
@@ -18,7 +18,39 @@
     "train_sequences": 4873,
     "val_sequences": 1044,
     "test_sequences": 1045,
-    "split_ratio": "70% Train, 15% Val, 15% Test (Chronological)",
+    "split_fractions_actual": {
+      "train_pct": 69.994,
+      "val_pct": 14.996,
+      "test_pct": 15.01
+    },
+    "sequence_index_ranges_0_indexed": {
+      "train": [
+        0,
+        4872
+      ],
+      "val": [
+        4873,
+        5916
+      ],
+      "test": [
+        5917,
+        6961
+      ]
+    },
+    "split_origin_timestamps": {
+      "train": [
+        "2024-09-06 15:07:00",
+        "2024-09-10 00:20:00"
+      ],
+      "val": [
+        "2024-09-10 00:20:00",
+        "2024-09-10 17:44:00"
+      ],
+      "test": [
+        "2024-09-10 17:44:00",
+        "2024-09-11 11:09:00"
+      ]
+    },
     "channels_used": [
       "Temperature (observed physical series)"
     ],
@@ -372,14 +404,22 @@
     }
   },
   "event_level_breach_metrics": {
+    "statistical_interpretation_disclosure": {
+      "bernoulli_independence_assumption": "Standard binomial Wilson score intervals assume independent Bernoulli trials. Physical breach events in this single ~17.42-hour continuous test series possess temporal autocorrelation and shared environmental/compressor dynamics. Intervals are descriptive conditional measures on this sensor trace and cannot be assumed to represent independent trials across multiple facilities.",
+      "sample_support_vs_efficacy": "Sample support reflects whether sufficient safe origins (>=30) and events (>=10) exist to compute descriptive metrics without extreme small-sample degeneracy. It does not establish operational effectiveness or statistical conclusiveness of the model.",
+      "food_safety_boundary": "Validation on dynamic excursion thresholds (5.5, 6.0, 6.5 deg C) does NOT prove or imply food-safety compliance at the 5.0 deg C regulatory benchmark."
+    },
     "threshold_5_0_deg_c": {
       "description": "Standard Food Profile Critical Limit (0.0 to 5.0 deg C). Chamber operates above 5.0 deg C at baseline; evaluation is STATISTICALLY INCONCLUSIVE due to extreme scarcity of safe origins.",
+      "sample_support": "INSUFFICIENT",
       "conclusive_status": "STATISTICALLY INCONCLUSIVE (insufficient safe origins or breach events in test series)",
       "safe_origins_count": 8,
       "total_unique_physical_events": 5,
       "persistence": {
         "threshold_deg_c": 5.0,
+        "sample_support": "INSUFFICIENT",
         "conclusive_status": "STATISTICALLY INCONCLUSIVE (insufficient safe origins or breach events in test series)",
+        "sample_support_notes": "STATISTICALLY INSUFFICIENT / INCONCLUSIVE: test series has insufficient safe baseline origins (<30) or breach events (<10).",
         "safe_origins_count": 8,
         "safe_origins_pct": 0.8,
         "total_unique_physical_events": 5,
@@ -420,7 +460,9 @@
       },
       "ridge": {
         "threshold_deg_c": 5.0,
+        "sample_support": "INSUFFICIENT",
         "conclusive_status": "STATISTICALLY INCONCLUSIVE (insufficient safe origins or breach events in test series)",
+        "sample_support_notes": "STATISTICALLY INSUFFICIENT / INCONCLUSIVE: test series has insufficient safe baseline origins (<30) or breach events (<10).",
         "safe_origins_count": 8,
         "safe_origins_pct": 0.8,
         "total_unique_physical_events": 5,
@@ -461,7 +503,9 @@
       },
       "real_tcn": {
         "threshold_deg_c": 5.0,
+        "sample_support": "INSUFFICIENT",
         "conclusive_status": "STATISTICALLY INCONCLUSIVE (insufficient safe origins or breach events in test series)",
+        "sample_support_notes": "STATISTICALLY INSUFFICIENT / INCONCLUSIVE: test series has insufficient safe baseline origins (<30) or breach events (<10).",
         "safe_origins_count": 8,
         "safe_origins_pct": 0.8,
         "total_unique_physical_events": 5,
@@ -500,16 +544,19 @@
           "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
         }
       },
-      "scientific_distinction": "With only 8 safe origins (0.8% of test set), sample size is insufficient to statistically validate prevention of 5.0 deg C excursions on this physical dataset."
+      "scientific_distinction": "With only 8 safe origins (0.8% of test set) and 5 physical events, sample size is insufficient to statistically validate prevention of 5.0 deg C excursions on this physical dataset (95% Wilson CI: 23.1% to 88.2%)."
     },
     "threshold_5_5_deg_c": {
       "description": "Secondary Precautionary Warning Threshold (+0.5 deg C above critical limit).",
-      "conclusive_status": "CONCLUSIVE",
+      "sample_support": "SUFFICIENT",
+      "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
       "safe_origins_count": 167,
       "total_unique_physical_events": 39,
       "persistence": {
         "threshold_deg_c": 5.5,
-        "conclusive_status": "CONCLUSIVE",
+        "sample_support": "SUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
+        "sample_support_notes": "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty.",
         "safe_origins_count": 167,
         "safe_origins_pct": 16.0,
         "total_unique_physical_events": 39,
@@ -550,7 +597,9 @@
       },
       "ridge": {
         "threshold_deg_c": 5.5,
-        "conclusive_status": "CONCLUSIVE",
+        "sample_support": "SUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
+        "sample_support_notes": "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty.",
         "safe_origins_count": 167,
         "safe_origins_pct": 16.0,
         "total_unique_physical_events": 39,
@@ -591,7 +640,9 @@
       },
       "real_tcn": {
         "threshold_deg_c": 5.5,
-        "conclusive_status": "CONCLUSIVE",
+        "sample_support": "SUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
+        "sample_support_notes": "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty.",
         "safe_origins_count": 167,
         "safe_origins_pct": 16.0,
         "total_unique_physical_events": 39,
@@ -633,12 +684,15 @@
     },
     "threshold_6_0_deg_c": {
       "description": "Dynamic Regime Excursion Threshold (chamber operating median ~6.0 deg C). Primary statistical benchmark for dynamic transition prediction.",
-      "conclusive_status": "CONCLUSIVE",
+      "sample_support": "SUFFICIENT",
+      "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
       "safe_origins_count": 706,
       "total_unique_physical_events": 44,
       "persistence": {
         "threshold_deg_c": 6.0,
-        "conclusive_status": "CONCLUSIVE",
+        "sample_support": "SUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
+        "sample_support_notes": "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty.",
         "safe_origins_count": 706,
         "safe_origins_pct": 67.6,
         "total_unique_physical_events": 44,
@@ -679,7 +733,9 @@
       },
       "ridge": {
         "threshold_deg_c": 6.0,
-        "conclusive_status": "CONCLUSIVE",
+        "sample_support": "SUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
+        "sample_support_notes": "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty.",
         "safe_origins_count": 706,
         "safe_origins_pct": 67.6,
         "total_unique_physical_events": 44,
@@ -720,7 +776,9 @@
       },
       "real_tcn": {
         "threshold_deg_c": 6.0,
-        "conclusive_status": "CONCLUSIVE",
+        "sample_support": "SUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
+        "sample_support_notes": "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty.",
         "safe_origins_count": 706,
         "safe_origins_pct": 67.6,
         "total_unique_physical_events": 44,
@@ -763,12 +821,15 @@
     },
     "threshold_6_5_deg_c": {
       "description": "Severe Dynamic Thermal Excursion Threshold (75th percentile ~6.5 deg C).",
-      "conclusive_status": "CONCLUSIVE",
+      "sample_support": "SUFFICIENT",
+      "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
       "safe_origins_count": 943,
       "total_unique_physical_events": 14,
       "persistence": {
         "threshold_deg_c": 6.5,
-        "conclusive_status": "CONCLUSIVE",
+        "sample_support": "SUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
+        "sample_support_notes": "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty.",
         "safe_origins_count": 943,
         "safe_origins_pct": 90.2,
         "total_unique_physical_events": 14,
@@ -809,7 +870,9 @@
       },
       "ridge": {
         "threshold_deg_c": 6.5,
-        "conclusive_status": "CONCLUSIVE",
+        "sample_support": "SUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
+        "sample_support_notes": "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty.",
         "safe_origins_count": 943,
         "safe_origins_pct": 90.2,
         "total_unique_physical_events": 14,
@@ -850,7 +913,9 @@
       },
       "real_tcn": {
         "threshold_deg_c": 6.5,
-        "conclusive_status": "CONCLUSIVE",
+        "sample_support": "SUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
+        "sample_support_notes": "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty.",
         "safe_origins_count": 943,
         "safe_origins_pct": 90.2,
         "total_unique_physical_events": 14,
@@ -888,7 +953,8 @@
           "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
           "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
         }
-      }
+      },
+      "scientific_distinction": "Real-TCN detects 8/14 events (57.1% [32.6%-78.6%]). The wide confidence interval spanning 46 percentage points reflects substantial statistical uncertainty; this point estimate cannot be interpreted as conclusive evidence of efficacy."
     }
   }
 }
