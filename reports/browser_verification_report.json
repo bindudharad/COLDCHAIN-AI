@@ -9,7 +9,7 @@
       "name": "home",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 2047.4,
+      "load_time_ms": 1949.6,
       "screenshot": "docs\\screenshots\\home.png",
       "status": "PASS"
     },
@@ -18,7 +18,7 @@
       "name": "dashboard",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 2149.4,
+      "load_time_ms": 2034.0,
       "screenshot": "docs\\screenshots\\dashboard.png",
       "status": "PASS"
     },
@@ -27,7 +27,7 @@
       "name": "datasets",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 1342.3,
+      "load_time_ms": 1399.9,
       "screenshot": "docs\\screenshots\\datasets.png",
       "status": "PASS"
     },
@@ -36,7 +36,7 @@
       "name": "live_monitoring",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 1731.7,
+      "load_time_ms": 1750.9,
       "screenshot": "docs\\screenshots\\live_monitoring.png",
       "status": "PASS"
     },
@@ -45,7 +45,7 @@
       "name": "predictions",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 1701.3,
+      "load_time_ms": 1672.3,
       "screenshot": "docs\\screenshots\\predictions.png",
       "status": "PASS"
     },
@@ -54,7 +54,7 @@
       "name": "optimization",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 1680.1,
+      "load_time_ms": 1693.0,
       "screenshot": "docs\\screenshots\\optimization.png",
       "status": "PASS"
     },
@@ -63,7 +63,7 @@
       "name": "alerts",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 1675.0,
+      "load_time_ms": 1692.4,
       "screenshot": "docs\\screenshots\\alerts.png",
       "status": "PASS"
     },
@@ -72,7 +72,7 @@
       "name": "model",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 1705.1,
+      "load_time_ms": 1694.5,
       "screenshot": "docs\\screenshots\\model.png",
       "status": "PASS"
     },
@@ -81,7 +81,7 @@
       "name": "sensors",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 1548.0,
+      "load_time_ms": 1637.3,
       "screenshot": "docs\\screenshots\\sensors.png",
       "status": "PASS"
     },
@@ -90,7 +90,7 @@
       "name": "reports",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 1686.0,
+      "load_time_ms": 1518.3,
       "screenshot": "docs\\screenshots\\reports.png",
       "status": "PASS"
     },
@@ -99,7 +99,7 @@
       "name": "upload",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 1544.9,
+      "load_time_ms": 1622.9,
       "screenshot": "docs\\screenshots\\upload.png",
       "status": "PASS"
     },
@@ -108,7 +108,7 @@
       "name": "methodology",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 1720.6,
+      "load_time_ms": 1714.0,
       "screenshot": "docs\\screenshots\\methodology.png",
       "status": "PASS"
     }

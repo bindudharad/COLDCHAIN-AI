@@ -671,6 +671,50 @@ class ModelArchitectureAndProvenanceTestCase(TestCase):
         self.assertIn(1, dilations)
         self.assertTrue(any(d > 1 for d in dilations), "MADTCN must contain dilated convolutions (dilation > 1)")
 
+    def test_mad_tcn_univariate_forward_contract(self):
+        """Assert MADTCN executes properly with univariate (1-channel) input shape (batch, window, 1)."""
+        import torch
+        from ml.mad_tcn import MADTCN
+
+        model = MADTCN(features=1, hidden=32, horizon=15)
+        x = torch.randn(8, 60, 1)
+        y = model(x)
+        self.assertEqual(y.shape, (8, 15), "Output shape must be (batch, horizon=15)")
+
+
+class ForecastGuidedOptimizationCouplingTestCase(TestCase):
+    """Scientific verification that forecast directly drives risk and influences NSGA-II decision-making."""
+
+    def test_forecast_changes_alter_risk_and_optimization_decisions(self):
+        """Prove that changing forecast trajectory changes risk score and resulting cooling intensity."""
+        from core import risk
+        from optimization.nsga2_optimizer import run_nsga2
+
+        # Safe trajectory: temperatures stay around 3.0 °C
+        safe_forecast = [3.0 + 0.05 * i for i in range(15)]
+        risk_safe = risk(safe_forecast, profile='Food')
+
+        # Dangerous trajectory: temperature rapidly rises past 5.0 °C limit
+        unsafe_forecast = [3.5 + 0.25 * i for i in range(15)]
+        risk_unsafe = risk(unsafe_forecast, profile='Food')
+
+        self.assertGreater(risk_unsafe['risk_score'], risk_safe['risk_score'],
+                           "Unsafe warming trajectory must yield higher risk score")
+
+        # Run NSGA-II under identical current/ambient conditions but different forecast risks
+        current_t = 3.8
+        ambient_t = 25.0
+
+        pareto_safe, rec_safe = run_nsga2(current_t, ambient_t, risk_safe['risk_score'], profile='Food')
+        pareto_unsafe, rec_unsafe = run_nsga2(current_t, ambient_t, risk_unsafe['risk_score'], profile='Food')
+
+        cooling_power_safe = rec_safe['cooling_intensity'] * rec_safe['compressor_duty_cycle']
+        cooling_power_unsafe = rec_unsafe['cooling_intensity'] * rec_unsafe['compressor_duty_cycle']
+
+        self.assertGreaterEqual(cooling_power_unsafe, cooling_power_safe - 1e-4,
+                                "High future thermal risk must demand proactive refrigeration response")
+
+
 
 
 

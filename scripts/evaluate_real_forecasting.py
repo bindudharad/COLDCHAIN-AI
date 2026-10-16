@@ -26,6 +26,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from ml.mad_tcn import MADTCN
+
 
 def wilson_score_interval(k: int, n: int) -> Tuple[float, float]:
     """Compute 95% Wilson score confidence interval for a binomial proportion."""
@@ -536,45 +538,78 @@ def run_benchmark(
     pred_tcn = last_temp_test + delta_pred
     m_tcn = compute_metrics(y_test, pred_tcn)
 
+    # 6. Model 6: Genuine MAD-TCN (Multi-scale Adaptive Dilated Temporal Convolutional Network)
+    # Evaluated directly on univariate physical telemetry (1 channel)
+    torch.manual_seed(42)
+    np.random.seed(42)
+
+    mad_tcn_model = MADTCN(features=1, hidden=32, horizon=horizon)
+    optimizer_mad = torch.optim.Adam(mad_tcn_model.parameters(), lr=1e-3)
+    criterion_mad = nn.MSELoss()
+
+    X_tr_t_mad = X_tr_t.unsqueeze(-1)
+    X_te_t_mad = X_te_t.unsqueeze(-1)
+
+    for epoch in range(40):
+        mad_tcn_model.train()
+        optimizer_mad.zero_grad()
+        loss_mad = criterion_mad(mad_tcn_model(X_tr_t_mad), y_tr_t)
+        loss_mad.backward()
+        optimizer_mad.step()
+
+    mad_tcn_model.eval()
+    with torch.no_grad():
+        delta_pred_mad = mad_tcn_model(X_te_t_mad).numpy()
+    pred_madtcn = last_temp_test + delta_pred_mad
+    m_madtcn = compute_metrics(y_test, pred_madtcn)
+
     # Breach Detection Validation on Real Test Data
     # 1. Primary Standard Food Safety Limit (5.0 °C):
     # In SENSOR03 test data, chamber runs at mean ~6.5 °C; 1045/1045 test sequences exceed 5.0 °C.
     breach_50_pers = compute_breach_metrics(y_test, pred_pers, 5.0)
     breach_50_ridge = compute_breach_metrics(y_test, pred_ridge, 5.0)
     breach_50_tcn = compute_breach_metrics(y_test, pred_tcn, 5.0)
+    breach_50_madtcn = compute_breach_metrics(y_test, pred_madtcn, 5.0)
 
     # 2. Secondary Warning Threshold (5.5 °C):
     breach_55_pers = compute_breach_metrics(y_test, pred_pers, 5.5)
     breach_55_ridge = compute_breach_metrics(y_test, pred_ridge, 5.5)
     breach_55_tcn = compute_breach_metrics(y_test, pred_tcn, 5.5)
+    breach_55_madtcn = compute_breach_metrics(y_test, pred_madtcn, 5.5)
 
     # 3. Dynamic Regime Excursion Threshold (6.0 °C, median operating temperature):
     breach_60_pers = compute_breach_metrics(y_test, pred_pers, 6.0)
     breach_60_ridge = compute_breach_metrics(y_test, pred_ridge, 6.0)
     breach_60_tcn = compute_breach_metrics(y_test, pred_tcn, 6.0)
+    breach_60_madtcn = compute_breach_metrics(y_test, pred_madtcn, 6.0)
 
     # 4. Severe Excursion Threshold (6.5 °C, upper 75th percentile):
     breach_65_pers = compute_breach_metrics(y_test, pred_pers, 6.5)
     breach_65_ridge = compute_breach_metrics(y_test, pred_ridge, 6.5)
     breach_65_tcn = compute_breach_metrics(y_test, pred_tcn, 6.5)
+    breach_65_madtcn = compute_breach_metrics(y_test, pred_madtcn, 6.5)
 
     # True Impending Transition Metrics (Chamber safe at origin T_0 <= threshold, subsequent excursion occurs)
     t_origin_test = X_test[:, -1]
     trans_50_pers = compute_transition_metrics(y_test, pred_pers, t_origin_test, 5.0)
     trans_50_ridge = compute_transition_metrics(y_test, pred_ridge, t_origin_test, 5.0)
     trans_50_tcn = compute_transition_metrics(y_test, pred_tcn, t_origin_test, 5.0)
+    trans_50_madtcn = compute_transition_metrics(y_test, pred_madtcn, t_origin_test, 5.0)
 
     trans_55_pers = compute_transition_metrics(y_test, pred_pers, t_origin_test, 5.5)
     trans_55_ridge = compute_transition_metrics(y_test, pred_ridge, t_origin_test, 5.5)
     trans_55_tcn = compute_transition_metrics(y_test, pred_tcn, t_origin_test, 5.5)
+    trans_55_madtcn = compute_transition_metrics(y_test, pred_madtcn, t_origin_test, 5.5)
 
     trans_60_pers = compute_transition_metrics(y_test, pred_pers, t_origin_test, 6.0)
     trans_60_ridge = compute_transition_metrics(y_test, pred_ridge, t_origin_test, 6.0)
     trans_60_tcn = compute_transition_metrics(y_test, pred_tcn, t_origin_test, 6.0)
+    trans_60_madtcn = compute_transition_metrics(y_test, pred_madtcn, t_origin_test, 6.0)
 
     trans_65_pers = compute_transition_metrics(y_test, pred_pers, t_origin_test, 6.5)
     trans_65_ridge = compute_transition_metrics(y_test, pred_ridge, t_origin_test, 6.5)
     trans_65_tcn = compute_transition_metrics(y_test, pred_tcn, t_origin_test, 6.5)
+    trans_65_madtcn = compute_transition_metrics(y_test, pred_madtcn, t_origin_test, 6.5)
 
     # Unique Physical Breach Event Early-Warning Detection (Contiguous Episodes across all thresholds)
     test_start = splits["test_sequence_indices"][0]
@@ -583,18 +618,22 @@ def run_benchmark(
     event_50_pers = compute_event_metrics(y_test, pred_pers, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=5.0)
     event_50_ridge = compute_event_metrics(y_test, pred_ridge, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=5.0)
     event_50_tcn = compute_event_metrics(y_test, pred_tcn, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=5.0)
+    event_50_madtcn = compute_event_metrics(y_test, pred_madtcn, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=5.0)
 
     event_55_pers = compute_event_metrics(y_test, pred_pers, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=5.5)
     event_55_ridge = compute_event_metrics(y_test, pred_ridge, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=5.5)
     event_55_tcn = compute_event_metrics(y_test, pred_tcn, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=5.5)
+    event_55_madtcn = compute_event_metrics(y_test, pred_madtcn, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=5.5)
 
     event_60_pers = compute_event_metrics(y_test, pred_pers, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=6.0)
     event_60_ridge = compute_event_metrics(y_test, pred_ridge, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=6.0)
     event_60_tcn = compute_event_metrics(y_test, pred_tcn, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=6.0)
+    event_60_madtcn = compute_event_metrics(y_test, pred_madtcn, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=6.0)
 
     event_65_pers = compute_event_metrics(y_test, pred_pers, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=6.5)
     event_65_ridge = compute_event_metrics(y_test, pred_ridge, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=6.5)
     event_65_tcn = compute_event_metrics(y_test, pred_tcn, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=6.5)
+    event_65_madtcn = compute_event_metrics(y_test, pred_madtcn, t_origin_test, timestamps=test_ts, horizon=horizon, threshold=6.5)
 
     # Print Formatted Comparison Table
     print(f"{'Method / Model':<35} {'MAE (°C)':<12} {'RMSE (°C)':<12} {'R² Score':<10} {'F1 (>5.0°C)':<12} {'F1 (>6.0°C)':<12} {'F1 (>6.5°C)':<12}")
@@ -603,7 +642,8 @@ def run_benchmark(
     print(f"{'2. 5-Step Moving Average':<35} {m_ma5['mae_deg_c']:<12.4f} {m_ma5['rmse_deg_c']:<12.4f} {m_ma5['r2_score']:<10.4f} {'N/A':<12} {'N/A':<12} {'N/A':<12}")
     print(f"{'3. Linear Trend Extrapolation':<35} {m_linear['mae_deg_c']:<12.4f} {m_linear['rmse_deg_c']:<12.4f} {m_linear['r2_score']:<10.4f} {'N/A':<12} {'N/A':<12} {'N/A':<12}")
     print(f"{'4. Ridge Autoregression AR(60)':<35} {m_ridge['mae_deg_c']:<12.4f} {m_ridge['rmse_deg_c']:<12.4f} {m_ridge['r2_score']:<10.4f} {breach_50_ridge['f1_score']:<12.4f} {breach_60_ridge['f1_score']:<12.4f} {breach_65_ridge['f1_score']:<12.4f}")
-    print(f"{'5. Dense MLP (Learned Neural)':<35} {m_tcn['mae_deg_c']:<12.4f} {m_tcn['rmse_deg_c']:<12.4f} {m_tcn['r2_score']:<10.4f} {breach_50_tcn['f1_score']:<12.4f} {breach_60_tcn['f1_score']:<12.4f} {breach_65_tcn['f1_score']:<12.4f}")
+    print(f"{'5. Dense MLP (Baseline Neural)':<35} {m_tcn['mae_deg_c']:<12.4f} {m_tcn['rmse_deg_c']:<12.4f} {m_tcn['r2_score']:<10.4f} {breach_50_tcn['f1_score']:<12.4f} {breach_60_tcn['f1_score']:<12.4f} {breach_65_tcn['f1_score']:<12.4f}")
+    print(f"{'6. Genuine MAD-TCN (Dilated Conv)':<35} {m_madtcn['mae_deg_c']:<12.4f} {m_madtcn['rmse_deg_c']:<12.4f} {m_madtcn['r2_score']:<10.4f} {breach_50_madtcn['f1_score']:<12.4f} {breach_60_madtcn['f1_score']:<12.4f} {breach_65_madtcn['f1_score']:<12.4f}")
     print("-" * 105)
 
     print("\n[STRICT IMPENDING EARLY-WARNING TRANSITION METRICS (Evaluated only when T_0 <= Threshold)]")
@@ -612,23 +652,24 @@ def run_benchmark(
     print(f"{'Persistence (>6.0°C)':<35} {trans_60_pers['safe_forecast_origins_evaluated']:<15} {trans_60_pers['true_transitions_occurred']:<15} {trans_60_pers['precision']:<12.4f} {trans_60_pers['recall']:<12.4f} {trans_60_pers['f1_score']:<10.4f}")
     print(f"{'Ridge AR(60) (>6.0°C)':<35} {trans_60_ridge['safe_forecast_origins_evaluated']:<15} {trans_60_ridge['true_transitions_occurred']:<15} {trans_60_ridge['precision']:<12.4f} {trans_60_ridge['recall']:<12.4f} {trans_60_ridge['f1_score']:<10.4f}")
     print(f"{'Dense MLP (>6.0°C)':<35} {trans_60_tcn['safe_forecast_origins_evaluated']:<15} {trans_60_tcn['true_transitions_occurred']:<15} {trans_60_tcn['precision']:<12.4f} {trans_60_tcn['recall']:<12.4f} {trans_60_tcn['f1_score']:<10.4f}")
+    print(f"{'Genuine MAD-TCN (>6.0°C)':<35} {trans_60_madtcn['safe_forecast_origins_evaluated']:<15} {trans_60_madtcn['true_transitions_occurred']:<15} {trans_60_madtcn['precision']:<12.4f} {trans_60_madtcn['recall']:<12.4f} {trans_60_madtcn['f1_score']:<10.4f}")
     print("-" * 99)
 
     print("\n[PHYSICAL EVENT-LEVEL EARLY-WARNING DETECTION (Unique Contiguous Episodes Across Thresholds)]")
-    print(f"{'Threshold / Method':<28} {'Sample Support':<18} {'Events':<8} {'Detected':<10} {'Rate (95% Wilson CI)':<24} {'Mean Lead':<12} {'FA Seqs':<10} {'FA / Day':<10}")
-    print("-" * 126)
-    for t_val, m_p, m_r, m_t in [
-        (5.0, event_50_pers, event_50_ridge, event_50_tcn),
-        (5.5, event_55_pers, event_55_ridge, event_55_tcn),
-        (6.0, event_60_pers, event_60_ridge, event_60_tcn),
-        (6.5, event_65_pers, event_65_ridge, event_65_tcn),
+    print(f"{'Threshold / Method':<32} {'Sample Support':<18} {'Events':<8} {'Detected':<10} {'Rate (95% Wilson CI)':<24} {'Mean Lead':<12} {'FA Seqs':<10} {'FA / Day':<10}")
+    print("-" * 130)
+    for t_val, m_p, m_r, m_t, m_m in [
+        (5.0, event_50_pers, event_50_ridge, event_50_tcn, event_50_madtcn),
+        (5.5, event_55_pers, event_55_ridge, event_55_tcn, event_55_madtcn),
+        (6.0, event_60_pers, event_60_ridge, event_60_tcn, event_60_madtcn),
+        (6.5, event_65_pers, event_65_ridge, event_65_tcn, event_65_madtcn),
     ]:
-        for lbl, m in [("Persistence", m_p), ("Ridge AR(60)", m_r), ("Dense MLP", m_t)]:
+        for lbl, m in [("Persistence", m_p), ("Ridge AR(60)", m_r), ("Dense MLP", m_t), ("Genuine MAD-TCN", m_m)]:
             ci_str = f"{m['event_detection_rate_pct']:.1f}% [{m['detection_rate_95ci_wilson'][0]}-{m['detection_rate_95ci_wilson'][1]}%]"
             row_title = f"{t_val:.1f}°C - {lbl}"
             supp_str = f"{m['sample_support']} (N={m['safe_origins_count']})"
-            print(f"{row_title:<28} {supp_str:<18} {m['total_unique_physical_events']:<8} {m['unique_events_detected']:<10} {ci_str:<24} {m['mean_warning_lead_time_min']:<5.1f} min   {m['false_alarm_sequences']:<10} {m['false_alarm_rate_per_day']:<10.1f}")
-        print("-" * 126)
+            print(f"{row_title:<32} {supp_str:<18} {m['total_unique_physical_events']:<8} {m['unique_events_detected']:<10} {ci_str:<24} {m['mean_warning_lead_time_min']:<5.1f} min   {m['false_alarm_sequences']:<10} {m['false_alarm_rate_per_day']:<10.1f}")
+        print("-" * 130)
     print("\n* Statistical Interpretation Disclosures:")
     print("  1. Standard binomial Wilson intervals assume independent Bernoulli trials. Events in this single ~17.42h")
     print("     continuous series possess temporal autocorrelation and environmental coupling (compressor/ambient).")
@@ -693,6 +734,7 @@ def run_benchmark(
             "linear_trend": m_linear,
             "ridge_ar60": m_ridge,
             "dense_mlp_neural": m_tcn,
+            "genuine_mad_tcn": m_madtcn,
         },
         "breach_detection_metrics": {
             "threshold_5_0_deg_c": {
@@ -700,24 +742,28 @@ def run_benchmark(
                 "persistence": breach_50_pers,
                 "ridge": breach_50_ridge,
                 "dense_mlp": breach_50_tcn,
+                "genuine_mad_tcn": breach_50_madtcn,
             },
             "threshold_5_5_deg_c": {
                 "description": "Secondary Precautionary Warning Threshold (+0.5 deg C above critical limit).",
                 "persistence": breach_55_pers,
                 "ridge": breach_55_ridge,
                 "dense_mlp": breach_55_tcn,
+                "genuine_mad_tcn": breach_55_madtcn,
             },
             "threshold_6_0_deg_c": {
                 "description": "Dynamic Regime Excursion Threshold (chamber operating median ~6.0 deg C).",
                 "persistence": breach_60_pers,
                 "ridge": breach_60_ridge,
                 "dense_mlp": breach_60_tcn,
+                "genuine_mad_tcn": breach_60_madtcn,
             },
             "threshold_6_5_deg_c": {
                 "description": "Severe Dynamic Thermal Excursion Threshold (75th percentile ~6.5 deg C).",
                 "persistence": breach_65_pers,
                 "ridge": breach_65_ridge,
                 "dense_mlp": breach_65_tcn,
+                "genuine_mad_tcn": breach_65_madtcn,
             },
         },
         "early_warning_transition_metrics": {
@@ -726,22 +772,26 @@ def run_benchmark(
                 "persistence": trans_50_pers,
                 "ridge": trans_50_ridge,
                 "dense_mlp": trans_50_tcn,
+                "genuine_mad_tcn": trans_50_madtcn,
             },
             "threshold_5_5_deg_c": {
                 "persistence": trans_55_pers,
                 "ridge": trans_55_ridge,
                 "dense_mlp": trans_55_tcn,
+                "genuine_mad_tcn": trans_55_madtcn,
             },
             "threshold_6_0_deg_c": {
                 "note": "Primary dynamic operational benchmark (706 safe origins, 383 true impending transitions).",
                 "persistence": trans_60_pers,
                 "ridge": trans_60_ridge,
                 "dense_mlp": trans_60_tcn,
+                "genuine_mad_tcn": trans_60_madtcn,
             },
             "threshold_6_5_deg_c": {
                 "persistence": trans_65_pers,
                 "ridge": trans_65_ridge,
                 "dense_mlp": trans_65_tcn,
+                "genuine_mad_tcn": trans_65_madtcn,
             },
         },
         "event_level_breach_metrics": {
@@ -759,6 +809,7 @@ def run_benchmark(
                 "persistence": event_50_pers,
                 "ridge": event_50_ridge,
                 "dense_mlp": event_50_tcn,
+                "genuine_mad_tcn": event_50_madtcn,
                 "scientific_distinction": "With only 8 safe origins (0.8% of test set) and 5 physical events, sample size is insufficient to statistically validate prevention of 5.0 deg C excursions on this physical dataset (95% Wilson CI: 23.1% to 88.2%)."
             },
             "threshold_5_5_deg_c": {
@@ -770,6 +821,7 @@ def run_benchmark(
                 "persistence": event_55_pers,
                 "ridge": event_55_ridge,
                 "dense_mlp": event_55_tcn,
+                "genuine_mad_tcn": event_55_madtcn,
             },
             "threshold_6_0_deg_c": {
                 "description": "Dynamic Regime Excursion Threshold (chamber operating median ~6.0 deg C). Primary statistical benchmark for dynamic transition prediction.",
@@ -780,6 +832,7 @@ def run_benchmark(
                 "persistence": event_60_pers,
                 "ridge": event_60_ridge,
                 "dense_mlp": event_60_tcn,
+                "genuine_mad_tcn": event_60_madtcn,
                 "scientific_distinction": "Reconciles sequence-level transition recall with physical event detection: while sliding windows generate multiple warnings per event, 88.6% - 95.5% of unique physical breach episodes are successfully anticipated 9+ minutes in advance with 60% fewer false alarms from Dense MLP."
             },
             "threshold_6_5_deg_c": {
@@ -791,6 +844,7 @@ def run_benchmark(
                 "persistence": event_65_pers,
                 "ridge": event_65_ridge,
                 "dense_mlp": event_65_tcn,
+                "genuine_mad_tcn": event_65_madtcn,
                 "scientific_distinction": "Dense MLP detects 8/14 events (57.1% [32.6%-78.6%]). The wide confidence interval spanning 46 percentage points reflects substantial statistical uncertainty; this point estimate cannot be interpreted as conclusive evidence of efficacy."
             },
         },

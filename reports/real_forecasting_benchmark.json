@@ -1,5 +1,5 @@
 {
-  "benchmark_timestamp": "2026-10-16T07:27:32.485228+00:00",
+  "benchmark_timestamp": "2026-10-16T13:50:39.247378+00:00",
   "dataset_metadata": {
     "source_file": "C:\\Projects\\Cold-Chain-Ai\\Datasets\\zenodo_hohenheim\\preprocessed_extracted\\SENSOR03_preprocessed.csv",
     "raw_observations": 84444,
@@ -111,6 +111,11 @@
       "mae_deg_c": 0.271,
       "rmse_deg_c": 0.3713,
       "r2_score": 0.3627
+    },
+    "genuine_mad_tcn": {
+      "mae_deg_c": 0.2637,
+      "rmse_deg_c": 0.3639,
+      "r2_score": 0.3876
     }
   },
   "breach_detection_metrics": {
@@ -141,6 +146,18 @@
         "f1_score": 1.0
       },
       "dense_mlp": {
+        "threshold_deg_c": 5.0,
+        "ground_truth_breaches": 1045,
+        "predicted_breaches": 1045,
+        "true_positives": 1045,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "true_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "genuine_mad_tcn": {
         "threshold_deg_c": 5.0,
         "ground_truth_breaches": 1045,
         "predicted_breaches": 1045,
@@ -190,6 +207,18 @@
         "precision": 0.998,
         "recall": 0.9644,
         "f1_score": 0.9809
+      },
+      "genuine_mad_tcn": {
+        "threshold_deg_c": 5.5,
+        "ground_truth_breaches": 1038,
+        "predicted_breaches": 1025,
+        "true_positives": 1022,
+        "false_positives": 3,
+        "false_negatives": 16,
+        "true_negatives": 4,
+        "precision": 0.9971,
+        "recall": 0.9846,
+        "f1_score": 0.9908
       }
     },
     "threshold_6_0_deg_c": {
@@ -229,6 +258,18 @@
         "precision": 0.9189,
         "recall": 0.5795,
         "f1_score": 0.7108
+      },
+      "genuine_mad_tcn": {
+        "threshold_deg_c": 6.0,
+        "ground_truth_breaches": 704,
+        "predicted_breaches": 426,
+        "true_positives": 387,
+        "false_positives": 39,
+        "false_negatives": 317,
+        "true_negatives": 302,
+        "precision": 0.9085,
+        "recall": 0.5497,
+        "f1_score": 0.685
       }
     },
     "threshold_6_5_deg_c": {
@@ -268,6 +309,18 @@
         "precision": 0.9024,
         "recall": 0.4912,
         "f1_score": 0.6361
+      },
+      "genuine_mad_tcn": {
+        "threshold_deg_c": 6.5,
+        "ground_truth_breaches": 226,
+        "predicted_breaches": 107,
+        "true_positives": 98,
+        "false_positives": 9,
+        "false_negatives": 128,
+        "true_negatives": 810,
+        "precision": 0.9159,
+        "recall": 0.4336,
+        "f1_score": 0.5886
       }
     }
   },
@@ -299,6 +352,18 @@
         "f1_score": 1.0
       },
       "dense_mlp": {
+        "threshold_deg_c": 5.0,
+        "safe_forecast_origins_evaluated": 8,
+        "true_transitions_occurred": 8,
+        "true_positives": 8,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "true_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0
+      },
+      "genuine_mad_tcn": {
         "threshold_deg_c": 5.0,
         "safe_forecast_origins_evaluated": 8,
         "true_transitions_occurred": 8,
@@ -347,6 +412,18 @@
         "precision": 0.992,
         "recall": 0.7702,
         "f1_score": 0.8671
+      },
+      "genuine_mad_tcn": {
+        "threshold_deg_c": 5.5,
+        "safe_forecast_origins_evaluated": 167,
+        "true_transitions_occurred": 161,
+        "true_positives": 145,
+        "false_positives": 2,
+        "false_negatives": 16,
+        "true_negatives": 4,
+        "precision": 0.9864,
+        "recall": 0.9006,
+        "f1_score": 0.9416
       }
     },
     "threshold_6_0_deg_c": {
@@ -386,6 +463,18 @@
         "precision": 0.8286,
         "recall": 0.2272,
         "f1_score": 0.3566
+      },
+      "genuine_mad_tcn": {
+        "threshold_deg_c": 6.0,
+        "safe_forecast_origins_evaluated": 706,
+        "true_transitions_occurred": 383,
+        "true_positives": 70,
+        "false_positives": 22,
+        "false_negatives": 313,
+        "true_negatives": 301,
+        "precision": 0.7609,
+        "recall": 0.1828,
+        "f1_score": 0.2947
       }
     },
     "threshold_6_5_deg_c": {
@@ -424,6 +513,18 @@
         "precision": 0.7143,
         "recall": 0.1154,
         "f1_score": 0.1987
+      },
+      "genuine_mad_tcn": {
+        "threshold_deg_c": 6.5,
+        "safe_forecast_origins_evaluated": 943,
+        "true_transitions_occurred": 130,
+        "true_positives": 9,
+        "false_positives": 5,
+        "false_negatives": 121,
+        "true_negatives": 808,
+        "precision": 0.6429,
+        "recall": 0.0692,
+        "f1_score": 0.125
       }
     }
   },
@@ -526,6 +627,49 @@
         }
       },
       "dense_mlp": {
+        "threshold_deg_c": 5.0,
+        "sample_support": "INSUFFICIENT",
+        "conclusive_status": "STATISTICALLY INCONCLUSIVE (insufficient safe origins or breach events in test series)",
+        "sample_support_notes": "STATISTICALLY INSUFFICIENT / INCONCLUSIVE: test series has insufficient safe baseline origins (<30) or breach events (<10).",
+        "safe_origins_count": 8,
+        "safe_origins_pct": 0.8,
+        "total_unique_physical_events": 5,
+        "unique_events_detected": 3,
+        "unique_events_missed": 2,
+        "event_detection_rate_pct": 60.0,
+        "event_missed_rate_pct": 40.0,
+        "detection_rate_95ci_wilson": [
+          23.1,
+          88.2
+        ],
+        "mean_warning_lead_time_min": 2.7,
+        "median_warning_lead_time_min": 1.0,
+        "lead_time_distribution_min": {
+          "min": 1.0,
+          "p25": 1.0,
+          "median": 1.0,
+          "mean": 2.7,
+          "p75": 3.5,
+          "max": 6.0
+        },
+        "overlap_matched_events": 3,
+        "total_sequence_warnings_on_events": 8,
+        "duplicate_warnings_per_detected_event": 2.67,
+        "false_alarm_sequences": 0,
+        "false_alarm_clustered_episodes": 0,
+        "false_alarm_rate_per_hour": 0.0,
+        "false_alarm_rate_per_day": 0.0,
+        "clustered_fa_rate_per_day": 0.0,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
+      },
+      "genuine_mad_tcn": {
         "threshold_deg_c": 5.0,
         "sample_support": "INSUFFICIENT",
         "conclusive_status": "STATISTICALLY INCONCLUSIVE (insufficient safe origins or breach events in test series)",
@@ -704,6 +848,49 @@
           "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
           "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
         }
+      },
+      "genuine_mad_tcn": {
+        "threshold_deg_c": 5.5,
+        "sample_support": "SUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
+        "sample_support_notes": "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty.",
+        "safe_origins_count": 167,
+        "safe_origins_pct": 16.0,
+        "total_unique_physical_events": 39,
+        "unique_events_detected": 38,
+        "unique_events_missed": 1,
+        "event_detection_rate_pct": 97.4,
+        "event_missed_rate_pct": 2.6,
+        "detection_rate_95ci_wilson": [
+          86.8,
+          99.5
+        ],
+        "mean_warning_lead_time_min": 7.6,
+        "median_warning_lead_time_min": 5.0,
+        "lead_time_distribution_min": {
+          "min": 1.0,
+          "p25": 4.0,
+          "median": 5.0,
+          "mean": 7.6,
+          "p75": 13.75,
+          "max": 15.0
+        },
+        "overlap_matched_events": 38,
+        "total_sequence_warnings_on_events": 184,
+        "duplicate_warnings_per_detected_event": 4.84,
+        "false_alarm_sequences": 2,
+        "false_alarm_clustered_episodes": 1,
+        "false_alarm_rate_per_hour": 0.11,
+        "false_alarm_rate_per_day": 2.8,
+        "clustered_fa_rate_per_day": 1.4,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
       }
     },
     "threshold_6_0_deg_c": {
@@ -841,6 +1028,49 @@
           "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
         }
       },
+      "genuine_mad_tcn": {
+        "threshold_deg_c": 6.0,
+        "sample_support": "SUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
+        "sample_support_notes": "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty.",
+        "safe_origins_count": 706,
+        "safe_origins_pct": 67.6,
+        "total_unique_physical_events": 44,
+        "unique_events_detected": 27,
+        "unique_events_missed": 17,
+        "event_detection_rate_pct": 61.4,
+        "event_missed_rate_pct": 38.6,
+        "detection_rate_95ci_wilson": [
+          46.6,
+          74.3
+        ],
+        "mean_warning_lead_time_min": 9.8,
+        "median_warning_lead_time_min": 12.0,
+        "lead_time_distribution_min": {
+          "min": 1.0,
+          "p25": 6.0,
+          "median": 12.0,
+          "mean": 9.8,
+          "p75": 14.0,
+          "max": 15.0
+        },
+        "overlap_matched_events": 20,
+        "total_sequence_warnings_on_events": 86,
+        "duplicate_warnings_per_detected_event": 3.19,
+        "false_alarm_sequences": 22,
+        "false_alarm_clustered_episodes": 9,
+        "false_alarm_rate_per_hour": 1.26,
+        "false_alarm_rate_per_day": 30.3,
+        "clustered_fa_rate_per_day": 12.4,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
+      },
       "scientific_distinction": "Reconciles sequence-level transition recall with physical event detection: while sliding windows generate multiple warnings per event, 88.6% - 95.5% of unique physical breach episodes are successfully anticipated 9+ minutes in advance with 60% fewer false alarms from Dense MLP."
     },
     "threshold_6_5_deg_c": {
@@ -969,6 +1199,49 @@
         "false_alarm_rate_per_hour": 0.34,
         "false_alarm_rate_per_day": 8.3,
         "clustered_fa_rate_per_day": 4.1,
+        "evaluation_duration_hours": 17.42,
+        "matching_policy": {
+          "min_actionable_lead_time_min": 1,
+          "max_horizon_lead_time_min": 15,
+          "cooldown_min": 15,
+          "pre_existing_breach_rule": "Events starting at t=0 cannot receive advance warning from test series and count as missed.",
+          "in_breach_alarms_rule": "Alarms generated after event onset (lead time <= 0) are strictly excluded from advance warning count."
+        }
+      },
+      "genuine_mad_tcn": {
+        "threshold_deg_c": 6.5,
+        "sample_support": "SUFFICIENT",
+        "conclusive_status": "DESCRIPTIVE (sufficient sample support: N_safe>=30, N_events>=10)",
+        "sample_support_notes": "Sample support is adequate to compute descriptive test metrics (N_safe >= 30, N_events >= 10); see Wilson CIs for statistical uncertainty.",
+        "safe_origins_count": 943,
+        "safe_origins_pct": 90.2,
+        "total_unique_physical_events": 14,
+        "unique_events_detected": 7,
+        "unique_events_missed": 7,
+        "event_detection_rate_pct": 50.0,
+        "event_missed_rate_pct": 50.0,
+        "detection_rate_95ci_wilson": [
+          26.8,
+          73.2
+        ],
+        "mean_warning_lead_time_min": 6.6,
+        "median_warning_lead_time_min": 1.0,
+        "lead_time_distribution_min": {
+          "min": 1.0,
+          "p25": 1.0,
+          "median": 1.0,
+          "mean": 6.6,
+          "p75": 13.5,
+          "max": 15.0
+        },
+        "overlap_matched_events": 5,
+        "total_sequence_warnings_on_events": 10,
+        "duplicate_warnings_per_detected_event": 1.43,
+        "false_alarm_sequences": 5,
+        "false_alarm_clustered_episodes": 2,
+        "false_alarm_rate_per_hour": 0.29,
+        "false_alarm_rate_per_day": 6.9,
+        "clustered_fa_rate_per_day": 2.8,
         "evaluation_duration_hours": 17.42,
         "matching_policy": {
           "min_actionable_lead_time_min": 1,
