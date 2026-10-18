@@ -1037,6 +1037,60 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
         self.assertNotEqual(c_vs_a['duration_change_pct'], c_vs_a['sample_change_pct'],
                             msg="Continuous excursion duration (-17.32%) must be strictly distinguished from discrete sample count (-17.84%)")
 
+    def test_unrounded_arithmetic_precision_and_display_rounding(self):
+        """Verify unrounded arithmetic explains the 94.12 vs 94.11 display rounding phenomenon."""
+        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        audit = data.get('unrounded_arithmetic_audit', {})
+        self.assertIn('method_a_unrounded_duration_min', audit)
+        self.assertIn('method_c_unrounded_duration_min', audit)
+
+        dur_a_unrounded = audit['method_a_unrounded_duration_min']
+        dur_c_unrounded = audit['method_c_unrounded_duration_min']
+        delta_unrounded = audit['c_vs_a_unrounded_duration_delta_min']
+
+        # True unrounded delta is -94.116... which rounds to -94.12
+        self.assertAlmostEqual(delta_unrounded, -94.116, places=3)
+        self.assertEqual(round(abs(delta_unrounded), 2), 94.12)
+
+        # Displayed values are rounded to 2 decimal places: 543.25 and 449.14
+        disp_a = round(dur_a_unrounded, 2)
+        disp_c = round(dur_c_unrounded, 2)
+        self.assertEqual(disp_a, 543.25)
+        self.assertEqual(disp_c, 449.14)
+
+        # Subtracting displayed values yields 94.11 due to 1-digit intermediate display truncation
+        self.assertEqual(round(disp_a - disp_c, 2), 94.11)
+        self.assertIn('Display rounding reconciliation', audit['display_rounding_explanation'])
+
+    def test_simulation_terminology_and_energy_identity(self):
+        """Verify energy identity and simulation scope terminology across all methods."""
+        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        energy_audit = data.get('energy_identity_audit', {})
+        self.assertEqual(energy_audit['contract'], 'total_energy_kwh == mean_power_kw * 12.5 h')
+
+        # Check all methods satisfy E == P * 12.5 within 0.006 kWh
+        for m_key in ['method_a', 'method_b', 'method_d', 'method_c']:
+            m_data = energy_audit[m_key]
+            total_e = m_data['total_energy_kwh']
+            mean_p = m_data['mean_power_kw']
+            recomputed = m_data['recomputed_energy_kwh']
+            self.assertAlmostEqual(total_e, recomputed, places=2)
+            self.assertAlmostEqual(total_e, mean_p * 12.5, delta=0.006)
+
+        # Check Markdown report uses correct simulated terminology
+        md_path = Path('reports/nsga2_comparison/nsga2_comparison_report.md')
+        report_text = md_path.read_text(encoding='utf-8')
+        self.assertIn('Simulated Temperature-Excursion Duration', report_text)
+        self.assertIn('aggregate simulated scenario-minutes', report_text)
+        self.assertIn('Simulated Energy Estimate', report_text)
+
+
 
 
 

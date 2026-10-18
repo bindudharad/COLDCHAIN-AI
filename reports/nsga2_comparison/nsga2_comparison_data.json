@@ -20,6 +20,41 @@
     "total_elapsed_minutes": 750.0,
     "explanation": "Each scenario simulates 15 elapsed minutes (intervals [0,1] through [14,15]). The 16 point samples represent endpoint temperatures. The previous figure of 800 was discrete sample count (50 x 16), not elapsed minutes. The actual elapsed operating time is exactly 750.0 minutes."
   },
+  "unrounded_arithmetic_audit": {
+    "method_a_unrounded_duration_min": 543.2520000000001,
+    "method_b_unrounded_duration_min": 525.519,
+    "method_d_unrounded_duration_min": 503.50600000000003,
+    "method_c_unrounded_duration_min": 449.13599999999997,
+    "c_vs_a_unrounded_duration_delta_min": -94.1160000000001,
+    "c_vs_a_unrounded_duration_pct": -17.32455655938682,
+    "c_vs_d_unrounded_duration_delta_min": -54.37000000000006,
+    "c_vs_d_unrounded_duration_pct": -10.798282443506146,
+    "display_rounding_explanation": "Display rounding reconciliation: Method A unrounded duration is 543.252000 min (displays as 543.25) and Method C is 449.136000 min (displays as 449.14). The unrounded duration reduction is 449.136000 - 543.252000 = -94.116000 min, which rounds to -94.12 min (94.12 minutes saved). Subtracting already-rounded display figures (543.25 - 449.14 = 94.11) differs by 0.01 min due to standard intermediate 1-digit display truncation."
+  },
+  "energy_identity_audit": {
+    "contract": "total_energy_kwh == mean_power_kw * 12.5 h",
+    "evaluation_scope": "50 simulated 15-minute intervals = 12.5 operating hours",
+    "method_a": {
+      "total_energy_kwh": 7.0321,
+      "mean_power_kw": 0.563,
+      "recomputed_energy_kwh": 7.0315
+    },
+    "method_b": {
+      "total_energy_kwh": 8.2164,
+      "mean_power_kw": 0.657,
+      "recomputed_energy_kwh": 8.2168
+    },
+    "method_d": {
+      "total_energy_kwh": 8.7924,
+      "mean_power_kw": 0.703,
+      "recomputed_energy_kwh": 8.7925
+    },
+    "method_c": {
+      "total_energy_kwh": 10.4838,
+      "mean_power_kw": 0.839,
+      "recomputed_energy_kwh": 10.4838
+    }
+  },
   "reconciliation_notice": {
     "metric_definitions": "Upper-bound violation: temperature > 5.0 \u00b0C. Lower-bound violation: temperature < 0.0 \u00b0C. Combined violation: temperature outside [0.0, 5.0] \u00b0C. Initial boundary sample t=0 is checked for compliance but does not count as an elapsed minute.",
     "sample_counts_vs_duration": "The 583, 565, 544, and 479 figures represent discrete violating sample counts (out of 800 total point samples). Continuous interpolated excursion duration across the 750 elapsed minutes is 543.25 min (Method A), 525.52 min (Method B), 503.51 min (Method D), and 449.14 min (Method C). Method C saves 94.12 minutes (-17.32%) against reactive control and 54.37 minutes (-10.80%) against unguided optimization.",
@@ -38,6 +73,7 @@
     "total_energy_kwh": 7.0321,
     "mean_power_kw": 0.563,
     "continuous_excursion_duration_min": 543.25,
+    "unrounded_continuous_excursion_duration_min": 543.2520000000001,
     "time_above_hi_min": 543.25,
     "time_below_lo_min": 0.0,
     "violating_samples_count": 583,
@@ -57,6 +93,7 @@
     "total_energy_kwh": 8.2164,
     "mean_power_kw": 0.657,
     "continuous_excursion_duration_min": 525.52,
+    "unrounded_continuous_excursion_duration_min": 525.519,
     "time_above_hi_min": 525.52,
     "time_below_lo_min": 0.0,
     "violating_samples_count": 565,
@@ -76,6 +113,7 @@
     "total_energy_kwh": 8.7924,
     "mean_power_kw": 0.703,
     "continuous_excursion_duration_min": 503.51,
+    "unrounded_continuous_excursion_duration_min": 503.50600000000003,
     "time_above_hi_min": 503.51,
     "time_below_lo_min": 0.0,
     "violating_samples_count": 544,
@@ -97,6 +135,7 @@
     "total_energy_kwh": 10.4838,
     "mean_power_kw": 0.839,
     "continuous_excursion_duration_min": 449.14,
+    "unrounded_continuous_excursion_duration_min": 449.13599999999997,
     "time_above_hi_min": 449.14,
     "time_below_lo_min": 0.0,
     "violating_samples_count": 479,
@@ -115,14 +154,18 @@
     "ordinary_algebraic_feasible_count": 23,
     "vs_method_a": {
       "duration_reduction_min": -94.12,
+      "unrounded_duration_reduction_min": -94.1160000000001,
       "duration_change_pct": -17.32,
+      "unrounded_duration_change_pct": -17.32455655938682,
       "sample_reduction_count": -104,
       "sample_change_pct": -17.84,
       "energy_change_pct": 49.08
     },
     "vs_method_d_ablation": {
       "duration_reduction_min": -54.37,
+      "unrounded_duration_reduction_min": -54.37000000000006,
       "duration_change_pct": -10.8,
+      "unrounded_duration_change_pct": -10.798282443506146,
       "sample_reduction_count": -65,
       "sample_change_pct": -11.95,
       "energy_change_pct": 19.24,
@@ -137,9 +180,9 @@
     "forecast_mae": 0.8524
   },
   "runtime_ms": {
-    "legacy": 220.4,
-    "audited": 202.5,
-    "ablation": 220.7
+    "legacy": 216.6,
+    "audited": 200.0,
+    "ablation": 213.7
   },
   "per_scenario_results": {
     "scenarios": [
