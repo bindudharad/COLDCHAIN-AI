@@ -86,9 +86,9 @@ export const MethodologyPage: React.FC = () => {
           </p>
           <ul className="text-xs text-slate-600 space-y-1.5 list-disc pl-5">
             <li><strong>Reactive Control:</strong> 583 discrete violating samples (543.25 excursion min).</li>
-            <li><strong>Forecast-Guided NSGA-II:</strong> 479 discrete violating samples (449.14 excursion min).</li>
-            <li><strong>Scientific Improvement:</strong> 17.84% discrete violation reduction (17.32% continuous time reduction).</li>
-            <li><strong>Verified Controllability:</strong> 18 scenarios achieve 100% full-trajectory safety under physical capacity bounds.</li>
+            <li><strong>Forecast-Guided NSGA-II:</strong> 476 discrete violating samples (446.40 excursion min).</li>
+            <li><strong>Scientific Improvement:</strong> 18.35% discrete violation reduction (17.83% continuous time reduction, saving 96.85 min).</li>
+            <li><strong>Verified Trajectory Controllability:</strong> 19 scenarios nominally trajectory-feasible (0–5°C); 18 buffered trajectory-feasible (0.2–4.8°C with 0.2°C buffer).</li>
           </ul>
         </div>
       </div>

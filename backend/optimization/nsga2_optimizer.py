@@ -24,7 +24,7 @@ class ColdProblem(Problem):
       G[1]: Lower temperature freezing limit across entire trajectory: T_min + buffer <= min(T_sim)
     """
     def __init__(self, current: float, ambient: float, future_risk: float,
-                 t_min: float = 0.0, t_max: float = 5.0, buffer: float = 0.05):
+                 t_min: float = 0.0, t_max: float = 5.0, buffer: float = 0.2):
         super().__init__(
             n_var=3,
             n_obj=2,
@@ -73,50 +73,58 @@ class ColdProblem(Problem):
         out['F'] = np.column_stack([total_risk, energy_kwh])
         
         # Constraints (G <= 0 represents feasible operation across entire trajectory):
-        # G1: Upper temperature boundary constraint
+        # G1: Upper temperature boundary constraint (buffered limit: T_max - buffer)
         g1 = max_sim - (self.t_max - self.buffer)
-        # G2: Lower temperature freezing constraint
+        # G2: Lower temperature freezing constraint (buffered limit: T_min + buffer)
         g2 = (self.t_min + self.buffer) - min_sim
         out['G'] = np.column_stack([g1, g2])
 
 
 def search_deterministic_feasible(current: float, ambient: float, lo: float = 0.0, hi: float = 5.0,
-                                  future_risk: float = 0.0):
+                                  buffer: float = 0.2, future_risk: float = 0.0):
     """
     Deterministic grid search for feasible actuator control settings (u, d).
-    Ensures that if physical compliance is achievable, a valid feasible schedule is found.
+    Evaluates both nominal [lo, hi] and buffered [lo+buffer, hi-buffer] trajectory feasibility.
     """
     k_inf = 0.018
     k_cool = 0.32
     candidates = []
     # Grid search over duty cycle and cooling intensity
-    for d in np.linspace(0.50, 1.0, 11):
-        for u in np.linspace(0.50, 1.0, 11):
+    for d in np.linspace(0.50, 1.0, 26):
+        for u in np.linspace(0.50, 1.0, 26):
+            u_r = round(float(u), 3)
+            d_r = round(float(d), 3)
             temp_sim = current
             max_t = temp_sim
             min_t = temp_sim
             for m in range(15):
-                comp_on = 1.0 if (m / 15.0) < d else 0.0
-                temp_sim += k_inf * (ambient - temp_sim) - k_cool * u * comp_on
+                comp_on = 1.0 if (m / 15.0) < d_r else 0.0
+                temp_sim += k_inf * (ambient - temp_sim) - k_cool * u_r * comp_on
                 max_t = max(max_t, temp_sim)
                 min_t = min(min_t, temp_sim)
-            if max_t <= hi and min_t >= lo:
-                cooling = 3.2 * u * d
+            
+            is_buffered = bool(max_t <= (hi - buffer) and min_t >= (lo + buffer) and ((lo + buffer) <= current <= (hi - buffer)))
+            is_nominal = bool(max_t <= hi and min_t >= lo and (lo <= current <= hi))
+            
+            if is_buffered or is_nominal:
+                cooling = 3.2 * u_r * d_r
                 risk_reduction = cooling * 8.0
                 res_risk = max(0.0, future_risk - risk_reduction)
-                power_kw = (0.25 + 0.035 * max(ambient - current, 0.0)) * (0.35 + 0.65 * u) * d
+                power_kw = (0.25 + 0.035 * max(ambient - current, 0.0)) * (0.35 + 0.65 * u_r) * d_r
                 e_kwh = power_kw * 0.25
                 candidates.append({
-                    'cooling_intensity': round(float(u), 3),
-                    'compressor_duty_cycle': round(float(d), 3),
+                    'cooling_intensity': u_r,
+                    'compressor_duty_cycle': d_r,
                     'target_temperature_offset': 0.0,
                     'safety_risk': round(float(res_risk), 3),
                     'estimated_energy_kwh': round(float(e_kwh), 4),
                     'estimated_power_kw': round(float(power_kw), 3),
                     'expected_temperature': round(float(temp_sim), 2),
-                    'feasible': True,
-                    'algebraic_feasible': True,
-                    'trajectory_feasible': True,
+                    'feasible': is_nominal,
+                    'algebraic_feasible': is_buffered,
+                    'trajectory_feasible': is_nominal,
+                    'nominal_trajectory_feasible': is_nominal,
+                    'buffered_trajectory_feasible': is_buffered,
                     'max_trajectory_temp': round(float(max_t), 3),
                     'min_trajectory_temp': round(float(min_t), 3),
                     'is_emergency_fallback': False
@@ -126,7 +134,7 @@ def search_deterministic_feasible(current: float, ambient: float, lo: float = 0.
 
 def run_nsga2(current: float, ambient: float, future_risk: float,
               population: int = 48, generations: int = 30,
-              profile: str = 'Food', buffer: float = 0.05):
+              profile: str = 'Food', buffer: float = 0.2):
     """
     Execute prediction-guided NSGA-II optimization with full trajectory constraints.
     Returns (pareto_solutions, recommended_solution).
@@ -173,59 +181,82 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
     
     rows = []
     for x_val, f_val, g_val in zip(X, F, G):
-        cooling = 3.2 * x_val[0] * x_val[1]
-        t_exp = round(float(current + ambient_gain - cooling + x_val[2]), 2)
+        u_rounded = round(float(x_val[0]), 3)
+        d_rounded = round(float(x_val[1]), 3)
+        offset_rounded = round(float(x_val[2]), 3)
+        
+        cooling = 3.2 * u_rounded * d_rounded
+        t_exp = round(float(current + ambient_gain - cooling + offset_rounded), 2)
+        
         # Trajectory forward simulation across 15-minute operational interval
-        # using the calibrated thermodynamic plant parameters (k_inf=0.018, k_cool=0.32)
+        # using exact rounded actuator control variables (k_inf=0.018, k_cool=0.32)
         k_inf = 0.018
         k_cool = 0.32
         temp_sim = current
         max_sim = temp_sim
         min_sim = temp_sim
         for m in range(15):
-            comp_on = 1.0 if (m / 15.0) < float(x_val[1]) else 0.0
-            temp_sim += k_inf * (ambient - temp_sim) - k_cool * float(x_val[0]) * comp_on
+            comp_on = 1.0 if (m / 15.0) < d_rounded else 0.0
+            temp_sim += k_inf * (ambient - temp_sim) - k_cool * u_rounded * comp_on
             max_sim = max(max_sim, temp_sim)
             min_sim = min(min_sim, temp_sim)
             
-        # Complete trajectory feasibility: entire 16-point profile remains strictly within safe bounds
-        is_traj_feasible = bool(not is_fallback and max_sim <= hi and min_sim >= lo)
-        is_alg_feasible = bool(not is_fallback and g_val[0] <= 1e-4 and g_val[1] <= 1e-4)
+        is_buffered = bool(not is_fallback and max_sim <= (hi - buffer) and min_sim >= (lo + buffer) and ((lo + buffer) <= current <= (hi - buffer)))
+        is_nominal = bool(not is_fallback and max_sim <= hi and min_sim >= lo and (lo <= current <= hi))
+        is_alg = bool(not is_fallback and g_val[0] <= 1e-4 and g_val[1] <= 1e-4)
         
         rows.append({
-            'cooling_intensity': round(float(x_val[0]), 3),
-            'compressor_duty_cycle': round(float(x_val[1]), 3),
-            'target_temperature_offset': round(float(x_val[2]), 3),
+            'cooling_intensity': u_rounded,
+            'compressor_duty_cycle': d_rounded,
+            'target_temperature_offset': offset_rounded,
             'safety_risk': round(float(f_val[0]), 3),
             'estimated_energy_kwh': round(float(f_val[1]), 4),
             'estimated_power_kw': round(float(f_val[1]) / 0.25, 3),
             'expected_temperature': t_exp,
-            'feasible': is_traj_feasible,
-            'algebraic_feasible': is_alg_feasible,
-            'trajectory_feasible': is_traj_feasible,
+            'feasible': is_nominal,
+            'algebraic_feasible': is_alg,
+            'trajectory_feasible': is_nominal,
+            'nominal_trajectory_feasible': is_nominal,
+            'buffered_trajectory_feasible': is_buffered,
             'max_trajectory_temp': round(float(max_sim), 3),
             'min_trajectory_temp': round(float(min_sim), 3),
             'is_emergency_fallback': is_fallback
         })
 
-    # If NSGA-II returned candidates but none achieved full trajectory feasibility,
-    # and the chamber started compliant (current in [lo, hi]), invoke deterministic grid search repair
-    traj_feasible_rows = [row for row in rows if row['trajectory_feasible']]
-    if not traj_feasible_rows and (lo <= current <= hi):
-        repaired = search_deterministic_feasible(current, ambient, lo=lo, hi=hi, future_risk=future_risk)
-        if repaired:
-            rows.extend(repaired)
-            traj_feasible_rows = [row for row in rows if row['trajectory_feasible']]
+    buffered_rows = [row for row in rows if row.get('buffered_trajectory_feasible', False)]
+    nominal_rows = [row for row in rows if row.get('nominal_trajectory_feasible', False)]
+    
+    # If no candidate achieved buffered trajectory feasibility, and chamber started buffered-compliant,
+    # invoke deterministic grid search repair for buffered compliance
+    if not buffered_rows and ((lo + buffer) <= current <= (hi - buffer)):
+        repaired = search_deterministic_feasible(current, ambient, lo=lo, hi=hi, buffer=buffer, future_risk=future_risk)
+        repaired_buf = [r for r in repaired if r.get('buffered_trajectory_feasible', False)]
+        if repaired_buf:
+            rows.extend(repaired_buf)
+            buffered_rows = [row for row in rows if row.get('buffered_trajectory_feasible', False)]
+            nominal_rows = [row for row in rows if row.get('nominal_trajectory_feasible', False)]
             is_fallback = False
 
-    # Filter feasible solutions for recommendation:
-    # First priority: solutions satisfying the complete dynamic trajectory constraints
-    alg_feasible_rows = [row for row in rows if row['algebraic_feasible']]
-    
-    if traj_feasible_rows:
-        candidate_pool = traj_feasible_rows
-    elif alg_feasible_rows:
-        candidate_pool = alg_feasible_rows
+    # If still no nominal candidate, and chamber started nominally compliant, repair for nominal compliance
+    if not nominal_rows and (lo <= current <= hi):
+        repaired = search_deterministic_feasible(current, ambient, lo=lo, hi=hi, buffer=buffer, future_risk=future_risk)
+        repaired_nom = [r for r in repaired if r.get('nominal_trajectory_feasible', False)]
+        if repaired_nom:
+            rows.extend(repaired_nom)
+            nominal_rows = [row for row in rows if row.get('nominal_trajectory_feasible', False)]
+            is_fallback = False
+
+    # Filter solutions for recommendation:
+    # 1st priority: solutions satisfying stricter buffered trajectory constraints (max <= 4.8 °C)
+    # 2nd priority: solutions satisfying nominal trajectory constraints (max <= 5.0 °C)
+    # 3rd priority: solutions satisfying algebraic constraints
+    # Fallback: all candidates
+    if buffered_rows:
+        candidate_pool = buffered_rows
+    elif nominal_rows:
+        candidate_pool = nominal_rows
+    elif any(row.get('algebraic_feasible', False) for row in rows):
+        candidate_pool = [row for row in rows if row.get('algebraic_feasible', False)]
     else:
         candidate_pool = rows
     
@@ -253,11 +284,19 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
             f"(intensity {rec_copy['cooling_intensity']}, duty {rec_copy['compressor_duty_cycle']}) "
             f"commanded. Expected temperature: {rec_copy['expected_temperature']} °C."
         )
-    elif rec_copy.get('trajectory_feasible', False):
+    elif rec_copy.get('buffered_trajectory_feasible', False):
         rec_copy['explanation'] = (
-            f"Selected from constrained NSGA-II Pareto frontier with complete trajectory verification. "
-            f"Maintains chamber temperature within {lo:.1f} to {hi:.1f} °C safe profile throughout the interval "
-            f"(peak: {rec_copy['max_trajectory_temp']} °C) with {rec_copy['estimated_energy_kwh']:.3f} kWh estimated energy."
+            f"Selected from constrained NSGA-II Pareto frontier with complete buffered trajectory verification. "
+            f"Maintains chamber temperature within {lo + buffer:.1f} to {hi - buffer:.1f} °C buffered envelope "
+            f"(nominal: {lo:.1f} to {hi:.1f} °C) throughout interval (peak: {rec_copy['max_trajectory_temp']} °C) "
+            f"with {rec_copy['estimated_energy_kwh']:.3f} kWh modeled energy."
+        )
+    elif rec_copy.get('nominal_trajectory_feasible', False):
+        rec_copy['explanation'] = (
+            f"Selected from constrained NSGA-II Pareto frontier with complete nominal trajectory verification. "
+            f"Maintains chamber temperature within nominal {lo:.1f} to {hi:.1f} °C safe bounds "
+            f"(peak: {rec_copy['max_trajectory_temp']} °C), but exceeds buffered threshold {hi - buffer:.1f} °C, "
+            f"with {rec_copy['estimated_energy_kwh']:.3f} kWh modeled energy."
         )
     else:
         rec_copy['explanation'] = (

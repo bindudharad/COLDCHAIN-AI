@@ -824,27 +824,31 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
         # Discrete violating sample counts (out of 800 samples)
         self.assertEqual(data['method_a_reactive']['violating_samples_count'], 583)
         self.assertEqual(data['method_b_legacy']['violating_samples_count'], 565)
-        self.assertEqual(data['method_d_ablation_risk_disabled']['violating_samples_count'], 486)
+        self.assertEqual(data['method_d_ablation_risk_disabled']['violating_samples_count'], 476)
         self.assertEqual(data['method_c_audited_forecast_guided']['violating_samples_count'], 476)
         self.assertEqual(data['method_c_audited_forecast_guided']['vs_method_a']['sample_reduction_count'], -107)
         self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['sample_change_pct'], -18.35, places=1)
-        self.assertEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['sample_reduction_count'], -10)
-        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['sample_change_pct'], -2.06, places=1)
+        self.assertEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['sample_reduction_count'], 0)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['sample_change_pct'], 0.0, places=1)
 
         # Continuous physical excursion duration (out of 750.0 elapsed minutes)
         self.assertAlmostEqual(data['method_a_reactive']['continuous_excursion_duration_min'], 543.25, places=1)
         self.assertAlmostEqual(data['method_b_legacy']['continuous_excursion_duration_min'], 525.52, places=1)
-        self.assertAlmostEqual(data['method_d_ablation_risk_disabled']['continuous_excursion_duration_min'], 454.09, places=1)
+        self.assertAlmostEqual(data['method_d_ablation_risk_disabled']['continuous_excursion_duration_min'], 446.40, places=1)
         self.assertAlmostEqual(data['method_c_audited_forecast_guided']['continuous_excursion_duration_min'], 446.40, places=1)
         self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['duration_reduction_min'], -96.85, places=1)
         self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['duration_change_pct'], -17.83, places=1)
-        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['duration_reduction_min'], -7.70, places=1)
-        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['duration_change_pct'], -1.69, places=1)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['duration_reduction_min'], 0.0, places=1)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['duration_change_pct'], 0.0, places=1)
 
         # Feasibility accounting
-        self.assertEqual(data['feasibility_accounting']['ordinary_algebraic_feasible_scenarios'], 19)
+        self.assertEqual(data['feasibility_accounting']['ordinary_algebraic_feasible_scenarios'], 18)
         self.assertEqual(data['feasibility_accounting']['emergency_fallback_overrides'], 31)
         self.assertEqual(data['feasibility_accounting']['trajectory_thermal_feasible_scenarios'], 19)
+        self.assertEqual(data['feasibility_accounting']['buffered_trajectory_feasible_scenarios'], 18)
+        self.assertEqual(data['feasibility_accounting']['nominally_trajectory_feasible_scenarios'], 19)
+        self.assertEqual(data['feasibility_accounting']['initially_compliant_scenarios'], 19)
+        self.assertEqual(data['feasibility_accounting']['initially_breached_recovered_by_endpoint'], 3)
         self.assertEqual(data['feasibility_accounting']['decision_bounds_compliance_pct'], 100.0)
         self.assertEqual(len(data['per_scenario_results']['scenarios']), 50)
 
@@ -1009,28 +1013,28 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
             data = json.load(f)
 
         pts_a = data['method_a_reactive']['violating_samples_count']  # 583
-        pts_d = data['method_d_ablation_risk_disabled']['violating_samples_count']  # 486
+        pts_d = data['method_d_ablation_risk_disabled']['violating_samples_count']  # 476
         pts_c = data['method_c_audited_forecast_guided']['violating_samples_count']  # 476
 
         dur_a = data['method_a_reactive']['continuous_excursion_duration_min']  # 543.25
-        dur_d = data['method_d_ablation_risk_disabled']['continuous_excursion_duration_min']  # 454.09
+        dur_d = data['method_d_ablation_risk_disabled']['continuous_excursion_duration_min']  # 446.40
         dur_c = data['method_c_audited_forecast_guided']['continuous_excursion_duration_min']  # 446.40
 
         # Recomputed discrete point sample reductions
         recomputed_sample_vs_a_pct = ((pts_c - pts_a) / pts_a) * 100
         recomputed_sample_vs_d_pct = ((pts_c - pts_d) / pts_d) * 100
         self.assertEqual(pts_c - pts_a, -107)
-        self.assertEqual(pts_c - pts_d, -10)
+        self.assertEqual(pts_c - pts_d, 0)
         self.assertAlmostEqual(recomputed_sample_vs_a_pct, -18.35, places=2)
-        self.assertAlmostEqual(recomputed_sample_vs_d_pct, -2.06, places=2)
+        self.assertAlmostEqual(recomputed_sample_vs_d_pct, 0.0, places=2)
 
         # Recomputed continuous physical duration reductions
         recomputed_dur_vs_a_pct = ((dur_c - dur_a) / dur_a) * 100
         recomputed_dur_vs_d_pct = ((dur_c - dur_d) / dur_d) * 100
         self.assertAlmostEqual(dur_c - dur_a, -96.85, places=1)
-        self.assertAlmostEqual(dur_c - dur_d, -7.70, places=1)
+        self.assertAlmostEqual(dur_c - dur_d, 0.0, places=1)
         self.assertAlmostEqual(recomputed_dur_vs_a_pct, -17.83, places=2)
-        self.assertAlmostEqual(recomputed_dur_vs_d_pct, -1.69, places=2)
+        self.assertAlmostEqual(recomputed_dur_vs_d_pct, 0.0, places=2)
 
         # Assert reported values match recomputed values
         c_vs_a = data['method_c_audited_forecast_guided']['vs_method_a']
@@ -1041,10 +1045,10 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
         self.assertAlmostEqual(c_vs_a['duration_reduction_min'], -96.85, places=1)
         self.assertAlmostEqual(c_vs_a['duration_change_pct'], -17.83, places=2)
 
-        self.assertEqual(c_vs_d['sample_reduction_count'], -10)
-        self.assertAlmostEqual(c_vs_d['sample_change_pct'], -2.06, places=2)
-        self.assertAlmostEqual(c_vs_d['duration_reduction_min'], -7.70, places=1)
-        self.assertAlmostEqual(c_vs_d['duration_change_pct'], -1.69, places=2)
+        self.assertEqual(c_vs_d['sample_reduction_count'], 0)
+        self.assertAlmostEqual(c_vs_d['sample_change_pct'], 0.0, places=2)
+        self.assertAlmostEqual(c_vs_d['duration_reduction_min'], 0.0, places=1)
+        self.assertAlmostEqual(c_vs_d['duration_change_pct'], 0.0, places=2)
 
         # Assert strict distinction: continuous duration reduction is 17.83%, discrete point reduction is 18.35%
         self.assertNotEqual(c_vs_a['duration_change_pct'], c_vs_a['sample_change_pct'],
