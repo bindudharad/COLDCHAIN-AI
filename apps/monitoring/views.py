@@ -119,7 +119,13 @@ def dashboard_api(request):
     if not sensor:
         return JsonResponse({'status': 'NO DATA', 'detail': 'Seed data first.'})
     result = decision_for_sensor(sensor)
-    result.pop('latest_reading', None)
+    latest = result.pop('latest_reading', None)
+    result['sensor_id'] = sensor.sensor_id
+    result['current_ambient'] = float(latest.ambient_temperature if latest and latest.ambient_temperature is not None else 22.0)
+    result['product_type'] = sensor.product_type
+    result['target_range'] = [0.0, 5.0]
+    result['data_provenance'] = 'DEMONSTRATION / SIMULATION DATA'
+    result['energy_notice'] = 'ENERGY VALUES ARE ESTIMATED/SIMULATED'
     return JsonResponse(result)
 
 def sensors_api(request):

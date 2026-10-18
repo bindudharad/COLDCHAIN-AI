@@ -1,0 +1,116 @@
+{
+  "total_pages_verified": 12,
+  "passed_count": 12,
+  "failed_count": 0,
+  "console_errors": [],
+  "pages": [
+    {
+      "route": "/",
+      "name": "overview",
+      "http_status": 200,
+      "content_verified": true,
+      "load_time_ms": 4006.3,
+      "screenshot": "docs\\screenshots\\redesign\\overview_desktop.png",
+      "status": "PASS"
+    },
+    {
+      "route": "/dashboard",
+      "name": "dashboard",
+      "http_status": 200,
+      "content_verified": true,
+      "load_time_ms": 2944.5,
+      "screenshot": "docs\\screenshots\\redesign\\dashboard_desktop.png",
+      "status": "PASS"
+    },
+    {
+      "route": "/live-monitoring",
+      "name": "telemetry_stream",
+      "http_status": 200,
+      "content_verified": true,
+      "load_time_ms": 2443.2,
+      "screenshot": "docs\\screenshots\\redesign\\telemetry_stream_desktop.png",
+      "status": "PASS"
+    },
+    {
+      "route": "/predictions",
+      "name": "predictions",
+      "http_status": 200,
+      "content_verified": true,
+      "load_time_ms": 2996.8,
+      "screenshot": "docs\\screenshots\\redesign\\predictions_desktop.png",
+      "status": "PASS"
+    },
+    {
+      "route": "/optimization",
+      "name": "optimization",
+      "http_status": 200,
+      "content_verified": true,
+      "load_time_ms": 2956.2,
+      "screenshot": "docs\\screenshots\\redesign\\optimization_desktop.png",
+      "status": "PASS"
+    },
+    {
+      "route": "/alerts",
+      "name": "alerts",
+      "http_status": 200,
+      "content_verified": true,
+      "load_time_ms": 3653.9,
+      "screenshot": "docs\\screenshots\\redesign\\alerts_desktop.png",
+      "status": "PASS"
+    },
+    {
+      "route": "/sensors",
+      "name": "sensors",
+      "http_status": 200,
+      "content_verified": true,
+      "load_time_ms": 2378.5,
+      "screenshot": "docs\\screenshots\\redesign\\sensors_desktop.png",
+      "status": "PASS"
+    },
+    {
+      "route": "/model",
+      "name": "neural_model",
+      "http_status": 200,
+      "content_verified": true,
+      "load_time_ms": 2269.1,
+      "screenshot": "docs\\screenshots\\redesign\\neural_model_desktop.png",
+      "status": "PASS"
+    },
+    {
+      "route": "/datasets",
+      "name": "datasets",
+      "http_status": 200,
+      "content_verified": true,
+      "load_time_ms": 2308.9,
+      "screenshot": "docs\\screenshots\\redesign\\datasets_desktop.png",
+      "status": "PASS"
+    },
+    {
+      "route": "/reports",
+      "name": "reports",
+      "http_status": 200,
+      "content_verified": true,
+      "load_time_ms": 2336.8,
+      "screenshot": "docs\\screenshots\\redesign\\reports_desktop.png",
+      "status": "PASS"
+    },
+    {
+      "route": "/upload",
+      "name": "upload",
+      "http_status": 200,
+      "content_verified": true,
+      "load_time_ms": 2286.7,
+      "screenshot": "docs\\screenshots\\redesign\\upload_desktop.png",
+      "status": "PASS"
+    },
+    {
+      "route": "/methodology",
+      "name": "methodology",
+      "http_status": 200,
+      "content_verified": true,
+      "load_time_ms": 2300.4,
+      "screenshot": "docs\\screenshots\\redesign\\methodology_desktop.png",
+      "status": "PASS"
+    }
+  ]
+}
