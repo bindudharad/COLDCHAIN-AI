@@ -331,9 +331,9 @@
     "forecast_mae": 0.8524
   },
   "runtime_ms": {
-    "legacy": 219.4,
-    "audited": 192.7,
-    "ablation": 209.6
+    "legacy": 207.0,
+    "audited": 188.1,
+    "ablation": 204.1
   },
   "per_scenario_results": {
     "scenarios": [
