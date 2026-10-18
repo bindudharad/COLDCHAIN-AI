@@ -10,50 +10,50 @@
     {
       "scale_records": 10000,
       "size_mb": 1.15,
-      "ingestion_time_s": 0.249,
-      "ingestion_throughput_rows_per_s": 40236.9,
-      "preprocessing_time_s": 0.085,
-      "preprocessing_throughput_rows_per_s": 118269.3,
+      "ingestion_time_s": 0.289,
+      "ingestion_throughput_rows_per_s": 34603.5,
+      "preprocessing_time_s": 0.088,
+      "preprocessing_throughput_rows_per_s": 113031.1,
       "peak_memory_mb": 2.78,
-      "inference_time_ms": 49.48,
-      "optimization_time_ms": 176.28,
-      "total_runtime_s": 0.58
+      "inference_time_ms": 49.32,
+      "optimization_time_ms": 207.94,
+      "total_runtime_s": 0.663
     },
     {
       "scale_records": 100000,
       "size_mb": 11.54,
-      "ingestion_time_s": 2.405,
-      "ingestion_throughput_rows_per_s": 41585.0,
-      "preprocessing_time_s": 0.182,
-      "preprocessing_throughput_rows_per_s": 550754.8,
+      "ingestion_time_s": 2.822,
+      "ingestion_throughput_rows_per_s": 35439.4,
+      "preprocessing_time_s": 0.21,
+      "preprocessing_throughput_rows_per_s": 476060.4,
       "peak_memory_mb": 25.21,
-      "inference_time_ms": 17.45,
-      "optimization_time_ms": 143.38,
-      "total_runtime_s": 2.886
+      "inference_time_ms": 19.99,
+      "optimization_time_ms": 201.02,
+      "total_runtime_s": 3.415
     },
     {
       "scale_records": 500000,
       "size_mb": 57.7,
-      "ingestion_time_s": 12.159,
-      "ingestion_throughput_rows_per_s": 41120.9,
-      "preprocessing_time_s": 0.754,
-      "preprocessing_throughput_rows_per_s": 663530.7,
+      "ingestion_time_s": 15.294,
+      "ingestion_throughput_rows_per_s": 32692.8,
+      "preprocessing_time_s": 0.931,
+      "preprocessing_throughput_rows_per_s": 537297.9,
       "peak_memory_mb": 125.92,
-      "inference_time_ms": 38.11,
-      "optimization_time_ms": 159.07,
-      "total_runtime_s": 13.811
+      "inference_time_ms": 67.3,
+      "optimization_time_ms": 198.33,
+      "total_runtime_s": 17.348
     },
     {
       "scale_records": 1000000,
       "size_mb": 115.39,
-      "ingestion_time_s": 25.06,
-      "ingestion_throughput_rows_per_s": 39904.8,
-      "preprocessing_time_s": 1.566,
-      "preprocessing_throughput_rows_per_s": 638649.9,
+      "ingestion_time_s": 29.831,
+      "ingestion_throughput_rows_per_s": 33521.9,
+      "preprocessing_time_s": 1.649,
+      "preprocessing_throughput_rows_per_s": 606383.6,
       "peak_memory_mb": 251.81,
-      "inference_time_ms": 67.58,
-      "optimization_time_ms": 137.2,
-      "total_runtime_s": 28.264
+      "inference_time_ms": 74.68,
+      "optimization_time_ms": 175.58,
+      "total_runtime_s": 33.427
     }
   ]
 }

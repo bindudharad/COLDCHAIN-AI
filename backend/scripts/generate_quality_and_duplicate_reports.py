@@ -695,6 +695,8 @@ def main():
     args = parser.parse_args()
 
     project_root = Path(__file__).resolve().parents[1]
+    if not (project_root / "data").exists() and (project_root.parent / "data").exists():
+        project_root = project_root.parent
     reports_dir = project_root / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
     output_path = Path(args.output) if args.output else reports_dir / "data_quality_report.json"

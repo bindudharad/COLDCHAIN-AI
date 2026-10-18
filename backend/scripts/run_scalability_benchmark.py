@@ -137,7 +137,7 @@ def main():
         print(f"{r['scale_records']:<12,d} {r['size_mb']:<7.1f} MB {r['ingestion_time_s']:<12.3f} {r['preprocessing_time_s']:<12.3f} {r['peak_memory_mb']:<7.1f} MB {r['total_runtime_s']:<10.3f}")
     print("-" * 70)
     
-    rep_dir = Path('reports')
+    rep_dir = Path(__file__).resolve().parents[2] / 'reports'
     rep_dir.mkdir(exist_ok=True)
     out_payload = {
         'benchmark': 'Single-Node Big Data Scalability Stress Test',
