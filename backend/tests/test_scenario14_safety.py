@@ -149,3 +149,58 @@ class Scenario14SafetyRegressionTests(TestCase):
             self.assertTrue(rec['trajectory_feasible'], f"{tc['name']} must achieve trajectory feasibility")
             self.assertLessEqual(rec['max_trajectory_temp'], 5.0)
             self.assertGreaterEqual(rec['min_trajectory_temp'], 0.0)
+
+    def test_forecast_risk_input_influences_optimizer_selection_and_ranking(self):
+        """
+        Prove that MAD-TCN forecast risk genuinely shifts candidate selection and ranking:
+        1. When predictive risk is disabled (future_risk=0.0, Method D ablation), the optimizer
+           strictly minimizes energy, driving peak temperature right against the buffer limit (4.798 °C).
+        2. When predictive risk is enabled (future_risk=28.46, Method C from MAD-TCN inference on Scenario 10),
+           the optimizer penalizes residual risk and commands proactive cooling (u=1.0, d=1.0),
+           keeping peak temperature substantially cooler (4.249 °C) to establish deep thermal resilience.
+        """
+        from core import risk
+        from ml.inference import forecast
+        
+        t0 = 4.249
+        tamb = 20.044
+        
+        # 1. Verification of forecast & risk pipeline integration
+        sample_seq = np.zeros((60, 12), dtype=np.float32)
+        sample_seq[:, 0] = np.linspace(3.5, 4.3, 60)
+        sample_seq[:, 2] = tamb
+        pred_future = forecast(sample_seq)
+        self.assertEqual(len(pred_future), 15, "Forecast horizon must be exactly 15 minutes")
+        
+        risk_res = risk(pred_future, profile='Food')
+        self.assertIn('risk_score', risk_res)
+        self.assertGreaterEqual(risk_res['risk_score'], 0.0)
+        
+        # 2. Compare matched optimization runs: Method C (forecast risk) vs Method D (ablation fr=0.0)
+        scenario10_risk = 28.46
+        _, rec_c = run_nsga2(t0, tamb, future_risk=scenario10_risk, profile='Food', buffer=0.2)
+        _, rec_d = run_nsga2(t0, tamb, future_risk=0.0, profile='Food', buffer=0.2)
+        
+        # 3. Assert decisions differ
+        self.assertNotEqual(
+            (rec_c['cooling_intensity'], rec_c['compressor_duty_cycle']),
+            (rec_d['cooling_intensity'], rec_d['compressor_duty_cycle']),
+            "Predictive risk must change selected actuator settings in controllable scenario"
+        )
+        
+        # 4. Assert forecast guidance commands proactive cooling with lower peak temperature
+        self.assertGreater(rec_c['compressor_duty_cycle'], rec_d['compressor_duty_cycle'],
+                           "Forecast guidance must increase cooling duty cycle against high predicted risk")
+        self.assertLess(rec_c['max_trajectory_temp'], rec_d['max_trajectory_temp'],
+                        "Forecast-guided proactive cooling must yield lower peak temperature than energy-minimizing ablation")
+        self.assertAlmostEqual(rec_c['max_trajectory_temp'], 4.249, delta=0.05)
+        self.assertAlmostEqual(rec_d['max_trajectory_temp'], 4.798, delta=0.05)
+        
+        # 5. Assert energy-safety trade-off: Method C spends more modeled energy for deeper safety headroom
+        self.assertGreater(rec_c['estimated_energy_kwh'], rec_d['estimated_energy_kwh'],
+                           "Proactive cooling must demand higher modeled energy than boundary-riding ablation")
+        
+        # 6. Both must still satisfy buffered trajectory constraints
+        self.assertTrue(rec_c['buffered_trajectory_feasible'])
+        self.assertTrue(rec_d['buffered_trajectory_feasible'])
+

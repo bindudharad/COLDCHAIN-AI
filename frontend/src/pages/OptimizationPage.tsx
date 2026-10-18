@@ -175,7 +175,7 @@ export const OptimizationPage: React.FC = () => {
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Full trajectory safety enforced against thermal model</span>
             </span>
-            <span className="text-pink-600 font-semibold">18 Controllable Regimes Verified</span>
+            <span className="text-pink-600 font-semibold">19 Nominally / 18 Buffered Feasible Regimes</span>
           </div>
         </div>
 

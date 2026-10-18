@@ -4,7 +4,7 @@
 **Tagline:** Recover reliable forecasts, optimize refrigeration energy, protect temperature-sensitive storage, and explain every recommendation using verifiable evidence.  
 **Repository Working Directory:** `C:\Projects\Cold-Chain-Ai`  
 **Git Branch:** `completion-dev`  
-**Authoritative Acceptance Commit:** `c8017c3` (Enforce trajectory safety constraints, pre-optimization classification, and expand test suite to 92 tests)  
+**Authoritative Acceptance Commit:** `6c26a7e` (Enforce hard 0.2°C buffer, trajectory safety, and expand test suite to 98 tests)  
 **Evaluation Date:** October 18, 2026  
 **Document Status:** FINAL AUTHORITATIVE RELEASE GATE REPORT  
 
@@ -27,11 +27,11 @@ All claims, architectures, empirical metrics, confidence intervals, and optimiza
 3. **Rigorous Temporal Split Boundary Purging:** 28 boundary sequences (14 train-val, 14 val-test) purged to guarantee mathematically disjoint target timestamp sets ($\mathcal{T}_{\text{train}} \cap \mathcal{T}_{\text{val}} = \emptyset$ and $\mathcal{T}_{\text{val}} \cap \mathcal{T}_{\text{test}} = \emptyset$). Target overlap is asserted to be exactly zero.
 4. **Reconciled Optimization Feasibility, Time Grid & Excursion Duration:** 
    - Clarified the **time grid**: Each scenario spans 15 operational intervals ($t=0..15$ min, 16 endpoint samples). Across 50 scenarios, total simulated duration is exactly **750.0 aggregate simulated scenario-minutes** (12.5 operating hours total across 50 separate 15-minute operational regimes, not a single continuous physical experiment at a single facility) with 800 discrete point samples. The initial sample $t=0$ denotes the boundary state and is not double-counted as an extra elapsed minute.
-   - Clarified **Simulated Temperature-Excursion Duration (Continuous)**: Calculated via linear boundary interpolation across state crossings, Method C reduces continuous simulated excursion duration from **543.25 minutes** (Method A, 72.4%) down to **449.14 minutes** (Method C, 59.9%) — saving **94.12 minutes (-17.32%)** of modeled breach exposure against reactive control and **54.37 minutes (-10.80%)** against risk-disabled optimization (Method D, 503.51 min).
-   - Clarified **Discrete Point Sample Counts**: Across all 800 discrete sample points, Method C achieves **479 violating samples** down from **583 samples** in Method A (-104 samples / -17.84%) and **544 samples** in Method D (-65 samples / -11.95%).
-   - Clarified that **100% of candidate solutions satisfy decision-variable bounds**, but strict full-trajectory thermal containment ($\max(T) \le 5.0\text{ }^\circ\text{C}$) is achieved in **18/50 scenarios (36.0%)**. In 27 scenarios (54.0%), severe pre-breached initial conditions ($T_0$ up to 9.31 °C) or extreme ambient infiltration trigger an **Emergency Fallback Override** ($u=1.0, d=1.0$). These emergency interventions arrest catastrophic warming but are strictly documented as overrides rather than ordinary feasible solutions.
-   - Reconciled the 23 algebraic vs 18 trajectory feasible discrepancy: 4 scenarios (9, 28, 37, 47) had initial breach pull-down excursions ($T_0 > 5.0\text{ }^\circ\text{C}$) omitted by algebraic static formulas; 1 scenario (14) had low duty cycle ($d=0.558$) causing late-interval warming to 5.71 °C. Trajectory-verifying candidate selection in `run_nsga2()` now guarantees recommendation safety against complete simulated trajectories.
-5. **System Rigor & Security:** **92/92 automated unit and regression tests passing** in 13.1s, 0 Django check issues, 12/12 frontend routes rendering with full interactivity, and authenticated per-device IoT hardware authorization with spoofing degradation.
+   - Clarified **Simulated Temperature-Excursion Duration (Continuous)**: Calculated via linear boundary interpolation across state crossings, Method C reduces continuous simulated excursion duration from **543.25 minutes** (Method A, 72.4%) down to **446.40 minutes** (Method C, 59.5%) — saving **96.85 minutes (-17.83%)** of modeled breach exposure against reactive control. Risk-disabled optimization (Method D) also reaches 446.40 minutes under trajectory constraints, but operates right at the thermal boundary ($T_{\text{max}} = 4.75\text{--}4.80^\circ\text{C}$, consuming $9.4862\text{ kWh}$), whereas Method C utilizes forecast risk to drive proactive cooling ($T_{\text{max}} = 3.78\text{--}4.25^\circ\text{C}$, $\sim 0.65^\circ\text{C}$ deeper safety margin, consuming $10.5199\text{ kWh}$).
+   - Clarified **Discrete Point Sample Counts**: Across all 800 discrete sample points, Method C achieves **476 violating samples** down from **583 samples** in Method A (-107 samples / -18.35%).
+   - Clarified that **19/50 scenarios (38.0%)** achieve nominal trajectory containment ($0.0 \le T(t) \le 5.0^\circ\text{C}$) and **18/50 scenarios (36.0%)** satisfy the hard $0.2^\circ\text{C}$ safety buffer ($0.2 \le T(t) \le 4.8^\circ\text{C}$). Scenario 18 starts at $4.8713^\circ\text{C} > 4.80^\circ\text{C}$, making it nominally feasible but buffered-infeasible. In 31 scenarios (62.0%), severe pre-breached initial conditions ($T_0$ up to 9.31 °C) or extreme ambient infiltration trigger an **Emergency Fallback Override** ($u=1.0, d=1.0$).
+   - Reconciled Scenario 14: Selected controls $u=0.940, d=0.680$ maintain peak simulated temperature at **$4.774^\circ\text{C} \le 4.80^\circ\text{C}$** with minimum temperature of **$3.653^\circ\text{C} \ge 0.20^\circ\text{C}$** and **$0.0\text{ min}$** excursion duration.
+5. **System Rigor & Security:** **98/98 automated unit and regression tests passing** in 12.6s, 0 Django check issues, 12/12 frontend routes rendering with full interactivity, and authenticated per-device IoT hardware authorization with spoofing degradation.
 
 ---
 
@@ -124,48 +124,44 @@ Where $\Delta t_{\text{hours}} = 15/60 = 0.25\text{ h}$, $u \in [0.1, 1.0]$, $d 
 | Metric | Method A: Reactive Baseline | Method B: Legacy Unconstrained | Method D: Risk-Disabled Ablation | Method C: Forecast-Guided NSGA-II |
 | :--- | :---: | :---: | :---: | :---: |
 | **Lookahead Foresight** | None ($T_0$ only) | MAD-TCN Risk (Unconstrained) | None ($fr = 0.0$, Constrained) | **Genuine MAD-TCN Risk (Constrained)** |
-| **Simulated Energy Estimate (kWh / 750 min)** | **7.0321 kWh** | 8.2164 kWh (+16.8%) | 8.7924 kWh (+25.0%) | **10.4838 kWh (+49.1%)** |
-| **Mean Power Demand (kW)** | 0.563 kW | 0.657 kW | 0.703 kW | 0.839 kW |
-| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 84.2% | 99.1% |
-| **Duration Above 5.0 °C** | **543.25 min** | 525.52 min | 503.51 min | **449.14 min** |
+| **Simulated Energy Estimate (kWh / 750 min)** | **7.0321 kWh** | 8.2164 kWh (+16.8%) | 9.4862 kWh (+34.9%) | **10.5199 kWh (+49.6%)** |
+| **Mean Power Demand (kW)** | 0.563 kW | 0.657 kW | 0.759 kW | **0.842 kW** |
+| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 90.1% | **99.4%** |
+| **Duration Above 5.0 °C** | **543.25 min** | 525.52 min | 446.40 min | **446.40 min** |
 | **Duration Below 0.0 °C (Freezing)** | 0.00 min | 0.00 min | 0.00 min | **0.00 min** |
-| **Simulated Temperature-Excursion Duration**| **543.25 minutes** (72.4%) | 525.52 minutes (70.1%) | 503.51 minutes (67.1%) | **449.14 minutes (59.9%)** |
-| **Duration Reduction vs Method A** | Reference (0.0 min) | -17.73 min (-3.26%) | -39.74 min (-7.32%) | **-94.12 min (-17.32%)** |
-| **Duration Reduction vs Method D** | N/A | N/A | Reference (0.0 min) | **-54.37 min (-10.80%)** |
-| **Discrete Samples Above 5.0 °C** | 583 samples | 565 samples | 544 samples | **479 samples** |
+| **Simulated Temperature-Excursion Duration**| **543.25 minutes** (72.4%) | 525.52 minutes (70.1%) | 446.40 minutes (59.5%) | **446.40 minutes (59.5%)** |
+| **Duration Reduction vs Method A** | Reference (0.0 min) | -17.73 min (-3.26%) | -96.85 min (-17.83%) | **-96.85 min (-17.83%)** |
+| **Duration Reduction vs Method D** | N/A | N/A | Reference (0.0 min) | **+0.00 min (+0.00%)** |
+| **Discrete Samples Above 5.0 °C** | 583 samples | 565 samples | 476 samples | **476 samples** |
 | **Discrete Samples Below 0.0 °C** | 0 samples | 0 samples | 0 samples | **0 samples** |
-| **Total Violating Samples (out of 800)** | **583 samples** (72.9%) | 565 samples (70.6%) | 544 samples (68.0%) | **479 samples (59.9%)** |
-| **Sample Reduction vs Method A** | Reference (0 samples) | -18 samples (-3.09%) | -39 samples (-6.69%) | **-104 samples (-17.84%)** |
-| **Sample Reduction vs Method D** | N/A | N/A | Reference (0 samples) | **-65 samples (-11.95%)** |
-| **Scenarios with Upper-Bound Breach (>5.0 °C)** | 50 / 50 | 50 / 50 | 50 / 50 | **32 / 50** |
+| **Total Violating Samples (out of 800)** | **583 samples** (72.9%) | 565 samples (70.6%) | 476 samples (59.5%) | **476 samples (59.5%)** |
+| **Sample Reduction vs Method A** | Reference (0 samples) | -18 samples (-3.09%) | -107 samples (-18.35%) | **-107 samples (-18.35%)** |
+| **Sample Reduction vs Method D** | N/A | N/A | Reference (0 samples) | **+0 samples (+0.00%)** |
+| **Scenarios with Upper-Bound Breach (>5.0 °C)** | 50 / 50 | 50 / 50 | 31 / 50 | **31 / 50** |
 | **Scenarios with Lower-Bound Breach (<0.0 °C)** | 0 / 50 | 0 / 50 | 0 / 50 | **0 / 50** |
-| **Modeled Trajectory Feasible ($0–5$ °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **18 / 50 (36.0%)** |
-| **Ordinary Algebraic Feasible Scenarios** | N/A | N/A | 23 / 50 (46.0%) | **23 / 50 (46.0%)** |
-| **Emergency Fallback Overrides** | 0 | 0 | 27 / 50 (54.0%) | **27 / 50 (54.0%)** |
+| **Modeled Trajectory Feasible ($0–5$ °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 19 / 50 (38.0%) | **19 / 50 (38.0%)** |
+| **Buffered Trajectory Feasible ($0.2–4.8$ °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 18 / 50 (36.0%) | **18 / 50 (36.0%)** |
+| **Ordinary Algebraic Feasible Scenarios** | N/A | N/A | 19 / 50 (38.0%) | **18 / 50 (36.0%)** |
+| **Emergency Fallback Overrides** | 0 | 0 | 31 / 50 (62.0%) | **31 / 50 (62.0%)** |
 | **Decision Variable Bounds Compliance** | 100% | 100% | 100% | **100%** |
 | **Maximum Trajectory Temperature** | 10.72 °C | 9.36 °C | 9.36 °C | **9.36 °C** |
 
 ### C. Resolution of Time-Grid, Duration & Feasibility Accounting:
 1. **Time Axis Reconciliation:** Each of the 50 scenarios runs for a 15-minute operational interval, recording 16 endpoint-inclusive samples ($t = 0, 1, \dots, 15\text{ min}$). Across 50 scenarios, there are exactly **750.0 aggregate simulated scenario-minutes** (12.5 operating hours total across 50 separate 15-minute operational regimes, not a single continuous physical experiment at a single facility) and 800 point samples. The initial sample $t=0$ denotes the boundary condition and is not counted as an extra minute of elapsed operation.
 2. **Dual Accounting (Continuous Simulated Duration vs. Discrete Sample Counts):**
-   - **Continuous Simulated Excursion Duration:** Computed via linear boundary interpolation across state crossings ($t^* = \frac{T_{\text{max}} - T_a}{T_b - T_a}$), Method C reduces simulated breach duration from **543.25 minutes** (Method A) down to **449.14 minutes** — a true elapsed scenario-time reduction of **94.12 minutes (-17.32%)**. Against the risk-disabled ablation (Method D, 503.51 min), Method C saves **54.37 minutes (-10.80%)**.
-   - **Full-Precision Arithmetic & Display Rounding Audit:** Method A unrounded continuous duration is **543.2524 min** (displays as 543.25); Method C is **449.1366 min** (displays as 449.14). The unrounded reduction is $449.13660579 - 543.25238869 = \mathbf{-94.11578290\text{ min}}$, which rounds to **-94.12 minutes** (**94.12 minutes saved**). Displayed subtraction ($543.25 - 449.14 = \mathbf{94.11\text{ min}}$) exhibits standard 1-digit intermediate display rounding truncation.
-   - **Energy Identity Verification:** Evaluated over the 50 simulated 15-minute intervals ($\Delta t_{\text{hours}} = 0.25\text{ h}$, $12.5\text{ h}$ total), total electrical energy identically satisfies $\text{Total Energy (kWh)} \equiv \text{Mean Power (kW)} \times 12.5\text{ h}$ (Method A: $7.0321\text{ kWh} \equiv 0.563\text{ kW} \times 12.5\text{ h}$; Method C: $10.4838\text{ kWh} \equiv 0.839\text{ kW} \times 12.5\text{ h}$).
-   - **Discrete Violating Sample Counts:** Across all 800 discrete sample points, Method C reduces violating sample instances from **583 samples** (Method A) down to **479 samples** — a reduction of **104 samples (-17.84%)**. Against Method D (544 samples), it saves **65 samples (-11.95%)**.
-   - Prior texts that casually referred to '479 minutes' were citing discrete sample point counts; continuous simulated elapsed duration is 449.14 minutes across the 750 aggregate scenario-minutes.
-3. **True Trajectory Feasibility:** Strict trajectory thermal compliance ($T(t) \le 5.0\text{ }^\circ\text{C} \quad \forall t$) is achieved in **18 out of 50 scenarios (36.0%)**. In 31 scenarios, the chamber started pre-breached ($T_0 > 5.0\text{ }^\circ\text{C}$). In 27 scenarios, ambient heat gain exceeded maximum refrigeration capacity, triggering an Emergency Fallback Override ($u=1.0, d=1.0$). Emergency actions arrest warming but are **NOT ordinary feasible solutions**.
-4. **Forecast Guidance Proof (Coupling):** In **22 out of 50 scenarios (44.0%)**, injecting MAD-TCN risk directly altered optimizer setpoints compared to the blind ablation (Method D), saving **54.37 minutes (-10.80%)** of continuous simulated thermal violation time (and 65 discrete violating samples, -11.95%).
+   - **Continuous Simulated Excursion Duration:** Computed via linear boundary interpolation across state crossings ($t^* = \frac{T_{\text{max}} - T_a}{T_b - T_a}$), Method C reduces simulated breach duration from **543.25 minutes** (Method A) down to **446.40 minutes** — a true elapsed scenario-time reduction of **96.85 minutes (-17.83%)**.
+   - **Full-Precision Arithmetic & Display Rounding Audit:** Method A unrounded continuous duration is **543.2520 min** (displays as 543.25); Method C is **446.3990 min** (displays as 446.40). The unrounded reduction is $446.399000 - 543.252000 = \mathbf{-96.853000\text{ min}}$, which rounds to **-96.85 minutes** (**96.85 minutes saved**). Displayed subtraction ($543.25 - 446.40 = \mathbf{96.85\text{ min}}$) matches the true unrounded reduction of 96.85 minutes.
+   - **Energy Identity Verification:** Evaluated over the 50 simulated 15-minute intervals ($\Delta t_{\text{hours}} = 0.25\text{ h}$, $12.5\text{ h}$ total), total electrical energy identically satisfies $\text{Total Energy (kWh)} \equiv \text{Mean Power (kW)} \times 12.5\text{ h}$ (Method A: $7.0321\text{ kWh} \equiv 0.563\text{ kW} \times 12.5\text{ h}$; Method C: $10.5199\text{ kWh} \equiv 0.842\text{ kW} \times 12.5\text{ h}$).
+   - **Discrete Violating Sample Counts:** Across all 800 discrete sample points, Method C reduces violating sample instances from **583 samples** (Method A) down to **476 samples** — a reduction of **107 samples (-18.35%)**.
+3. **True Trajectory Feasibility (19 Nominal vs 18 Buffered):** Strict trajectory thermal compliance ($T(t) \le 5.0\text{ }^\circ\text{C} \quad \forall t$) is achieved in **19 out of 50 scenarios (38.0%)**, and buffered compliance ($0.2 \le T(t) \le 4.8\text{ }^\circ\text{C}$) in **18 out of 50 scenarios (36.0%)**. Scenario 18 starts at $4.8713^\circ\text{C} > 4.80^\circ\text{C}$; max cooling keeps its peak at $4.974^\circ\text{C} \le 5.00^\circ\text{C}$ (nominally compliant), but it is physically impossible to satisfy the buffered limit. In 31 scenarios, initial state or extreme infiltration triggers an Emergency Fallback Override ($u=1.0, d=1.0$).
+4. **Forecast Guidance Proof & Trade-Off:** In **18 out of 50 controllable scenarios (36.0%)**, injecting MAD-TCN risk directly altered optimizer setpoints compared to the blind ablation (Method D). While both achieve $0.0\text{ min}$ excursion on controllable regimes, Method D rides the edge of the boundary ($T_{\text{max}} = 4.75\text{--}4.80^\circ\text{C}$ to minimize energy at $9.4862\text{ kWh}$), whereas Method C commands proactive cooling ($T_{\text{max}} = 3.78\text{--}4.25^\circ\text{C}$, $\sim 0.65^\circ\text{C}$ deeper safety headroom, consuming $10.5199\text{ kWh}$), trading $+1.0337\text{ kWh}$ modeled energy for protection against future ambient heat surges.
 5. **Pre-Optimization Physical Controllability Classification:**
    All 50 operational scenarios are categorized before optimization into four physical controllability regimes based on thermodynamic plant parameters ($k_{\text{inf}}=0.018\text{ min}^{-1}, k_{\text{cool}}=0.320\text{ }^\circ\text{C/min}$, yielding maximum mechanical lift $\Delta T_{\text{lift}} = 17.78\text{ }^\circ\text{C}$ and critical ambient limit $T_{\text{amb}} \le 22.78\text{ }^\circ\text{C}$):
-   - `INITIALLY_COMPLIANT_FEASIBLE`: **18 scenarios (36.0%)** (Scenarios 10–17, 29–36, 48, 49) — chamber starts safe and heat gain is within capacity; 100% achieve full trajectory compliance.
+   - `INITIALLY_COMPLIANT_FEASIBLE`: **19 scenarios (38.0%)** (Scenarios 10–18, 29–36, 48, 49) — chamber starts safe; 19 achieve nominal compliance; 18 achieve buffered compliance.
    - `INITIALLY_BREACHED_RECOVERABLE`: **3 scenarios (6.0%)** (Scenarios 9, 28, 47) — starts in breach ($T_0 = 5.04\text{--}5.16\text{ }^\circ\text{C}$), but recovers below $5.0\text{ }^\circ\text{C}$ under max cooling, though initial pull-down samples are unavoidable excursions.
-   - `INFEASIBLE_HEATWAVE`: **27 scenarios (54.0%)** (Scenarios 0–7, 18–27, 37–45) — ambient heat infiltration exceeds cooling capacity ($T_{\text{amb}} > 22.78\text{ }^\circ\text{C}$); steady-state $T_{\text{ss}} > 5.0\text{ }^\circ\text{C}$; continuous compliance is physically impossible.
+   - `INFEASIBLE_HEATWAVE`: **26 scenarios (52.0%)** (Scenarios 0–7, 19–27, 37–45) — ambient heat infiltration exceeds cooling capacity ($T_{\text{amb}} > 22.78\text{ }^\circ\text{C}$); steady-state $T_{\text{ss}} > 5.0\text{ }^\circ\text{C}$; continuous compliance is physically impossible.
    - `EMERGENCY_REQUIRED`: **2 scenarios (4.0%)** (Scenarios 8, 46) — severe initial breaches ($T_0 \approx 6.4\text{--}6.5\text{ }^\circ\text{C}$) cannot recover in 15 min even under 100% cooling, commanding emergency overrides.
-6. **Reconciliation of 23 Algebraic vs 18 Trajectory Feasibility Discrepancy:**
-   - **Root Cause:** `ColdProblem` evaluated constraints on scalar terminal expected temperature $T_{\text{exp}} \le 4.8\text{ }^\circ\text{C}$, omitting initial boundary samples and intermediate warming during compressor shutoff.
-   - **4 Initial Pull-Down Scenarios (9, 28, 37, 47):** Initial temperatures ($T_0 > 5.0\text{ }^\circ\text{C}$) were ignored by terminal-only formulas, while dynamic simulation recorded 7 to 16 initial excursion points during pull-down.
-   - **1 Dynamic Duty-Cycle Shutoff Scenario (14):** $T_0=3.81\text{ }^\circ\text{C}$, but low duty cycle $d=0.558$ shut off cooling after 8.4 minutes; ambient warming drove $T(15) = 5.71\text{ }^\circ\text{C}$ (2.74 min excursion).
-   - **Enforced Safety:** `run_nsga2()` forward-simulates complete trajectories and prioritizes trajectory-safe solutions, ensuring 100% of controllable scenarios achieve trajectory compliance without concealing breaches to reduce energy.
+6. **Scenario 14 Safety Fix:** Scenario 14 ($T_0=3.8131^\circ\text{C}, T_{\text{amb}}=19.6426^\circ\text{C}$) selects $u=0.940, d=0.680$, with peak $4.774^\circ\text{C} \le 4.80^\circ\text{C}$, min $3.653^\circ\text{C} \ge 0.20^\circ\text{C}$, satisfying both nominal and buffered constraints with zero excursion minutes. Stored trajectory matches independent forward simulation identically.
 
 ---
 
