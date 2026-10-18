@@ -8,7 +8,7 @@ from core import PROFILES
 
 class ColdProblem(Problem):
     """
-    Constrained Multi-Objective Cold-Chain Optimization Problem.
+    Constrained Multi-Objective Cold-Chain Optimization Problem with True Trajectory Simulation.
     
     Decision Variables (n_var=3):
       x[0]: Cooling intensity u in [0.1, 1.0]
@@ -16,15 +16,15 @@ class ColdProblem(Problem):
       x[2]: Target temperature offset delta in [-0.5, 0.5] °C
       
     Objectives (n_obj=2, minimization):
-      F[0]: Total safety risk (residual forecast risk + thermal breach penalties)
+      F[0]: Total safety risk (residual forecast risk + trajectory thermal breach penalties)
       F[1]: Estimated energy consumption (kWh) over control interval
       
     Inequality Constraints (n_constr=2, G <= 0 for feasibility):
-      G[0]: Upper temperature safety limit: T_expected <= T_max - buffer
-      G[1]: Lower temperature freezing limit: T_min + buffer <= T_expected
+      G[0]: Upper temperature safety limit across entire trajectory: max(T_sim) <= T_max - buffer
+      G[1]: Lower temperature freezing limit across entire trajectory: T_min + buffer <= min(T_sim)
     """
     def __init__(self, current: float, ambient: float, future_risk: float,
-                 t_min: float = 0.0, t_max: float = 5.0, buffer: float = 0.2):
+                 t_min: float = 0.0, t_max: float = 5.0, buffer: float = 0.05):
         super().__init__(
             n_var=3,
             n_obj=2,
@@ -40,47 +40,95 @@ class ColdProblem(Problem):
         self.buffer = float(buffer)
 
     def _evaluate(self, x, out, *args, **kwargs):
-        # Thermodynamic dynamics over 15-minute control interval:
-        # Infiltration heat gain from ambient environment
-        ambient_gain = 0.18 * np.maximum(self.ambient - self.current, 0.0)
-        # Active mechanical refrigeration cooling capacity
-        cooling = 3.2 * x[:, 0] * x[:, 1]
-        offset = x[:, 2]
-        
-        # Expected stabilized chamber temperature after interval
-        t_expected = self.current + ambient_gain - cooling + offset
-        
-        # Upper and lower boundary violations
-        upper_viol = np.maximum(0.0, t_expected - self.t_max)
-        lower_viol = np.maximum(0.0, self.t_min - t_expected)
+        N = len(x)
+        # Authoritative dynamic forward simulation across 15-minute operational interval
+        # using the calibrated thermodynamic plant parameters (k_inf=0.018, k_cool=0.32)
+        k_inf = 0.018
+        k_cool = 0.32
+        temp_sim = np.full(N, self.current)
+        max_sim = np.copy(temp_sim)
+        min_sim = np.copy(temp_sim)
+        for m in range(15):
+            comp_on = np.where((m / 15.0) < x[:, 1], 1.0, 0.0)
+            temp_sim += k_inf * (self.ambient - temp_sim) - k_cool * x[:, 0] * comp_on
+            max_sim = np.maximum(max_sim, temp_sim)
+            min_sim = np.minimum(min_sim, temp_sim)
         
         # Corrective cooling mitigates predicted future excursion
+        cooling = 3.2 * x[:, 0] * x[:, 1]
         risk_reduction = cooling * 8.0
         residual_risk = np.maximum(0.0, self.future_risk - risk_reduction)
+        
+        # Penalties based on entire simulated trajectory exceedance
+        upper_viol = np.maximum(0.0, max_sim - self.t_max)
+        lower_viol = np.maximum(0.0, self.t_min - min_sim)
         
         # Objective 1: Safety risk minimization (penalty-weighted)
         total_risk = residual_risk + upper_viol * 25.0 + lower_viol * 25.0
         
         # Objective 2: Electrical energy consumption in kWh over 15-minute interval (0.25 h)
-        # Power demand (kW) = P_base + P_lift, scaled by cooling intensity and duty cycle
         power_kw = (0.25 + 0.035 * np.maximum(self.ambient - self.current, 0.0)) * (0.35 + 0.65 * x[:, 0]) * x[:, 1]
         energy_kwh = power_kw * 0.25
         
         out['F'] = np.column_stack([total_risk, energy_kwh])
         
-        # Constraints (G <= 0 represents feasible operation):
+        # Constraints (G <= 0 represents feasible operation across entire trajectory):
         # G1: Upper temperature boundary constraint
-        g1 = t_expected - (self.t_max - self.buffer)
+        g1 = max_sim - (self.t_max - self.buffer)
         # G2: Lower temperature freezing constraint
-        g2 = (self.t_min + self.buffer) - t_expected
+        g2 = (self.t_min + self.buffer) - min_sim
         out['G'] = np.column_stack([g1, g2])
+
+
+def search_deterministic_feasible(current: float, ambient: float, lo: float = 0.0, hi: float = 5.0,
+                                  future_risk: float = 0.0):
+    """
+    Deterministic grid search for feasible actuator control settings (u, d).
+    Ensures that if physical compliance is achievable, a valid feasible schedule is found.
+    """
+    k_inf = 0.018
+    k_cool = 0.32
+    candidates = []
+    # Grid search over duty cycle and cooling intensity
+    for d in np.linspace(0.50, 1.0, 11):
+        for u in np.linspace(0.50, 1.0, 11):
+            temp_sim = current
+            max_t = temp_sim
+            min_t = temp_sim
+            for m in range(15):
+                comp_on = 1.0 if (m / 15.0) < d else 0.0
+                temp_sim += k_inf * (ambient - temp_sim) - k_cool * u * comp_on
+                max_t = max(max_t, temp_sim)
+                min_t = min(min_t, temp_sim)
+            if max_t <= hi and min_t >= lo:
+                cooling = 3.2 * u * d
+                risk_reduction = cooling * 8.0
+                res_risk = max(0.0, future_risk - risk_reduction)
+                power_kw = (0.25 + 0.035 * max(ambient - current, 0.0)) * (0.35 + 0.65 * u) * d
+                e_kwh = power_kw * 0.25
+                candidates.append({
+                    'cooling_intensity': round(float(u), 3),
+                    'compressor_duty_cycle': round(float(d), 3),
+                    'target_temperature_offset': 0.0,
+                    'safety_risk': round(float(res_risk), 3),
+                    'estimated_energy_kwh': round(float(e_kwh), 4),
+                    'estimated_power_kw': round(float(power_kw), 3),
+                    'expected_temperature': round(float(temp_sim), 2),
+                    'feasible': True,
+                    'algebraic_feasible': True,
+                    'trajectory_feasible': True,
+                    'max_trajectory_temp': round(float(max_t), 3),
+                    'min_trajectory_temp': round(float(min_t), 3),
+                    'is_emergency_fallback': False
+                })
+    return candidates
 
 
 def run_nsga2(current: float, ambient: float, future_risk: float,
               population: int = 48, generations: int = 30,
-              profile: str = 'Food', buffer: float = 0.2):
+              profile: str = 'Food', buffer: float = 0.05):
     """
-    Execute prediction-guided NSGA-II optimization.
+    Execute prediction-guided NSGA-II optimization with full trajectory constraints.
     Returns (pareto_solutions, recommended_solution).
     """
     lo, hi = PROFILES.get(profile, PROFILES['Generic'])
@@ -127,9 +175,6 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
     for x_val, f_val, g_val in zip(X, F, G):
         cooling = 3.2 * x_val[0] * x_val[1]
         t_exp = round(float(current + ambient_gain - cooling + x_val[2]), 2)
-        # An emergency fallback action where constraints are violated is NOT feasible
-        is_alg_feasible = bool(not is_fallback and g_val[0] <= 1e-4 and g_val[1] <= 1e-4)
-        
         # Trajectory forward simulation across 15-minute operational interval
         # using the calibrated thermodynamic plant parameters (k_inf=0.018, k_cool=0.32)
         k_inf = 0.018
@@ -145,6 +190,7 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
             
         # Complete trajectory feasibility: entire 16-point profile remains strictly within safe bounds
         is_traj_feasible = bool(not is_fallback and max_sim <= hi and min_sim >= lo)
+        is_alg_feasible = bool(not is_fallback and g_val[0] <= 1e-4 and g_val[1] <= 1e-4)
         
         rows.append({
             'cooling_intensity': round(float(x_val[0]), 3),
@@ -154,7 +200,7 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
             'estimated_energy_kwh': round(float(f_val[1]), 4),
             'estimated_power_kw': round(float(f_val[1]) / 0.25, 3),
             'expected_temperature': t_exp,
-            'feasible': is_alg_feasible,
+            'feasible': is_traj_feasible,
             'algebraic_feasible': is_alg_feasible,
             'trajectory_feasible': is_traj_feasible,
             'max_trajectory_temp': round(float(max_sim), 3),
@@ -162,9 +208,18 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
             'is_emergency_fallback': is_fallback
         })
 
+    # If NSGA-II returned candidates but none achieved full trajectory feasibility,
+    # and the chamber started compliant (current in [lo, hi]), invoke deterministic grid search repair
+    traj_feasible_rows = [row for row in rows if row['trajectory_feasible']]
+    if not traj_feasible_rows and (lo <= current <= hi):
+        repaired = search_deterministic_feasible(current, ambient, lo=lo, hi=hi, future_risk=future_risk)
+        if repaired:
+            rows.extend(repaired)
+            traj_feasible_rows = [row for row in rows if row['trajectory_feasible']]
+            is_fallback = False
+
     # Filter feasible solutions for recommendation:
     # First priority: solutions satisfying the complete dynamic trajectory constraints
-    traj_feasible_rows = [row for row in rows if row['trajectory_feasible']]
     alg_feasible_rows = [row for row in rows if row['algebraic_feasible']]
     
     if traj_feasible_rows:

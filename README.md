@@ -82,43 +82,57 @@ Across 50 operational cold-chain cycles evaluated in `reports/nsga2_comparison/n
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\activate
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
 ```
 
 ### Dataset Audit & Inventory
 ```powershell
-python scripts/audit_datasets.py
-python scripts/generate_quality_and_duplicate_reports.py
+python backend/scripts/audit_datasets.py
+python backend/scripts/generate_quality_and_duplicate_reports.py
 ```
 
 ### Model Training & Benchmarking
 ```powershell
-# Evaluate baseline
-python scripts/evaluate_baseline.py
+# Evaluate synthetic demonstration baseline
+python backend/scripts/evaluate_baseline.py
+
+# Evaluate real Hohenheim research facility telemetry (DOI: 10.5281/zenodo.15130001)
+python backend/scripts/evaluate_real_forecasting.py
 
 # Train MAD-TCN on public IoT temperature dataset
-python scripts/train_iot_temperature.py
+python backend/scripts/train_iot_temperature.py
 
 # Train energy model
-python scripts/train_energy_model.py
+python backend/scripts/train_energy_model.py
 
-# Run NSGA-II comparison (Method A vs Method B)
-python scripts/compare_nsga2_methods.py
+# Run NSGA-II comparison (Method A vs Method B vs Method C vs Method D)
+python backend/scripts/compare_nsga2_methods.py
 
 # Run Big Data scalability stress test (10K to 1M rows)
-python scripts/run_scalability_benchmark.py
+python backend/scripts/run_scalability_benchmark.py
 ```
 
-### Testing & Web Application
+### Running Backend & Frontend
 ```powershell
-# Verify Django system integrity
-python manage.py check
+# 1. Start Django Backend (API & Ingestion Service)
+cd backend
+..\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000
 
-# Run complete automated test suite
-python manage.py test
-
-# Start Django Development Server
-python manage.py runserver
+# 2. Start React Frontend (Modern Blue-Pink Single Page App)
+cd frontend
+npm run dev
+# React interface launches at: http://127.0.0.1:5173/
 ```
 
-Open the Control Center at: **`http://127.0.0.1:8000/`** (Datasets catalog at **`http://127.0.0.1:8000/datasets/`**).
+### Testing & Verification
+```powershell
+# Run complete 96 automated tests
+cd backend
+..\.venv\Scripts\python.exe manage.py test --no-input
+
+# Run automated full-stack Playwright browser verification (12 routes)
+.\.venv\Scripts\python.exe backend/scripts/verify_react_frontend.py
+```
+
+For complete architectural details, see [FRONTEND_BACKEND_ARCHITECTURE.md](docs/FRONTEND_BACKEND_ARCHITECTURE.md).
+

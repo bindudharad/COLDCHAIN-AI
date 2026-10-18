@@ -1,7 +1,14 @@
 from pathlib import Path
-import os
+import os, sys
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BACKEND_DIR = Path(__file__).resolve().parent.parent
+REPO_ROOT = BACKEND_DIR.parent
+BASE_DIR = REPO_ROOT
+
+for p in [str(BACKEND_DIR), str(REPO_ROOT)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'development-only-change-this-key')
 IOT_HARDWARE_API_KEY = os.getenv('COLDCHAIN_IOT_HARDWARE_KEY', 'coldchain-verified-hardware-secret-key-2026')
 REGISTERED_IOT_HARDWARE_DEVICES = {
@@ -24,10 +31,13 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 ROOT_URLCONF = 'config.urls'
-TEMPLATES = [{'BACKEND':'django.template.backends.django.DjangoTemplates','DIRS':[BASE_DIR / 'templates'],'APP_DIRS':True,'OPTIONS':{'context_processors':['django.template.context_processors.debug','django.template.context_processors.request','django.contrib.auth.context_processors.auth','django.contrib.messages.context_processors.messages']}}]
+TEMPLATES = [{'BACKEND':'django.template.backends.django.DjangoTemplates','DIRS':[BACKEND_DIR / 'templates', BASE_DIR / 'templates'],'APP_DIRS':True,'OPTIONS':{'context_processors':['django.template.context_processors.debug','django.template.context_processors.request','django.contrib.auth.context_processors.auth','django.contrib.messages.context_processors.messages']}}]
 WSGI_APPLICATION = 'config.wsgi.application'
-DATABASES = {'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': BASE_DIR / 'db.sqlite3'}}
+DATABASES = {'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': BACKEND_DIR / 'db.sqlite3'}}
 LANGUAGE_CODE='en-us'; TIME_ZONE='UTC'; USE_I18N=True; USE_TZ=True
-STATIC_URL='static/'; STATICFILES_DIRS=[BASE_DIR / 'static']; DEFAULT_AUTO_FIELD='django.db.models.BigAutoField'
+STATIC_URL='static/'
+STATICFILES_DIRS=[p for p in [BACKEND_DIR / 'static', BASE_DIR / 'static'] if p.exists()]
+DEFAULT_AUTO_FIELD='django.db.models.BigAutoField'
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024
 WINDOW_SIZE = 60; FORECAST_HORIZON = 15
+

@@ -1,12 +1,19 @@
-import os, json
+import os, sys, json
 from pathlib import Path
 from datetime import timedelta
 import numpy as np
 import torch
 
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+REPO_ROOT = BACKEND_DIR.parent
+for p in [str(BACKEND_DIR), str(REPO_ROOT)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 import django
 django.setup()
+
 
 from django.test import TestCase
 from django.utils import timezone
@@ -220,8 +227,10 @@ class ApiWorkflowTests(TestCase):
 
     # 17. MAD-TCN inference (tensor shape 1x60x12 -> 15, no NaN, no Inf)
     def test_17_mad_tcn_inference(self):
-        ckpt_path = Path('models/mad_tcn_best.pt')
+        ckpt_path = Path('models/mad_tcn_best.pt') if Path('models/mad_tcn_best.pt').exists() else (REPO_ROOT / 'models/mad_tcn_best.pt')
         self.assertTrue(ckpt_path.exists(), "Model checkpoint must exist")
+
+
         seq = np.random.randn(60, 12).astype(np.float32)
         out = forecast(seq)
         self.assertEqual(len(out), 15)

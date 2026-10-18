@@ -1,7 +1,16 @@
-import os
+import os, sys
+from pathlib import Path
+
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+REPO_ROOT = BACKEND_DIR.parent
+for p in [str(BACKEND_DIR), str(REPO_ROOT)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 import django
 django.setup()
+
 from django.test import SimpleTestCase
 import torch
 from ml.mad_tcn import MADTCN

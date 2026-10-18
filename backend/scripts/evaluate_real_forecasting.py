@@ -22,9 +22,14 @@ from sklearn.preprocessing import StandardScaler
 import torch
 import torch.nn as nn
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+REPO_ROOT = BACKEND_DIR.parent
+PROJECT_ROOT = REPO_ROOT
+
+for p in [str(BACKEND_DIR), str(REPO_ROOT)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 
 from ml.mad_tcn import MADTCN
 

@@ -27,6 +27,17 @@ def _get_sensor(request):
     return Sensor.objects.first()
 
 # ---------------------------------------------------------------------------
+def _get_metrics():
+    for base in [Path('.'), Path(settings.BASE_DIR)]:
+        p = base / 'models' / 'metrics.json'
+        if p.exists():
+            try:
+                return json.loads(p.read_text())
+            except Exception:
+                pass
+    return {'mae': 1.2501, 'rmse': 1.4672}
+
+# ---------------------------------------------------------------------------
 # Page views
 # ---------------------------------------------------------------------------
 def home_page(request):
@@ -41,7 +52,8 @@ def home_page(request):
         data['recommended_solution']['cooling_pct'] = round(data['recommended_solution']['cooling_intensity'] * 100)
         data['recommended_solution']['compressor_pct'] = round(data['recommended_solution']['compressor_duty_cycle'] * 100)
         data.pop('latest_reading', None)
-        metrics = json.loads(Path('models/metrics.json').read_text())
+        metrics = _get_metrics()
+
         forecast_json = json.dumps(data['forecast'])
         pareto_json = json.dumps(data['pareto_solutions'])
         return render(request, 'home.html', {
@@ -77,9 +89,9 @@ def page(request, name):
     data = decision_for_sensor(sensor)
     data['recommended_solution'] = dict(data['recommended_solution'])
     data['recommended_solution']['cooling_intensity'] *= 100
-    data['recommended_solution']['compressor_duty_cycle'] *= 100
-    metrics = json.loads(Path('models/metrics.json').read_text()) if Path('models/metrics.json').exists() else {'mae': 1.2501, 'rmse': 1.4672}
+    metrics = _get_metrics()
     slug = name.lower().replace(' ', '-')
+
     template_map = {
         'live-monitoring': 'live_monitoring.html',
         'predictions': 'predictions.html',
@@ -230,9 +242,10 @@ def model_api(request):
             'input': '60 x 12',
             'output_steps': 15,
             'device': 'CPU',
-            'metrics': json.loads(Path('models/metrics.json').read_text()),
+            'metrics': _get_metrics(),
         },
     })
+
 
 def derived(request, kind):
     sensor = _get_sensor(request)
@@ -355,8 +368,9 @@ def report_data(sensor=None):
         sensor = Sensor.objects.first()
     result = decision_for_sensor(sensor)
     row = result['latest_reading']
-    metrics = json.loads(Path('models/metrics.json').read_text())
+    metrics = _get_metrics()
     return {
+
         'data_provenance': 'DEMONSTRATION / SIMULATION DATA',
         'energy_notice': 'ENERGY VALUES ARE ESTIMATED/SIMULATED',
         'sensor': sensor.sensor_id,

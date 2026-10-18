@@ -16,11 +16,27 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+REPO_ROOT = BACKEND_DIR.parent
+for p in [str(BACKEND_DIR), str(REPO_ROOT)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+def _resolve_repo_path(rel_path):
+    p = Path(rel_path)
+    if p.exists():
+        return p
+    for base in [REPO_ROOT, BACKEND_DIR]:
+        cand = base / rel_path
+        if cand.exists() or cand.parent.exists():
+            return cand
+    return p
+
 from core_preprocessing import prepare, sequences, FEATURES
 from ml.inference import forecast
 from core import risk, PROFILES, estimated_power_kw, estimated_energy_kwh
 from optimization.nsga2_optimizer import run_nsga2, ColdProblem
+
 
 def run_legacy_nsga2(current, ambient, future_risk):
     """Old unconstrained formulation from audit diagnosis."""
@@ -205,7 +221,8 @@ def main():
     print("COLDCHAIN-AI: NSGA-II SCIENTIFIC COMPARATIVE EXPERIMENT & AUDIT")
     print("=" * 75)
     
-    csv_path = Path('data/raw/simulated_cold_chain.csv')
+    csv_path = _resolve_repo_path('data/raw/simulated_cold_chain.csv')
+
     if not csv_path.exists():
         print(f"Error: {csv_path} not found.")
         sys.exit(1)
@@ -509,8 +526,9 @@ def main():
     print(f"  Method C vs Reactive Baseline (A): {c_vs_a_pts_delta:+d} samples ({c_vs_a_pts_pct:+.2f}%) [Reconciles 583 -> 479]")
     print(f"  Method C vs Risk-Disabled Ablation (D): {c_vs_d_pts_delta:+d} samples ({c_vs_d_pts_pct:+.2f}%) [Reconciles 544 -> 479]")
 
-    rep_dir = Path('reports/nsga2_comparison')
+    rep_dir = _resolve_repo_path('reports/nsga2_comparison')
     rep_dir.mkdir(parents=True, exist_ok=True)
+
     
     # Pre-calculate percentage differences
     b_energy_pct = ((total_e_b - total_e_a) / total_e_a) * 100

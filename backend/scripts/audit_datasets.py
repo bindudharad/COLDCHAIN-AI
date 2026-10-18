@@ -893,8 +893,11 @@ def main():
     )
     args = parser.parse_args()
 
-    # Determine project root
+    # Determine project root (handling backend/ subdirectory)
     project_root = Path(__file__).resolve().parents[1]
+    if not (project_root / "data").exists() and (project_root.parent / "data").exists():
+        project_root = project_root.parent
+
 
     # Resolve scan directories
     raw_dir = Path(args.data_raw)

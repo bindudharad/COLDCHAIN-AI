@@ -9,7 +9,21 @@ import numpy as np
 import pandas as pd
 import torch
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+REPO_ROOT = BACKEND_DIR.parent
+for p in [str(BACKEND_DIR), str(REPO_ROOT)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+def _resolve_path(rel_path):
+    p = Path(rel_path)
+    if p.exists():
+        return p
+    cand = REPO_ROOT / rel_path
+    if cand.exists() or cand.parent.exists():
+        return cand
+    return p
+
 from core_preprocessing import prepare, sequences, FEATURES
 from ml.mad_tcn import MADTCN
 
@@ -28,7 +42,8 @@ def main():
     print("MAD-TCN FORECASTING BENCHMARK: COMPARISON AGAINST CLASSICAL BASELINES")
     print("=" * 70)
     
-    csv_path = Path('data/raw/simulated_cold_chain.csv')
+    csv_path = _resolve_path('data/raw/simulated_cold_chain.csv')
+
     if not csv_path.exists():
         print(f"Error: {csv_path} not found.")
         sys.exit(1)
@@ -91,7 +106,7 @@ def main():
     # ---------------------------------------------------------
     # Model A: Original Pre-trained Checkpoint (Raw Features)
     # ---------------------------------------------------------
-    orig_ckpt_path = Path('models/mad_tcn_best.pt')
+    orig_ckpt_path = _resolve_path('models/mad_tcn_best.pt')
     if not orig_ckpt_path.exists():
         print(f"Error: {orig_ckpt_path} not found.")
         sys.exit(1)
@@ -107,8 +122,8 @@ def main():
     # ---------------------------------------------------------
     # Model B: Retrained Checkpoint (with StandardScaler)
     # ---------------------------------------------------------
-    retrained_ckpt_path = Path('models/mad_tcn_retrained.pt')
-    scaler_path = Path('models/scaler_retrained.pkl')
+    retrained_ckpt_path = _resolve_path('models/mad_tcn_retrained.pt')
+    scaler_path = _resolve_path('models/scaler_retrained.pkl')
     
     if retrained_ckpt_path.exists() and scaler_path.exists():
         import pickle
@@ -138,8 +153,9 @@ def main():
     print("-" * 72)
     
     # Save unified results to reports directory
-    rep_dir = Path('reports')
+    rep_dir = _resolve_path('reports')
     rep_dir.mkdir(exist_ok=True)
+
     summary = {
         'dataset': 'simulated_cold_chain.csv (CC-01)',
         'target_column': 'temperature (°C)',

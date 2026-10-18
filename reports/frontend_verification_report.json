@@ -9,8 +9,8 @@
       "name": "overview",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 3833.9,
-      "screenshot": "docs\\screenshots\\redesign\\overview_desktop.png",
+      "load_time_ms": 3907.4,
+      "screenshot": "C:\\Projects\\Cold-Chain-Ai\\docs\\screenshots\\redesign\\overview_desktop.png",
       "status": "PASS"
     },
     {
@@ -18,8 +18,8 @@
       "name": "dashboard",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 2907.2,
-      "screenshot": "docs\\screenshots\\redesign\\dashboard_desktop.png",
+      "load_time_ms": 3105.6,
+      "screenshot": "C:\\Projects\\Cold-Chain-Ai\\docs\\screenshots\\redesign\\dashboard_desktop.png",
       "status": "PASS"
     },
     {
@@ -27,8 +27,8 @@
       "name": "telemetry_stream",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 2382.2,
-      "screenshot": "docs\\screenshots\\redesign\\telemetry_stream_desktop.png",
+      "load_time_ms": 2463.1,
+      "screenshot": "C:\\Projects\\Cold-Chain-Ai\\docs\\screenshots\\redesign\\telemetry_stream_desktop.png",
       "status": "PASS"
     },
     {
@@ -36,8 +36,8 @@
       "name": "predictions",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 3004.5,
-      "screenshot": "docs\\screenshots\\redesign\\predictions_desktop.png",
+      "load_time_ms": 3016.1,
+      "screenshot": "C:\\Projects\\Cold-Chain-Ai\\docs\\screenshots\\redesign\\predictions_desktop.png",
       "status": "PASS"
     },
     {
@@ -45,8 +45,8 @@
       "name": "optimization",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 3168.6,
-      "screenshot": "docs\\screenshots\\redesign\\optimization_desktop.png",
+      "load_time_ms": 2975.7,
+      "screenshot": "C:\\Projects\\Cold-Chain-Ai\\docs\\screenshots\\redesign\\optimization_desktop.png",
       "status": "PASS"
     },
     {
@@ -54,8 +54,8 @@
       "name": "alerts",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 3736.4,
-      "screenshot": "docs\\screenshots\\redesign\\alerts_desktop.png",
+      "load_time_ms": 3592.3,
+      "screenshot": "C:\\Projects\\Cold-Chain-Ai\\docs\\screenshots\\redesign\\alerts_desktop.png",
       "status": "PASS"
     },
     {
@@ -63,8 +63,8 @@
       "name": "sensors",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 2457.7,
-      "screenshot": "docs\\screenshots\\redesign\\sensors_desktop.png",
+      "load_time_ms": 2378.8,
+      "screenshot": "C:\\Projects\\Cold-Chain-Ai\\docs\\screenshots\\redesign\\sensors_desktop.png",
       "status": "PASS"
     },
     {
@@ -72,8 +72,8 @@
       "name": "neural_model",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 2328.7,
-      "screenshot": "docs\\screenshots\\redesign\\neural_model_desktop.png",
+      "load_time_ms": 2248.4,
+      "screenshot": "C:\\Projects\\Cold-Chain-Ai\\docs\\screenshots\\redesign\\neural_model_desktop.png",
       "status": "PASS"
     },
     {
@@ -81,8 +81,8 @@
       "name": "datasets",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 2291.9,
-      "screenshot": "docs\\screenshots\\redesign\\datasets_desktop.png",
+      "load_time_ms": 2384.1,
+      "screenshot": "C:\\Projects\\Cold-Chain-Ai\\docs\\screenshots\\redesign\\datasets_desktop.png",
       "status": "PASS"
     },
     {
@@ -90,8 +90,8 @@
       "name": "reports",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 2382.2,
-      "screenshot": "docs\\screenshots\\redesign\\reports_desktop.png",
+      "load_time_ms": 2375.3,
+      "screenshot": "C:\\Projects\\Cold-Chain-Ai\\docs\\screenshots\\redesign\\reports_desktop.png",
       "status": "PASS"
     },
     {
@@ -99,8 +99,8 @@
       "name": "upload",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 2347.1,
-      "screenshot": "docs\\screenshots\\redesign\\upload_desktop.png",
+      "load_time_ms": 1855.1,
+      "screenshot": "C:\\Projects\\Cold-Chain-Ai\\docs\\screenshots\\redesign\\upload_desktop.png",
       "status": "PASS"
     },
     {
@@ -108,8 +108,8 @@
       "name": "methodology",
       "http_status": 200,
       "content_verified": true,
-      "load_time_ms": 2289.8,
-      "screenshot": "docs\\screenshots\\redesign\\methodology_desktop.png",
+      "load_time_ms": 2225.4,
+      "screenshot": "C:\\Projects\\Cold-Chain-Ai\\docs\\screenshots\\redesign\\methodology_desktop.png",
       "status": "PASS"
     }
   ]

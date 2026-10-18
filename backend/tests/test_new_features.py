@@ -11,10 +11,12 @@ from pathlib import Path
 import sys
 import tempfile
 
-# Ensure project root is in sys.path
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+# Ensure backend and project root are in sys.path
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+REPO_ROOT = BACKEND_DIR.parent
+for p in [str(BACKEND_DIR), str(REPO_ROOT)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 import django
@@ -23,6 +25,17 @@ django.setup()
 from django.conf import settings
 from django.test import TestCase
 from django.utils import timezone
+
+def _get_report_path(rel_path):
+    p = Path(rel_path)
+    if p.exists():
+        return p
+    for base in [REPO_ROOT, Path(settings.BASE_DIR)]:
+        candidate = base / rel_path
+        if candidate.exists():
+            return candidate
+    return p
+
 
 from core import energy, estimated_energy_kwh, estimated_power_kw
 from scripts.audit_datasets import detect_delimiter
@@ -792,7 +805,7 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
 
     def test_nsga2_comparison_data_reconciliation(self):
         """Verify machine-readable nsga2_comparison_data.json matches verified audit figures exactly."""
-        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        json_path = _get_report_path('reports/nsga2_comparison/nsga2_comparison_data.json')
         self.assertTrue(json_path.exists(), "nsga2_comparison_data.json must exist")
 
         with open(json_path, 'r', encoding='utf-8') as f:
@@ -938,7 +951,7 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
 
     def test_per_scenario_raw_data_and_aggregate_consistency(self):
         """Verify perfect mathematical consistency between raw per-scenario records and aggregate summary."""
-        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        json_path = _get_report_path('reports/nsga2_comparison/nsga2_comparison_data.json')
         self.assertTrue(json_path.exists())
 
         with open(json_path, 'r', encoding='utf-8') as f:
@@ -991,7 +1004,7 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
 
     def test_recomputed_percentage_reductions_agreement(self):
         """Verify exact agreement between raw recomputed percentage reductions and reported figures."""
-        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        json_path = _get_report_path('reports/nsga2_comparison/nsga2_comparison_data.json')
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
@@ -1039,7 +1052,7 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
 
     def test_unrounded_arithmetic_precision_and_display_rounding(self):
         """Verify unrounded arithmetic explains the 94.12 vs 94.11 display rounding phenomenon."""
-        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        json_path = _get_report_path('reports/nsga2_comparison/nsga2_comparison_data.json')
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
@@ -1067,7 +1080,7 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
 
     def test_simulation_terminology_and_energy_identity(self):
         """Verify energy identity and simulation scope terminology across all methods."""
-        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        json_path = _get_report_path('reports/nsga2_comparison/nsga2_comparison_data.json')
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
@@ -1084,7 +1097,7 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
             self.assertAlmostEqual(total_e, mean_p * 12.5, delta=0.006)
 
         # Check Markdown report uses correct simulated terminology
-        md_path = Path('reports/nsga2_comparison/nsga2_comparison_report.md')
+        md_path = _get_report_path('reports/nsga2_comparison/nsga2_comparison_report.md')
         report_text = md_path.read_text(encoding='utf-8')
         self.assertIn('Simulated Temperature-Excursion Duration', report_text)
         self.assertIn('aggregate simulated scenario-minutes', report_text)
@@ -1162,7 +1175,7 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
 
     def test_reconciliation_of_23_algebraic_vs_18_trajectory_scenarios(self):
         """Verify machine-readable reconciliation_23_vs_18_audit precisely explains the 5 discordant scenarios."""
-        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        json_path = _get_report_path('reports/nsga2_comparison/nsga2_comparison_data.json')
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
             
@@ -1185,7 +1198,7 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
 
     def test_pre_optimization_classification_audit_integrity(self):
         """Verify pre_optimization_classification_audit counts and physical basis match theory."""
-        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        json_path = _get_report_path('reports/nsga2_comparison/nsga2_comparison_data.json')
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
             

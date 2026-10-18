@@ -26,6 +26,9 @@ FRONTEND_ROUTES = [
     {'route': '/methodology', 'name': 'methodology', 'expected_text': 'Research Methodology & Physical Formulations'},
 ]
 
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+REPO_ROOT = BACKEND_DIR.parent
+
 def wait_for_port(port, timeout=25):
     start = time.time()
     while time.time() - start < timeout:
@@ -41,7 +44,7 @@ def main():
     print("COLDCHAIN-AI: REACT FRONTEND + DJANGO FULL-STACK PLAYWRIGHT AUDIT")
     print("=" * 75)
 
-    screenshot_dir = Path('docs/screenshots/redesign')
+    screenshot_dir = REPO_ROOT / 'docs/screenshots/redesign'
     screenshot_dir.mkdir(parents=True, exist_ok=True)
 
     django_port = 8000
@@ -51,18 +54,19 @@ def main():
     print(f"Starting Django Backend on http://127.0.0.1:{django_port}...")
     django_proc = subprocess.Popen(
         [python_exe, 'manage.py', 'runserver', f'127.0.0.1:{django_port}', '--noreload'],
+        cwd=str(BACKEND_DIR),
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL
     )
 
     print(f"Starting Vite Frontend on http://127.0.0.1:{vite_port}...")
-    # Use npx vite preview or vite dev
     vite_proc = subprocess.Popen(
         ['npx.cmd', 'vite', '--port', str(vite_port), '--host', '127.0.0.1'],
-        cwd=str(Path('frontend').resolve()),
+        cwd=str(REPO_ROOT / 'frontend'),
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL
     )
+
 
     print("Waiting for Django & Vite ports to open...")
     if not wait_for_port(django_port, timeout=25):
@@ -175,8 +179,9 @@ def main():
         except Exception:
             pass
 
-    rep_dir = Path('reports')
+    rep_dir = REPO_ROOT / 'reports'
     rep_dir.mkdir(exist_ok=True)
+
     out_data = {
         'total_pages_verified': len(FRONTEND_ROUTES),
         'passed_count': sum(1 for r in results if r['status'] == 'PASS'),
