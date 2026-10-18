@@ -5,7 +5,7 @@
   "data_provenance": "DEMONSTRATION / SIMULATION DATA",
   "energy_notice": "ENERGY VALUES ARE ESTIMATED/SIMULATED",
   "sensor": "TEST-01",
-  "timestamp": "2026-10-18T04:35:51.785504+00:00",
+  "timestamp": "2026-10-18T09:41:28.888122+00:00",
   "current_temperature": 3.4942607593108406,
   "forecast": [
     4.14397668838501,
@@ -40,6 +40,10 @@
       "estimated_power_kw": 0.828,
       "expected_temperature": 2.78,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.494,
+      "min_trajectory_temp": 3.191,
       "is_emergency_fallback": false
     },
     {
@@ -51,6 +55,10 @@
       "estimated_power_kw": 0.308,
       "expected_temperature": 4.78,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.876,
+      "min_trajectory_temp": 3.368,
       "is_emergency_fallback": false
     },
     {
@@ -62,6 +70,10 @@
       "estimated_power_kw": 0.748,
       "expected_temperature": 3.29,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.511,
+      "min_trajectory_temp": 3.209,
       "is_emergency_fallback": false
     },
     {
@@ -73,6 +85,10 @@
       "estimated_power_kw": 0.719,
       "expected_temperature": 3.33,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.582,
+      "min_trajectory_temp": 3.281,
       "is_emergency_fallback": false
     },
     {
@@ -84,6 +100,10 @@
       "estimated_power_kw": 0.614,
       "expected_temperature": 3.99,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.135,
+      "min_trajectory_temp": 3.246,
       "is_emergency_fallback": false
     },
     {
@@ -95,6 +115,10 @@
       "estimated_power_kw": 0.395,
       "expected_temperature": 4.52,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.32,
+      "min_trajectory_temp": 3.33,
       "is_emergency_fallback": false
     },
     {
@@ -106,6 +130,10 @@
       "estimated_power_kw": 0.549,
       "expected_temperature": 3.88,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.734,
+      "min_trajectory_temp": 3.283,
       "is_emergency_fallback": false
     },
     {
@@ -117,6 +145,10 @@
       "estimated_power_kw": 0.464,
       "expected_temperature": 4.61,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.027,
+      "min_trajectory_temp": 3.302,
       "is_emergency_fallback": false
     },
     {
@@ -128,6 +160,10 @@
       "estimated_power_kw": 0.442,
       "expected_temperature": 4.69,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.034,
+      "min_trajectory_temp": 3.311,
       "is_emergency_fallback": false
     },
     {
@@ -139,6 +175,10 @@
       "estimated_power_kw": 0.648,
       "expected_temperature": 3.55,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.134,
+      "min_trajectory_temp": 3.246,
       "is_emergency_fallback": false
     },
     {
@@ -150,6 +190,10 @@
       "estimated_power_kw": 0.628,
       "expected_temperature": 4.3,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.136,
+      "min_trajectory_temp": 3.247,
       "is_emergency_fallback": false
     },
     {
@@ -161,6 +205,10 @@
       "estimated_power_kw": 0.497,
       "expected_temperature": 4.21,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.901,
+      "min_trajectory_temp": 3.466,
       "is_emergency_fallback": false
     },
     {
@@ -172,6 +220,10 @@
       "estimated_power_kw": 0.523,
       "expected_temperature": 4.39,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.734,
+      "min_trajectory_temp": 3.283,
       "is_emergency_fallback": false
     },
     {
@@ -183,6 +235,10 @@
       "estimated_power_kw": 0.541,
       "expected_temperature": 4.31,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.743,
+      "min_trajectory_temp": 3.293,
       "is_emergency_fallback": false
     },
     {
@@ -194,6 +250,10 @@
       "estimated_power_kw": 0.766,
       "expected_temperature": 3.72,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.494,
+      "min_trajectory_temp": 3.256,
       "is_emergency_fallback": false
     },
     {
@@ -205,6 +265,10 @@
       "estimated_power_kw": 0.6,
       "expected_temperature": 4.03,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.437,
+      "min_trajectory_temp": 3.264,
       "is_emergency_fallback": false
     },
     {
@@ -216,6 +280,10 @@
       "estimated_power_kw": 0.821,
       "expected_temperature": 2.85,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.494,
+      "min_trajectory_temp": 3.192,
       "is_emergency_fallback": false
     },
     {
@@ -227,6 +295,10 @@
       "estimated_power_kw": 0.708,
       "expected_temperature": 3.9,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.83,
+      "min_trajectory_temp": 3.231,
       "is_emergency_fallback": false
     },
     {
@@ -238,6 +310,10 @@
       "estimated_power_kw": 0.772,
       "expected_temperature": 3.69,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.494,
+      "min_trajectory_temp": 3.208,
       "is_emergency_fallback": false
     },
     {
@@ -249,6 +325,10 @@
       "estimated_power_kw": 0.411,
       "expected_temperature": 4.4,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.324,
+      "min_trajectory_temp": 3.334,
       "is_emergency_fallback": false
     },
     {
@@ -260,6 +340,10 @@
       "estimated_power_kw": 0.81,
       "expected_temperature": 2.95,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.494,
+      "min_trajectory_temp": 3.225,
       "is_emergency_fallback": false
     },
     {
@@ -271,6 +355,10 @@
       "estimated_power_kw": 0.572,
       "expected_temperature": 3.79,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.551,
+      "min_trajectory_temp": 3.387,
       "is_emergency_fallback": false
     },
     {
@@ -282,6 +370,10 @@
       "estimated_power_kw": 0.37,
       "expected_temperature": 4.61,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.6,
+      "min_trajectory_temp": 3.348,
       "is_emergency_fallback": false
     },
     {
@@ -293,6 +385,10 @@
       "estimated_power_kw": 0.478,
       "expected_temperature": 4.25,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.043,
+      "min_trajectory_temp": 3.321,
       "is_emergency_fallback": false
     },
     {
@@ -304,6 +400,10 @@
       "estimated_power_kw": 0.342,
       "expected_temperature": 4.66,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.665,
+      "min_trajectory_temp": 3.423,
       "is_emergency_fallback": false
     },
     {
@@ -315,6 +415,10 @@
       "estimated_power_kw": 0.432,
       "expected_temperature": 4.33,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.118,
+      "min_trajectory_temp": 3.404,
       "is_emergency_fallback": false
     },
     {
@@ -326,6 +430,10 @@
       "estimated_power_kw": 0.798,
       "expected_temperature": 2.89,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.494,
+      "min_trajectory_temp": 3.203,
       "is_emergency_fallback": false
     },
     {
@@ -337,6 +445,10 @@
       "estimated_power_kw": 0.384,
       "expected_temperature": 4.7,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.6,
+      "min_trajectory_temp": 3.348,
       "is_emergency_fallback": false
     },
     {
@@ -348,6 +460,10 @@
       "estimated_power_kw": 0.381,
       "expected_temperature": 4.66,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.602,
+      "min_trajectory_temp": 3.35,
       "is_emergency_fallback": false
     },
     {
@@ -359,6 +475,10 @@
       "estimated_power_kw": 0.699,
       "expected_temperature": 3.69,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.826,
+      "min_trajectory_temp": 3.228,
       "is_emergency_fallback": false
     },
     {
@@ -370,6 +490,10 @@
       "estimated_power_kw": 0.316,
       "expected_temperature": 4.77,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.872,
+      "min_trajectory_temp": 3.363,
       "is_emergency_fallback": false
     },
     {
@@ -381,6 +505,10 @@
       "estimated_power_kw": 0.514,
       "expected_temperature": 4.13,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.844,
+      "min_trajectory_temp": 3.403,
       "is_emergency_fallback": false
     },
     {
@@ -392,6 +520,10 @@
       "estimated_power_kw": 0.785,
       "expected_temperature": 2.98,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.494,
+      "min_trajectory_temp": 3.192,
       "is_emergency_fallback": false
     },
     {
@@ -403,6 +535,10 @@
       "estimated_power_kw": 0.661,
       "expected_temperature": 3.42,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.138,
+      "min_trajectory_temp": 3.249,
       "is_emergency_fallback": false
     },
     {
@@ -414,6 +550,10 @@
       "estimated_power_kw": 0.321,
       "expected_temperature": 4.73,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.876,
+      "min_trajectory_temp": 3.368,
       "is_emergency_fallback": false
     },
     {
@@ -425,6 +565,10 @@
       "estimated_power_kw": 0.585,
       "expected_temperature": 4.18,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.562,
+      "min_trajectory_temp": 3.399,
       "is_emergency_fallback": false
     },
     {
@@ -436,6 +580,10 @@
       "estimated_power_kw": 0.522,
       "expected_temperature": 4.12,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.839,
+      "min_trajectory_temp": 3.398,
       "is_emergency_fallback": false
     },
     {
@@ -447,6 +595,10 @@
       "estimated_power_kw": 0.506,
       "expected_temperature": 4.09,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.888,
+      "min_trajectory_temp": 3.452,
       "is_emergency_fallback": false
     },
     {
@@ -458,6 +610,10 @@
       "estimated_power_kw": 0.785,
       "expected_temperature": 2.99,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.494,
+      "min_trajectory_temp": 3.192,
       "is_emergency_fallback": false
     },
     {
@@ -469,6 +625,10 @@
       "estimated_power_kw": 0.441,
       "expected_temperature": 4.69,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.046,
+      "min_trajectory_temp": 3.325,
       "is_emergency_fallback": false
     },
     {
@@ -480,6 +640,10 @@
       "estimated_power_kw": 0.573,
       "expected_temperature": 3.81,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.437,
+      "min_trajectory_temp": 3.264,
       "is_emergency_fallback": false
     },
     {
@@ -491,6 +655,10 @@
       "estimated_power_kw": 0.466,
       "expected_temperature": 4.24,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.027,
+      "min_trajectory_temp": 3.303,
       "is_emergency_fallback": false
     },
     {
@@ -502,6 +670,10 @@
       "estimated_power_kw": 0.421,
       "expected_temperature": 4.49,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.324,
+      "min_trajectory_temp": 3.334,
       "is_emergency_fallback": false
     },
     {
@@ -513,6 +685,10 @@
       "estimated_power_kw": 0.476,
       "expected_temperature": 4.27,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.038,
+      "min_trajectory_temp": 3.315,
       "is_emergency_fallback": false
     },
     {
@@ -524,6 +700,10 @@
       "estimated_power_kw": 0.371,
       "expected_temperature": 4.75,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": false,
+      "max_trajectory_temp": 5.596,
+      "min_trajectory_temp": 3.343,
       "is_emergency_fallback": false
     },
     {
@@ -535,6 +715,10 @@
       "estimated_power_kw": 0.595,
       "expected_temperature": 3.72,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.437,
+      "min_trajectory_temp": 3.264,
       "is_emergency_fallback": false
     },
     {
@@ -546,6 +730,10 @@
       "estimated_power_kw": 0.639,
       "expected_temperature": 3.56,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 4.184,
+      "min_trajectory_temp": 3.298,
       "is_emergency_fallback": false
     },
     {
@@ -557,6 +745,10 @@
       "estimated_power_kw": 0.678,
       "expected_temperature": 3.81,
       "feasible": true,
+      "algebraic_feasible": true,
+      "trajectory_feasible": true,
+      "max_trajectory_temp": 3.835,
+      "min_trajectory_temp": 3.236,
       "is_emergency_fallback": false
     }
   ],
@@ -569,6 +761,10 @@
     "estimated_power_kw": 0.828,
     "expected_temperature": 2.78,
     "feasible": true,
+    "algebraic_feasible": true,
+    "trajectory_feasible": true,
+    "max_trajectory_temp": 3.494,
+    "min_trajectory_temp": 3.191,
     "is_emergency_fallback": false,
     "explanation": "Selected from pymoo NSGA-II constrained optimization using future risk from MAD-TCN."
   },

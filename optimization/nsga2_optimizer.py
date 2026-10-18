@@ -128,7 +128,24 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
         cooling = 3.2 * x_val[0] * x_val[1]
         t_exp = round(float(current + ambient_gain - cooling + x_val[2]), 2)
         # An emergency fallback action where constraints are violated is NOT feasible
-        is_feasible = bool(not is_fallback and g_val[0] <= 1e-4 and g_val[1] <= 1e-4)
+        is_alg_feasible = bool(not is_fallback and g_val[0] <= 1e-4 and g_val[1] <= 1e-4)
+        
+        # Trajectory forward simulation across 15-minute operational interval
+        # using the calibrated thermodynamic plant parameters (k_inf=0.018, k_cool=0.32)
+        k_inf = 0.018
+        k_cool = 0.32
+        temp_sim = current
+        max_sim = temp_sim
+        min_sim = temp_sim
+        for m in range(15):
+            comp_on = 1.0 if (m / 15.0) < float(x_val[1]) else 0.0
+            temp_sim += k_inf * (ambient - temp_sim) - k_cool * float(x_val[0]) * comp_on
+            max_sim = max(max_sim, temp_sim)
+            min_sim = min(min_sim, temp_sim)
+            
+        # Complete trajectory feasibility: entire 16-point profile remains strictly within safe bounds
+        is_traj_feasible = bool(not is_fallback and max_sim <= hi and min_sim >= lo)
+        
         rows.append({
             'cooling_intensity': round(float(x_val[0]), 3),
             'compressor_duty_cycle': round(float(x_val[1]), 3),
@@ -137,13 +154,25 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
             'estimated_energy_kwh': round(float(f_val[1]), 4),
             'estimated_power_kw': round(float(f_val[1]) / 0.25, 3),
             'expected_temperature': t_exp,
-            'feasible': is_feasible,
+            'feasible': is_alg_feasible,
+            'algebraic_feasible': is_alg_feasible,
+            'trajectory_feasible': is_traj_feasible,
+            'max_trajectory_temp': round(float(max_sim), 3),
+            'min_trajectory_temp': round(float(min_sim), 3),
             'is_emergency_fallback': is_fallback
         })
 
-    # Filter feasible solutions for recommendation
-    feasible_rows = [row for row in rows if row['feasible']]
-    candidate_pool = feasible_rows if feasible_rows else rows
+    # Filter feasible solutions for recommendation:
+    # First priority: solutions satisfying the complete dynamic trajectory constraints
+    traj_feasible_rows = [row for row in rows if row['trajectory_feasible']]
+    alg_feasible_rows = [row for row in rows if row['algebraic_feasible']]
+    
+    if traj_feasible_rows:
+        candidate_pool = traj_feasible_rows
+    elif alg_feasible_rows:
+        candidate_pool = alg_feasible_rows
+    else:
+        candidate_pool = rows
     
     min_risk = min(a['safety_risk'] for a in candidate_pool)
     max_risk = max(a['safety_risk'] for a in candidate_pool)
@@ -168,6 +197,12 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
             f"into the safe {lo:.1f} to {hi:.1f} °C range within 15 min. Maximum cooling "
             f"(intensity {rec_copy['cooling_intensity']}, duty {rec_copy['compressor_duty_cycle']}) "
             f"commanded. Expected temperature: {rec_copy['expected_temperature']} °C."
+        )
+    elif rec_copy.get('trajectory_feasible', False):
+        rec_copy['explanation'] = (
+            f"Selected from constrained NSGA-II Pareto frontier with complete trajectory verification. "
+            f"Maintains chamber temperature within {lo:.1f} to {hi:.1f} °C safe profile throughout the interval "
+            f"(peak: {rec_copy['max_trajectory_temp']} °C) with {rec_copy['estimated_energy_kwh']:.3f} kWh estimated energy."
         )
     else:
         rec_copy['explanation'] = (

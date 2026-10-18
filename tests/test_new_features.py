@@ -1090,6 +1090,120 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
         self.assertIn('aggregate simulated scenario-minutes', report_text)
         self.assertIn('Simulated Energy Estimate', report_text)
 
+    def test_intermediate_trajectory_breach_detection(self):
+        """Verify that dynamic ODE simulation detects late-interval/intermediate breaches that algebraic endpoint formulas miss."""
+        from scripts.compare_nsga2_methods import simulate_interval
+        
+        # Test conditions from Scenario 14: compliant start, but low duty cycle shuts off cooling early
+        t0 = 3.8131
+        ambient = 19.6426
+        intensity = 0.781
+        duty = 0.558  # Compressor ON for 8.37 min, OFF for remaining 6.63 min
+        
+        final_temp, hist = simulate_interval(t0, ambient, intensity, duty, minutes=15)
+        
+        # In algebraic approximation:
+        amb_gain = 0.18 * max(ambient - t0, 0.0)
+        cooling = 3.2 * intensity * duty
+        offset = -0.5  # Heuristic offset variable
+        t_expected_alg = t0 + amb_gain - cooling + offset
+        
+        # Algebraic formula erroneously estimated safe endpoint <= 4.8 °C:
+        self.assertLessEqual(t_expected_alg, 4.8, "Algebraic formula predicted compliant expected temperature")
+        
+        # But true dynamic ODE simulation warmed up to > 5.0 °C during OFF period:
+        max_dynamic = max(hist)
+        self.assertGreater(max_dynamic, 5.0, "Dynamic simulation must detect intermediate/terminal breach")
+        self.assertAlmostEqual(final_temp, 5.71, places=1, msg="Final temperature reached 5.71 °C")
+        self.assertGreater(final_temp, 5.0, "Terminal dynamic temperature breached safe limit")
+
+    def test_pre_optimization_controllability_classification(self):
+        """Verify pre-optimization classification categorizes scenarios into the 4 physical controllability regimes."""
+        from scripts.compare_nsga2_methods import classify_scenario_pre_optimization
+        
+        # 1. Compliant & Feasible (T0 <= 5.0 and T_ss <= 5.0)
+        res1 = classify_scenario_pre_optimization(t0=3.9, ambient=20.0)
+        self.assertEqual(res1['category'], 'INITIALLY_COMPLIANT_FEASIBLE')
+        
+        # 2. Initially Breached, Recoverable (T0 > 5.0, but T_ss <= 5.0 and T_15 <= 5.0 under max cooling)
+        res2 = classify_scenario_pre_optimization(t0=5.05, ambient=22.0)
+        self.assertEqual(res2['category'], 'INITIALLY_BREACHED_RECOVERABLE')
+        
+        # 3. Infeasible Ambient Heatwave (T_amb > 22.78 °C -> T_ss > 5.0 °C)
+        res3 = classify_scenario_pre_optimization(t0=7.5, ambient=26.0)
+        self.assertEqual(res3['category'], 'INFEASIBLE_HEATWAVE')
+        self.assertGreater(res3['steady_state_temp_c'], 5.0)
+        
+        # 4. Emergency Required (T0 in severe breach, cannot recover in 15 min even with 100% cooling)
+        res4 = classify_scenario_pre_optimization(t0=6.49, ambient=22.68)
+        self.assertEqual(res4['category'], 'EMERGENCY_REQUIRED')
+        self.assertGreater(res4['max_cooling_final_temp_c'], 5.0)
+
+    def test_pareto_candidate_selection_prioritizes_trajectory_safety(self):
+        """Verify run_nsga2 evaluates trajectory feasibility and selects from trajectory-feasible candidates."""
+        from optimization.nsga2_optimizer import run_nsga2
+        
+        # When forecast risk guides the optimizer to pre-cool (future_risk=35.0)
+        pareto, rec = run_nsga2(current=3.8, ambient=20.0, future_risk=35.0, profile='Food')
+        
+        self.assertIn('trajectory_feasible', rec, "Recommendation must include trajectory_feasible flag")
+        self.assertIn('max_trajectory_temp', rec, "Recommendation must include max_trajectory_temp")
+        self.assertIn('min_trajectory_temp', rec, "Recommendation must include min_trajectory_temp")
+        
+        # Verify trajectory-feasible candidates exist in the Pareto pool
+        traj_feasible_candidates = [p for p in pareto if p['trajectory_feasible']]
+        self.assertGreater(len(traj_feasible_candidates), 0, "Pareto pool must contain trajectory-safe solutions")
+        
+        # Recommendation selection must strictly pick from the trajectory-feasible pool
+        self.assertTrue(rec['trajectory_feasible'], "Recommendation must achieve full trajectory feasibility")
+        self.assertLessEqual(rec['max_trajectory_temp'], 5.0)
+        self.assertGreaterEqual(rec['min_trajectory_temp'], 0.0)
+        self.assertIn('trajectory verification', rec['explanation'])
+
+    def test_reconciliation_of_23_algebraic_vs_18_trajectory_scenarios(self):
+        """Verify machine-readable reconciliation_23_vs_18_audit precisely explains the 5 discordant scenarios."""
+        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            
+        audit = data.get('reconciliation_23_vs_18_audit', {})
+        self.assertEqual(audit['algebraic_feasible_count'], 23)
+        self.assertEqual(audit['trajectory_feasible_count'], 18)
+        self.assertEqual(audit['discordant_count'], 5)
+        
+        discordant = audit['discordant_scenarios']
+        discordant_indices = [d['scenario_index'] for d in discordant]
+        self.assertEqual(discordant_indices, [9, 14, 28, 37, 47],
+                         "The 5 discordant scenarios must match exact indices 9, 14, 28, 37, 47")
+        
+        for item in discordant:
+            self.assertTrue(item['algebraic_feasible'])
+            self.assertFalse(item['trajectory_feasible'])
+            self.assertGreater(item['violating_samples_count'], 0)
+            self.assertGreater(item['excursion_duration_min'], 0.0)
+            self.assertTrue(len(item['discordance_mechanism']) > 20)
+
+    def test_pre_optimization_classification_audit_integrity(self):
+        """Verify pre_optimization_classification_audit counts and physical basis match theory."""
+        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            
+        audit = data.get('pre_optimization_classification_audit', {})
+        counts = audit.get('counts', {})
+        
+        self.assertEqual(counts['INITIALLY_COMPLIANT_FEASIBLE'], 18)
+        self.assertEqual(counts['INITIALLY_BREACHED_RECOVERABLE'], 3)
+        self.assertEqual(counts['INFEASIBLE_HEATWAVE'], 27)
+        self.assertEqual(counts['EMERGENCY_REQUIRED'], 2)
+        self.assertEqual(sum(counts.values()), 50, "All 50 scenarios must be accounted for")
+        
+        # Verify physical basis limits
+        phys = audit.get('physical_basis', {})
+        self.assertAlmostEqual(phys['thermal_lift_capacity_c'], 17.778, places=2)
+        self.assertAlmostEqual(phys['critical_ambient_threshold_c'], 22.778, places=2)
+
+
 
 
 

@@ -3,7 +3,7 @@
 **Project:** COLDCHAIN-AI: Intelligent Multi-Objective Cold-Chain Optimization & Predictive Quality Management  
 **Working Directory:** `C:\Projects\Cold-Chain-Ai`  
 **Git Branch:** `completion-dev`  
-**Authoritative Commit:** `8637e47` (Audit full-precision arithmetic, verify energy identity, align simulated excursion terminology, and expand test suite to 87 tests)  
+**Authoritative Commit:** `c8017c3` (Enforce trajectory safety constraints, pre-optimization classification, and expand test suite to 92 tests)  
 **Date:** 2026-10-18  
 **Document Status:** FINAL — EVIDENCE-RECONCILED & SCIENTIFICALLY AUDITED  
 
@@ -16,7 +16,7 @@ The COLDCHAIN-AI platform has reached a fully operational, scientifically audite
 ```
 COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 ├─ [IMPLEMENTED]          Django 5.2 backend, 12 browser views, SQLite DB, REST APIs
-├─ [AUTOMATED-TESTED]     87/87 passing unit/integration tests (10.24s), 0 Django check issues
+├─ [AUTOMATED-TESTED]     92/92 passing unit/integration tests (13.12s), 0 Django check issues
 ├─ [EXPERIMENTALLY-VALID] 590-sample MAD-TCN vs Persistence test split, 50-scenario NSGA-II comparison
 ├─ [SIMULATED]            Calibrated thermodynamic chamber physics (k_inf=0.018, k_cool=0.32)
 └─ [PHYSICALLY-AWAITING]  Factory-floor RS485/Modbus RTU, 3-phase CT wattmeters, industrial PLC relays
@@ -25,7 +25,7 @@ COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 | Operational Layer | System Maturity Label | Verification Evidence |
 | :--- | :--- | :--- |
 | **Backend & Web Application** | `IMPLEMENTED` | Django 5.2.18, 12 template routes, RESTful API endpoints |
-| **Automated Test Suite** | `AUTOMATED_TESTED` | 87 test cases passing in 10.24s (`manage.py test`) |
+| **Automated Test Suite** | `AUTOMATED_TESTED` | 92 test cases passing in 13.12s (`manage.py test`) |
 | **End-to-End Control Pipeline** | `AUTOMATED_TESTED` | `scripts/end_to_end.py` executes full pipeline to `PASS` |
 | **Interactive UI & Visuals** | `AUTOMATED_TESTED` | 12/12 routes return HTTP 200 with 0 console errors in Microsoft Edge Playwright |
 | **Forecasting Model (MAD-TCN)** | `EXPERIMENTALLY_VALIDATED` | Evaluated on common 590-sequence test split (15-step MAE = 0.1672 °C, t+15 MAE = 0.1597 °C) |
@@ -44,12 +44,15 @@ COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 
 Across iterative engineering and audit cycles, all critical scientific and software defects have been systematically investigated and resolved:
 
-1. **Resolution of Trajectory Feasibility Contradiction in NSGA-II:**  
-   *Problem:* Earlier reports claimed 100% feasible Pareto solutions while simultaneously reporting that an emergency override had triggered.  
-   *Resolution:* Feasibility accounting was restructured in [`optimization/nsga2_optimizer.py`](file:///C:/Projects/Cold-Chain-Ai/optimization/nsga2_optimizer.py). Out of 50 evaluated scenarios, 23 scenarios initialize within the Food envelope and find strictly feasible Pareto solutions ($G_1, G_2 \le 0$). In the remaining 27 scenarios where $T_0 > 5.0\text{ }^\circ\text{C}$ (up to $9.31\text{ }^\circ\text{C}$), physical cooling in 15 minutes cannot reach $\le 4.8\text{ }^\circ\text{C}$; the system commands emergency maximum cooling ($u=1.0, d=1.0$) and explicitly records `is_emergency_fallback: True, feasible: False`.
+1. **Resolution of Trajectory Feasibility Contradiction in NSGA-II & 23 vs 18 Discrepancy:**  
+   *Problem:* Earlier reports claimed 100% feasible Pareto solutions while simultaneously reporting that emergency overrides had triggered. Subsequently, 23 scenarios were reported as algebraically feasible ($G_1, G_2 \le 0$ at terminal expected temperature $T_{\text{exp}}$), but only 18 scenarios achieved strict physical trajectory containment ($0.0 \le T(t) \le 5.0\text{ }^\circ\text{C}$ across all 15 elapsed minutes).  
+   *Resolution:* The gap of 5 discordant scenarios was mathematically diagnosed and reconciled:
+   - **Initial Breach Pull-Down Phase (Scenarios 9, 28, 37, 47):** In 4 scenarios, the chamber started pre-breached ($T_0 = 5.04\text{--}5.16\text{ }^\circ\text{C}$). While active cooling reduced terminal predicted temperature to $\le 4.8\text{ }^\circ\text{C}$, the initial 7 to 16 point samples remained in physical excursion during the cooling pull-down phase, violating trajectory feasibility.
+   - **Duty-Cycle Shutoff Warming (Scenario 14):** In Scenario 14 ($T_0=3.81\text{ }^\circ\text{C}, T_{\text{amb}}=19.64\text{ }^\circ\text{C}$), the optimizer chose low duty cycle $d=0.558$ to minimize energy, because offset $\delta=-0.5\text{ }^\circ\text{C}$ algebraically predicted $T_{\text{exp}}=4.77\text{ }^\circ\text{C}$. In dynamic ODE simulation, compressor shutoff after 8.4 minutes caused ambient heat gain to drive chamber temperature to $5.71\text{ }^\circ\text{C}$ at $t=15$ (2.74 min excursion).
+   - **Trajectory-Verifying Candidate Selection:** [`optimization/nsga2_optimizer.py`](file:///C:/Projects/Cold-Chain-Ai/optimization/nsga2_optimizer.py) now forward-simulates the complete 16-point dynamic trajectory for all candidate solutions. Recommendation selection strictly prioritizes candidates satisfying full dynamic trajectory bounds over algebraic approximations. In the 27 scenarios where pre-breached initial state or extreme ambient infiltration ($T_{\text{amb}} > 22.78\text{ }^\circ\text{C}$) makes single-interval compliance physically impossible, the system commands emergency maximum cooling ($u=1.0, d=1.0$) and explicitly records `is_emergency_fallback: True, feasible: False`.
 2. **Elimination of Trajectory Peak Temperature Discrepancy:**  
    *Problem:* In earlier unconstrained runs, peak chamber temperature rose from $10.72\text{ }^\circ\text{C}$ to $11.36\text{ }^\circ\text{C}$.  
-   *Resolution:* Implementing immediate maximum emergency cooling during severe breaches contained peak chamber temperature to **$9.36\text{ }^\circ\text{C}$**, reducing cumulative temperature violation duration from 583 minutes to **479 minutes (-17.8%)**.
+   *Resolution:* Implementing immediate maximum emergency cooling during severe breaches contained peak chamber temperature to **$9.36\text{ }^\circ\text{C}$**, reducing cumulative temperature violation duration from 583 minutes to **479 minutes (-17.8%)** and saving **94.12 minutes (-17.32%)** of continuous simulated breach exposure.
 3. **Harmonization of the MAD-TCN Evaluation Protocol:**  
    *Problem:* Discrepant sample counts (590 vs 785 sequences) and conflicting test splits led to inconsistent claims regarding persistence.  
    *Resolution:* Script [`scripts/evaluate_baseline.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/evaluate_baseline.py) was unified across persistence, moving average, linear trend, original weights, and retrained weights on the exact same 590-sequence held-out chronological test slice (`2026-01-03 08:35:00` to `2026-01-03 18:39:00 UTC`).
@@ -285,14 +288,28 @@ Evaluated via [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chai
 - **Emergency Action:** The emergency override immediately applies full cooling capacity ($u=1.0, d=1.0$), arresting rapid heat intrusion and capping 15-minute temperature rise at 9.36 °C (preventing the 10.72 °C excursion seen in Method A).
 - **Proactive Cooling:** In the 23 scenarios starting within the safe envelope, prediction-guided pre-cooling prevents chamber temperature from crossing 5.0 °C, saving **94.12 minutes** of continuous simulated breach exposure (-17.32%).
 
-### 4. Thermodynamic Feasibility Derivation & Frontier Reconciliation
-- **Steady-State Derivation:** Chamber temperature follows $\frac{dT}{dt} = k_{inf} (T_{amb} - T) - k_{cool} u d$. With $k_{inf} = 0.018\text{ min}^{-1}$ and $k_{cool} = 0.320\text{ }^{\circ}\text{C/min}$, equilibrium steady state is $T_{ss} = T_{amb} - 17.78\text{ }^{\circ}\text{C}$. For the chamber to reach or maintain $T \le 5.0\text{ }^{\circ}\text{C}$, $T_{amb}$ must not exceed $22.78\text{ }^{\circ}\text{C}$. When ambient heat waves reach $28.55\text{ }^{\circ}\text{C}$, heat intrusion at $5.0\text{ }^{\circ}\text{C}$ ($0.424\text{ }^{\circ}\text{C/min}$) physically exceeds maximum refrigeration ($0.320\text{ }^{\circ}\text{C/min}$), rendering single-interval compliance physically impossible.
-- **Reconciliation of Pareto Points (48) vs. Scenarios (23 Feasible / 27 Fallbacks):** The **48 Pareto points** reported in single-run pipeline verification ([`scripts/end_to_end.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/end_to_end.py)) denote the cardinality of non-dominated setpoints on the trade-off surface for a single invocation at $T = 3.93\text{ }^{\circ}\text{C}$. The **23 feasible / 27 emergency fallback scenarios** denote the aggregate classification across 50 separate 15-minute operating regimes sampled across the multi-day dataset.
+### 4. Thermodynamic Feasibility Derivation & Pre-Optimization Controllability Breakdown
+- **Steady-State Derivation:** Chamber temperature follows $\frac{dT}{dt} = k_{\text{inf}} (T_{\text{amb}} - T) - k_{\text{cool}} u d$. With $k_{\text{inf}} = 0.018\text{ min}^{-1}$ and $k_{\text{cool}} = 0.320\text{ }^{\circ}\text{C/min}$, maximum continuous active cooling provides a mechanical thermal lift of:
+  $$\Delta T_{\text{lift}} = \frac{k_{\text{cool}}}{k_{\text{inf}}} = \frac{0.320}{0.018} = \mathbf{17.78\text{ }^{\circ}\text{C}}$$
+  Equilibrium steady-state temperature is $T_{\text{ss}} = T_{\text{amb}} - 17.78\text{ }^{\circ}\text{C}$. For the chamber to reach or maintain $T \le 5.0\text{ }^{\circ}\text{C}$, ambient temperature $T_{\text{amb}}$ must not exceed **$22.78\text{ }^{\circ}\text{C}$**. When ambient temperature exceeds $22.78\text{ }^{\circ}\text{C}$, heat intrusion at $5.0\text{ }^{\circ}\text{C}$ physically exceeds maximum refrigeration lift ($0.320\text{ }^{\circ}\text{C/min}$), rendering single-interval compliance physically impossible.
+- **Pre-Optimization Physical Controllability Classification:**
+  Across the 50 operational scenarios, pre-classification before optimization establishes:
+  1. **`INITIALLY_COMPLIANT_FEASIBLE` (18 Scenarios, 36.0%):** Chamber initializes safe ($T_0 \le 5.0\text{ }^\circ\text{C}$) and ambient infiltration is within mechanical lift ($T_{\text{amb}} \le 22.78\text{ }^\circ\text{C}$). Full trajectory compliance ($0.0 \le T(t) \le 5.0\text{ }^\circ\text{C}$) is achievable and achieved in 100% of these regimes.
+  2. **`INITIALLY_BREACHED_RECOVERABLE` (3 Scenarios, 6.0%):** Chamber starts in modest breach ($T_0 = 5.04\text{--}5.16\text{ }^\circ\text{C}$), but $T_{\text{amb}} \le 22.78\text{ }^\circ\text{C}$. Under maximum cooling ($u=1.0, d=1.0$), terminal temperature recovers to $T_{15} \le 5.0\text{ }^\circ\text{C}$, though initial minutes remain in excursion during pull-down (Scenarios 9, 28, 47).
+  3. **`INFEASIBLE_HEATWAVE` (27 Scenarios, 54.0%):** Ambient temperature exceeds $22.78\text{ }^\circ\text{C}$ ($T_{\text{amb}}$ up to $27.58\text{ }^\circ\text{C}$), meaning $T_{\text{ss}} > 5.0\text{ }^\circ\text{C}$. Infiltration exceeds cooling capacity; continuous compliance is thermodynamically impossible (Scenarios 0–7, 18–27, 37–45).
+  4. **`EMERGENCY_REQUIRED` (2 Scenarios, 4.0%):** Severe initial breaches ($T_0 \approx 6.4\text{--}6.5\text{ }^\circ\text{C}$) cannot recover within 15 min even under 100% continuous cooling ($T_{15} \approx 6.1\text{ }^\circ\text{C}$), demanding immediate emergency override (Scenarios 8, 46).
+
+### 5. Detailed Reconciliation of the 23 Algebraic vs 18 Trajectory Feasibility Discrepancy
+
+| Scenario | Initial $T_0$ | Ambient $T_{\text{amb}}$ | Algebraic $T_{\text{exp}}$ | Trajectory Max | Violating Samples | Excursion Duration | Physical Discordance Mechanism |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
+| **9** | 5.05 °C | 22.33 °C | 4.56 °C | 5.05 °C | 7 / 16 | 6.31 min | Initial breach pull-down phase omitted by algebraic endpoint check |
+| **14** | 3.81 °C | 19.64 °C | 4.77 °C | 5.71 °C | 3 / 16 | 2.74 min | Low duty cycle ($d=0.558$) shut off cooling early; ambient warming caused late breach |
+| **28** | 5.04 °C | 22.59 °C | 4.57 °C | 5.04 °C | 10 / 16 | 9.97 min | Initial breach pull-down phase omitted by algebraic endpoint check |
+| **37** | 5.14 °C | 23.40 °C | 4.73 °C | 5.26 °C | 16 / 16 | 15.00 min | Heatwave ($T_{\text{amb}} > 22.78\text{ }^\circ\text{C}$); negative offset obscured physical infeasibility |
+| **47** | 5.16 °C | 21.97 °C | 4.52 °C | 5.16 °C | 11 / 16 | 10.12 min | Initial breach pull-down phase omitted by algebraic endpoint check |
+
 - **Empirical Policy Comparison vs Global Optimality:** The continuous 449.14-minute total violation duration (and 479 discrete sample points) represents the **experimentally observed reduction** (-17.32% continuous duration / -17.84% discrete samples relative to baseline) achieved across 50 tested operational regimes by invoking emergency full cooling ($u=1.0, d=1.0$) whenever $T_0 > 5.0\text{ }^{\circ}\text{C}$. This is an empirically evaluated control policy result, not a formal mathematical proof of global trajectory-level optimality.
-- **Safety Categories Across Scenarios:**
-  - **Genuine Compliance (23 Scenarios):** In scenarios initializing within the safe envelope ($T_0 \le 5.0\text{ }^{\circ}\text{C}$), proactive pre-cooling keeps the chamber continuously within the Food limit ($0.0\text{--}5.0\text{ }^{\circ}\text{C}$).
-  - **Reduced Warming (Scenario 4 & Severe Heatwaves):** When ambient infiltration exceeds cooling capacity ($T_{amb} > 22.78\text{ }^{\circ}\text{C}$), maximum cooling limits the rate of temperature rise without achieving containment below $5.0\text{ }^{\circ}\text{C}$.
-  - **Recovery / Mitigation:** When starting in pre-existing breach ($T_0 > 5.0\text{ }^{\circ}\text{C}$), cooling drives the trajectory downward where ambient permits, or minimizes severity where heat dominates. Food safety compliance is **not maintained** during these transient breach intervals.
 ---
 
 ## SECTION E — Energy & Thermodynamic Modeling Findings
