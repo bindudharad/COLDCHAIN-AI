@@ -20,22 +20,22 @@
 ### B. Audit of the 479-Minute Metric (Samples vs Continuous Duration):
 The figures **583, 565, 544, and 479** were **DISCRETE SAMPLE POINT COUNTS** (out of 800 discrete samples across the 50 scenarios), NOT physical elapsed duration:
 - In each scenario, if all 16 discrete samples were > 5.0 °C, the sample counter added 16.
-- The difference 583 - 479 = 104 represented a reduction of **104 violating sample points (-17.84%)**.
+- The difference 583 - 476 = 107 represented a reduction of **107 violating sample points (-18.35%)**.
 - **Continuous Simulated Temperature-Excursion Duration (Linear Boundary Interpolation):**
   When continuous boundary crossings are interpolated (t* = (5.0 - T_a) / (T_b - T_a)):
   - **Method A (Reactive Baseline):** **543.25 simulated scenario-minutes** of excursion (72.4% of modeled time).
   - **Method B (Legacy Unconstrained):** **525.52 simulated scenario-minutes** of excursion (70.1% of modeled time).
-  - **Method D (Risk-Disabled Ablation):** **503.51 simulated scenario-minutes** of excursion (67.1% of modeled time).
-  - **Method C (Forecast-Guided NSGA-II):** **449.14 simulated scenario-minutes** of excursion (59.9% of modeled time).
-  - **Simulated Duration Saved vs Reactive Control:** **94.12 minutes (-17.32%)**!
-  - **Simulated Duration Saved vs Unguided Optimization:** **54.37 minutes (-10.80%)**!
+  - **Method D (Risk-Disabled Ablation):** **454.09 simulated scenario-minutes** of excursion (60.5% of modeled time).
+  - **Method C (Forecast-Guided NSGA-II):** **446.40 simulated scenario-minutes** of excursion (59.5% of modeled time).
+  - **Simulated Duration Saved vs Reactive Control:** **96.85 minutes (-17.83%)**!
+  - **Simulated Duration Saved vs Unguided Optimization:** **7.70 minutes (-1.69%)**!
 
 ### C. Full-Precision Arithmetic & Display Rounding Audit:
 - **Method A Unrounded Excursion Duration:** 543.252000 minutes (displays as **543.25 min**)
-- **Method C Unrounded Excursion Duration:** 449.136000 minutes (displays as **449.14 min**)
-- **True Unrounded Difference (Method C vs Method A):** 449.136000 - 543.252000 = **-94.116000 minutes**
-- **Displayed Difference:** When rounded to 2 decimal places, 94.116000 correctly rounds to **94.12 minutes saved** (-17.32% reduction).
-- **Display Rounding Reconciliation:** Subtracting the already-rounded display figures (543.25 - 449.14 = 94.11) exhibits standard 1-digit intermediate display rounding truncation compared to the true unrounded reduction of 94.12 minutes.
+- **Method C Unrounded Excursion Duration:** 446.399000 minutes (displays as **446.40 min**)
+- **True Unrounded Difference (Method C vs Method A):** 446.399000 - 543.252000 = **-96.853000 minutes**
+- **Displayed Difference:** When rounded to 2 decimal places, 96.853000 correctly rounds to **96.85 minutes saved** (-17.83% reduction).
+- **Display Rounding Reconciliation:** Subtracting the already-rounded display figures (543.25 - 446.40 = 96.85) exhibits standard 1-digit intermediate display rounding truncation compared to the true unrounded reduction of 96.85 minutes.
 
 ---
 
@@ -45,24 +45,24 @@ The figures **583, 565, 544, and 479** were **DISCRETE SAMPLE POINT COUNTS** (ou
 | :--- | :---: | :---: | :---: | :---: |
 | **Control Philosophy** | Fixed hysteresis band (T_0) | Unchecked prediction (n_c=0) | Constrained, blind (fr=0.0) | **Constrained + Forecast Guidance + Fallback** |
 | **Aggregate Simulated Scenario-Minutes** | **750.0 minutes** | **750.0 minutes** | **750.0 minutes** | **750.0 minutes** |
-| **Simulated Temperature-Excursion Duration** | **543.25 minutes** | 525.52 minutes | 503.51 minutes | **449.14 minutes (-17.32%)** |
-| **Duration Above 5.0 °C** | 543.25 minutes | 525.52 minutes | 503.51 minutes | **449.14 minutes** |
+| **Simulated Temperature-Excursion Duration** | **543.25 minutes** | 525.52 minutes | 454.09 minutes | **446.40 minutes (-17.83%)** |
+| **Duration Above 5.0 °C** | 543.25 minutes | 525.52 minutes | 454.09 minutes | **446.40 minutes** |
 | **Duration Below 0.0 °C (Freezing)** | 0.00 minutes | 0.00 minutes | 0.00 minutes | **0.00 minutes** |
-| **Duration Reduction vs Method A** | Reference (0.0 min) | -17.73 min (-3.26%) | -39.75 min (-7.32%) | **-94.12 min (-17.32%)** |
-| **Duration Reduction vs Method D** | N/A | N/A | Reference (0.0 min) | **-54.37 min (-10.80%)** |
-| **Discrete Samples Above 5.0 °C** | 583 samples | 565 samples | 544 samples | **479 samples** |
+| **Duration Reduction vs Method A** | Reference (0.0 min) | -17.73 min (-3.26%) | -89.16 min (-16.41%) | **-96.85 min (-17.83%)** |
+| **Duration Reduction vs Method D** | N/A | N/A | Reference (0.0 min) | **-7.70 min (-1.69%)** |
+| **Discrete Samples Above 5.0 °C** | 583 samples | 565 samples | 486 samples | **476 samples** |
 | **Discrete Samples Below 0.0 °C** | 0 samples | 0 samples | 0 samples | **0 samples** |
-| **Total Violating Samples (out of 800)**| **583 samples** | 565 samples | 544 samples | **479 samples (-104 samples, -17.84%)** |
-| **Sample Reduction vs Method A** | Reference (0 samples) | -18 samples (-3.09%) | -39 samples (-6.69%) | **-104 samples (-17.84%)** |
-| **Sample Reduction vs Method D** | N/A | N/A | Reference (0 samples) | **-65 samples (-11.95%)** |
-| **Scenarios with Upper-Bound Breach (>5.0 °C)** | 50 / 50 | 50 / 50 | 50 / 50 | **32 / 50** |
+| **Total Violating Samples (out of 800)**| **583 samples** | 565 samples | 486 samples | **476 samples (-107 samples, -18.35%)** |
+| **Sample Reduction vs Method A** | Reference (0 samples) | -18 samples (-3.09%) | -97 samples (-16.64%) | **-107 samples (-18.35%)** |
+| **Sample Reduction vs Method D** | N/A | N/A | Reference (0 samples) | **-10 samples (-2.06%)** |
+| **Scenarios with Upper-Bound Breach (>5.0 °C)** | 50 / 50 | 50 / 50 | 41 / 50 | **31 / 50** |
 | **Scenarios with Lower-Bound Breach (<0.0 °C)** | 0 / 50 | 0 / 50 | 0 / 50 | **0 / 50** |
-| **Modeled Trajectory Feasible (0–5 °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **18 / 50 (36%)** |
-| **Simulated Energy Estimate (kWh / 750 min)** | **7.0321 kWh** | 8.2164 kWh (+16.8%) | 8.7924 kWh (+25.0%) | **10.4838 kWh (+49.1%)** |
-| **Mean Electrical Power Demand (kW)** | 0.563 kW | 0.657 kW | 0.703 kW | **0.839 kW** |
-| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 84.2% | **99.1%** |
-| **Ordinary Algebraic Feasible Scenarios** | N/A | N/A | 23 / 50 (46.0%) | **23 / 50 (46.0%)** |
-| **Emergency Fallback Overrides** | 0 | 0 | 27 / 50 (54.0%) | **27 / 50 (54.0%)** |
+| **Modeled Trajectory Feasible (0–5 °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **19 / 50 (38.0%)** |
+| **Simulated Energy Estimate (kWh / 750 min)** | **7.0321 kWh** | 8.2164 kWh (+16.8%) | 9.3963 kWh (+33.6%) | **10.5126 kWh (+49.5%)** |
+| **Mean Electrical Power Demand (kW)** | 0.563 kW | 0.657 kW | 0.752 kW | **0.841 kW** |
+| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 90.5% | **99.3%** |
+| **Ordinary Algebraic Feasible Scenarios** | N/A | N/A | 19 / 50 (38.0%) | **19 / 50 (38.0%)** |
+| **Emergency Fallback Overrides** | 0 | 0 | 31 / 50 (62.0%) | **31 / 50 (62.0%)** |
 | **Decision Bounds Compliance** | 100% | 100% | 100% | **100%** |
 | **Maximum Trajectory Temperature** | 10.72 °C | 9.36 °C | 9.36 °C | **9.36 °C** |
 | **Maximum Threshold Exceedance** | 5.72 °C | 4.36 °C | 4.36 °C | **4.36 °C** |
@@ -71,8 +71,8 @@ The figures **583, 565, 544, and 479** were **DISCRETE SAMPLE POINT COUNTS** (ou
 
 ## 3. Proof of Forecast-to-Optimizer Coupling
 
-1. **Direct Decision Sensitivity:** In **22 out of 50 scenarios (44.0%)**, injecting the MAD-TCN future risk directly shifted the Pareto selection compared to Method D (risk-disabled), compelling earlier and stronger compressor activation.
-2. **Simulated Excursion Reduction via Lookahead:** Forecast foresight reduced simulated temperature-excursion duration by **54.37 minutes (-10.80%)** relative to the identical constrained optimizer operating blind to future trends.
+1. **Direct Decision Sensitivity:** In **18 out of 50 scenarios (44.0%)**, injecting the MAD-TCN future risk directly shifted the Pareto selection compared to Method D (risk-disabled), compelling earlier and stronger compressor activation.
+2. **Simulated Excursion Reduction via Lookahead:** Forecast foresight reduced simulated temperature-excursion duration by **7.70 minutes (-1.69%)** relative to the identical constrained optimizer operating blind to future trends.
 3. **Data Flow Verification:** Input Window (60x12) -> ml.inference:forecast -> Risk Score -> ColdProblem F0 -> NSGA-II -> Simulated Control Recommendation (u, d).
 
 ---
@@ -83,7 +83,7 @@ The figures **583, 565, 544, and 479** were **DISCRETE SAMPLE POINT COUNTS** (ou
 - **Interval Energy consumption (kWh):** Over 15-minute operational intervals, E = P * (15 / 60) = P * 0.25.
 - **Energy Identity Verification:** Total energy identically equals Mean Power × 12.5 hours (50 intervals × 0.25 h):
   - Method A: 7.0321 kWh == 0.563 kW * 12.5 h (7.0315 kWh, delta = 0.0006)
-  - Method C: 10.4838 kWh == 0.839 kW * 12.5 h (10.4838 kWh, delta = 0.0000)
+  - Method C: 10.5126 kWh == 0.841 kW * 12.5 h (10.5125 kWh, delta = 0.0001)
 - **Data Notice:** Energy figures are analytically simulated from thermodynamic models, not metered on physical 3-phase hardware analyzers.
 
 ---

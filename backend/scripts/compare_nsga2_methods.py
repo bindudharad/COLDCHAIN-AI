@@ -587,22 +587,23 @@ def main():
         f"| **Simulated Temperature-Excursion Duration** | **{dur_a:.2f} minutes** | {dur_b:.2f} minutes | {dur_d:.2f} minutes | **{dur_c:.2f} minutes ({c_vs_a_dur_pct:+.2f}%)** |",
         f"| **Duration Above 5.0 °C** | {time_above_a:.2f} minutes | {time_above_b:.2f} minutes | {time_above_d:.2f} minutes | **{time_above_c:.2f} minutes** |",
         f"| **Duration Below 0.0 °C (Freezing)** | {time_below_a:.2f} minutes | {time_below_b:.2f} minutes | {time_below_d:.2f} minutes | **{time_below_c:.2f} minutes** |",
-        f"| **Duration Reduction vs Method A** | Reference (0.0 min) | -17.73 min (-3.26%) | -39.75 min (-7.32%) | **{c_vs_a_dur_delta:+.2f} min ({c_vs_a_dur_pct:+.2f}%)** |",
+        f"| **Duration Reduction vs Method A** | Reference (0.0 min) | {dur_b - dur_a:+.2f} min ({((dur_b - dur_a)/dur_a)*100:+.2f}%) | {dur_d - dur_a:+.2f} min ({((dur_d - dur_a)/dur_a)*100:+.2f}%) | **{c_vs_a_dur_delta:+.2f} min ({c_vs_a_dur_pct:+.2f}%)** |",
         f"| **Duration Reduction vs Method D** | N/A | N/A | Reference (0.0 min) | **{c_vs_d_dur_delta:+.2f} min ({c_vs_d_dur_pct:+.2f}%)** |",
         f"| **Discrete Samples Above 5.0 °C** | {samples_above_a} samples | {samples_above_b} samples | {samples_above_d} samples | **{samples_above_c} samples** |",
         f"| **Discrete Samples Below 0.0 °C** | {samples_below_a} samples | {samples_below_b} samples | {samples_below_d} samples | **{samples_below_c} samples** |",
         f"| **Total Violating Samples (out of 800)**| **{pts_a} samples** | {pts_b} samples | {pts_d} samples | **{pts_c} samples ({c_vs_a_pts_delta:+d} samples, {c_vs_a_pts_pct:+.2f}%)** |",
-        f"| **Sample Reduction vs Method A** | Reference (0 samples) | -18 samples (-3.09%) | -39 samples (-6.69%) | **-104 samples (-17.84%)** |",
-        f"| **Sample Reduction vs Method D** | N/A | N/A | Reference (0 samples) | **-65 samples (-11.95%)** |",
+        f"| **Sample Reduction vs Method A** | Reference (0 samples) | {pts_b - pts_a:+d} samples ({((pts_b - pts_a)/pts_a)*100:+.2f}%) | {pts_d - pts_a:+d} samples ({((pts_d - pts_a)/pts_a)*100:+.2f}%) | **{c_vs_a_pts_delta:+d} samples ({c_vs_a_pts_pct:+.2f}%)** |",
+        f"| **Sample Reduction vs Method D** | N/A | N/A | Reference (0 samples) | **{c_vs_d_pts_delta:+d} samples ({c_vs_d_pts_pct:+.2f}%)** |",
         f"| **Scenarios with Upper-Bound Breach (>5.0 °C)** | {scen_upper_a} / 50 | {scen_upper_b} / 50 | {scen_upper_d} / 50 | **{scen_upper_c} / 50** |",
         f"| **Scenarios with Lower-Bound Breach (<0.0 °C)** | {scen_lower_a} / 50 | {scen_lower_b} / 50 | {scen_lower_d} / 50 | **{scen_lower_c} / 50** |",
-        f"| **Modeled Trajectory Feasible (0–5 °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **{traj_feasible_c} / 50 ({traj_feasible_c*2}%)** |",
+        f"| **Modeled Trajectory Feasible (0–5 °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **{traj_feasible_c} / 50 ({(traj_feasible_c/num_scenarios)*100:.1f}%)** |",
         f"| **Simulated Energy Estimate (kWh / 750 min)** | **{total_e_a:.4f} kWh** | {total_e_b:.4f} kWh ({b_energy_pct:+.1f}%) | {total_e_d:.4f} kWh ({d_energy_pct:+.1f}%) | **{total_e_c:.4f} kWh ({c_vs_a_energy_pct:+.1f}%)** |",
         f"| **Mean Electrical Power Demand (kW)** | {mean_p_a:.3f} kW | {mean_p_b:.3f} kW | {mean_p_d:.3f} kW | **{mean_p_c:.3f} kW** |",
         f"| **Mean Compressor Duty Cycle** | {avg_duty_a:.1f}% | {avg_duty_b:.1f}% | {avg_duty_d:.1f}% | **{avg_duty_c:.1f}%** |",
-        f"| **Ordinary Algebraic Feasible Scenarios** | N/A | N/A | {d_algebraic_count} / 50 (46.0%) | **{algebraic_feasible_c} / 50 (46.0%)** |",
-        f"| **Emergency Fallback Overrides** | 0 | 0 | {d_emergency_count} / 50 (54.0%) | **{emergency_count_c} / 50 (54.0%)** |",
+        f"| **Ordinary Algebraic Feasible Scenarios** | N/A | N/A | {d_algebraic_count} / 50 ({(d_algebraic_count/num_scenarios)*100:.1f}%) | **{algebraic_feasible_c} / 50 ({(algebraic_feasible_c/num_scenarios)*100:.1f}%)** |",
+        f"| **Emergency Fallback Overrides** | 0 | 0 | {d_emergency_count} / 50 ({(d_emergency_count/num_scenarios)*100:.1f}%) | **{emergency_count_c} / 50 ({(emergency_count_c/num_scenarios)*100:.1f}%)** |",
         "| **Decision Bounds Compliance** | 100% | 100% | 100% | **100%** |",
+
         f"| **Maximum Trajectory Temperature** | {max_t_a:.2f} °C | {max_t_b:.2f} °C | {max_t_d:.2f} °C | **{max_t_c:.2f} °C** |",
         f"| **Maximum Threshold Exceedance** | {max_exc_a:.2f} °C | {max_exc_b:.2f} °C | {max_exc_d:.2f} °C | **{max_exc_c:.2f} °C** |",
         "",
@@ -749,7 +750,7 @@ def main():
                 f"Display rounding reconciliation: Method A unrounded duration is {dur_a:.6f} min (displays as {dur_a:.2f}) "
                 f"and Method C is {dur_c:.6f} min (displays as {dur_c:.2f}). "
                 f"The unrounded duration reduction is {dur_c:.6f} - {dur_a:.6f} = {c_vs_a_dur_delta:.6f} min, "
-                f"which rounds to {c_vs_a_dur_delta:.2f} min (94.12 minutes saved). "
+                f"which rounds to {c_vs_a_dur_delta:.2f} min ({abs(c_vs_a_dur_delta):.2f} minutes saved). "
                 f"Subtracting already-rounded display figures ({dur_a:.2f} - {dur_c:.2f} = {round(dur_a, 2) - round(dur_c, 2):.2f}) "
                 f"differs by 0.01 min due to standard intermediate 1-digit display truncation."
             )
@@ -772,17 +773,58 @@ def main():
             }
         },
         'reconciliation_23_vs_18_audit': {
-            'algebraic_feasible_count': algebraic_feasible_c,
-            'trajectory_feasible_count': traj_feasible_c,
-            'discordant_count': len(discordant_scenarios),
-            'discordant_scenarios': discordant_scenarios,
-            'explanation': 'Reconciles the 23 vs 18 feasibility gap: 4 scenarios started in an initial temperature breach (T0 > 5.0 °C) where active cooling brought terminal expected temperature <= 4.8 °C but initial samples remained in violation during pull-down; 1 scenario (Scen 14) had low compressor duty cycle (d=0.558) that caused late-interval warming above 5.0 °C.'
+            'algebraic_feasible_count': 23,
+            'trajectory_feasible_count': 18,
+            'discordant_count': 5,
+            'discordant_scenarios': [
+                {
+                    'scenario_index': 9, 'step_idx': 769, 'initial_temp_c': 5.0541, 'ambient_temp_c': 22.3322,
+                    'algebraic_feasible': True, 'trajectory_feasible': False, 'violating_samples_count': 7,
+                    'excursion_duration_min': 6.309, 'max_temp_c': 5.0541, 'duty_cycle': 1.0, 'cooling_intensity': 1.0,
+                    'discordance_mechanism': 'Initial State Breach: Chamber started at T0=5.05 °C > 5.0 °C. Although active cooling reduced terminal expected temperature to <= 4.8 °C, the initial 7 discrete samples (duration: 6.31 min) remained in physical violation during the pull-down phase.'
+                },
+                {
+                    'scenario_index': 14, 'step_idx': 1184, 'initial_temp_c': 3.8131, 'ambient_temp_c': 19.6426,
+                    'algebraic_feasible': True, 'trajectory_feasible': False, 'violating_samples_count': 3,
+                    'excursion_duration_min': 2.737, 'max_temp_c': 5.7118, 'duty_cycle': 0.558, 'cooling_intensity': 0.781,
+                    'discordance_mechanism': 'Dynamic Shutoff / Duty Cycle Infiltration: Chamber started compliant (T0=3.81 °C), but pre-fix optimizer selected low compressor duty cycle (d=0.558, u=0.781) to minimize energy. After compressor shut off at t=8.4 min, ambient heat gain drove temperature to peak at 5.71 °C (excursion duration: 2.74 min, 3 violating samples). Fixed in post-fix engine (now selects d=0.667, u=0.883 with 0.0 min excursion).'
+                },
+                {
+                    'scenario_index': 28, 'step_idx': 2347, 'initial_temp_c': 5.0416, 'ambient_temp_c': 22.5855,
+                    'algebraic_feasible': True, 'trajectory_feasible': False, 'violating_samples_count': 10,
+                    'excursion_duration_min': 9.967, 'max_temp_c': 5.0416, 'duty_cycle': 1.0, 'cooling_intensity': 1.0,
+                    'discordance_mechanism': 'Initial State Breach: Chamber started at T0=5.04 °C > 5.0 °C. Initial 10 samples (duration: 9.97 min) remained in physical violation during pull-down.'
+                },
+                {
+                    'scenario_index': 37, 'step_idx': 3094, 'initial_temp_c': 5.1437, 'ambient_temp_c': 23.3986,
+                    'algebraic_feasible': True, 'trajectory_feasible': False, 'violating_samples_count': 16,
+                    'excursion_duration_min': 15.0, 'max_temp_c': 5.2575, 'duty_cycle': 1.0, 'cooling_intensity': 1.0,
+                    'discordance_mechanism': 'Extreme Ambient Heat Infiltration: Ambient temperature (23.40 °C) exceeds steady-state cooling capacity. The algebraic formulation permitted a negative target offset (delta=-0.5 °C) which mathematically offset the infiltration, whereas physical continuous refrigeration could not prevent trajectory excursion.'
+                },
+                {
+                    'scenario_index': 47, 'step_idx': 3924, 'initial_temp_c': 5.1582, 'ambient_temp_c': 21.9678,
+                    'algebraic_feasible': True, 'trajectory_feasible': False, 'violating_samples_count': 11,
+                    'excursion_duration_min': 10.124, 'max_temp_c': 5.1582, 'duty_cycle': 1.0, 'cooling_intensity': 1.0,
+                    'discordance_mechanism': 'Initial State Breach: Chamber started at T0=5.16 °C > 5.0 °C. Initial 11 samples (duration: 10.12 min) remained in physical violation during pull-down.'
+                }
+            ],
+            'explanation': 'Historical pre-fix diagnostic audit reconciling the earlier 23 vs 18 feasibility gap before Scenario 14 full-trajectory constraints were unified in the production engine.'
         },
         'reconciliation_notice': {
             'metric_definitions': 'Upper-bound violation: temperature > 5.0 °C. Lower-bound violation: temperature < 0.0 °C. Combined violation: temperature outside [0.0, 5.0] °C. Initial boundary sample t=0 is checked for compliance but does not count as an elapsed minute.',
-            'sample_counts_vs_duration': 'The 583, 565, 544, and 479 figures represent discrete violating sample counts (out of 800 total point samples). Continuous interpolated excursion duration across the 750 elapsed minutes is 543.25 min (Method A), 525.52 min (Method B), 503.51 min (Method D), and 449.14 min (Method C). Method C saves 94.12 minutes (-17.32%) against reactive control and 54.37 minutes (-10.80%) against unguided optimization.',
-            'feasibility_reconciliation': 'Strict physical trajectory feasibility (0.0 <= T(t) <= 5.0 °C across all 15 elapsed minutes) is achieved in 18/50 scenarios (36.0%). 27/50 scenarios engage Emergency Fallback because initial temperature is pre-breached or ambient heat gain exceeds maximum 15-minute cooling capacity.'
+            'sample_counts_vs_duration': (
+                f"The figures {pts_a}, {pts_b}, {pts_d}, and {pts_c} represent discrete violating sample counts (out of 800 total point samples). "
+                f"Continuous interpolated excursion duration across the 750 elapsed minutes is {dur_a:.2f} min (Method A), {dur_b:.2f} min (Method B), "
+                f"{dur_d:.2f} min (Method D), and {dur_c:.2f} min (Method C). Method C saves {abs(c_vs_a_dur_delta):.2f} minutes ({c_vs_a_dur_pct:.2f}%) "
+                f"against reactive control and {abs(c_vs_d_dur_delta):.2f} minutes ({c_vs_d_dur_pct:.2f}%) against unguided optimization."
+            ),
+            'feasibility_reconciliation': (
+                f"Strict physical trajectory feasibility (0.0 <= T(t) <= 5.0 °C across all 15 elapsed minutes) is achieved in {traj_feasible_c}/50 scenarios "
+                f"({(traj_feasible_c/num_scenarios)*100:.1f}%). {emergency_count_c}/50 scenarios engage Emergency Fallback because initial temperature "
+                f"is pre-breached or ambient heat gain exceeds maximum 15-minute cooling capacity."
+            )
         },
+
         'feasibility_accounting': {
             'total_scenarios': num_scenarios,
             'ordinary_algebraic_feasible_scenarios': algebraic_feasible_c,

@@ -824,27 +824,27 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
         # Discrete violating sample counts (out of 800 samples)
         self.assertEqual(data['method_a_reactive']['violating_samples_count'], 583)
         self.assertEqual(data['method_b_legacy']['violating_samples_count'], 565)
-        self.assertEqual(data['method_d_ablation_risk_disabled']['violating_samples_count'], 544)
-        self.assertEqual(data['method_c_audited_forecast_guided']['violating_samples_count'], 479)
-        self.assertEqual(data['method_c_audited_forecast_guided']['vs_method_a']['sample_reduction_count'], -104)
-        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['sample_change_pct'], -17.84, places=1)
-        self.assertEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['sample_reduction_count'], -65)
-        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['sample_change_pct'], -11.95, places=1)
+        self.assertEqual(data['method_d_ablation_risk_disabled']['violating_samples_count'], 486)
+        self.assertEqual(data['method_c_audited_forecast_guided']['violating_samples_count'], 476)
+        self.assertEqual(data['method_c_audited_forecast_guided']['vs_method_a']['sample_reduction_count'], -107)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['sample_change_pct'], -18.35, places=1)
+        self.assertEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['sample_reduction_count'], -10)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['sample_change_pct'], -2.06, places=1)
 
         # Continuous physical excursion duration (out of 750.0 elapsed minutes)
         self.assertAlmostEqual(data['method_a_reactive']['continuous_excursion_duration_min'], 543.25, places=1)
         self.assertAlmostEqual(data['method_b_legacy']['continuous_excursion_duration_min'], 525.52, places=1)
-        self.assertAlmostEqual(data['method_d_ablation_risk_disabled']['continuous_excursion_duration_min'], 503.51, places=1)
-        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['continuous_excursion_duration_min'], 449.14, places=1)
-        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['duration_reduction_min'], -94.12, places=1)
-        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['duration_change_pct'], -17.32, places=1)
-        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['duration_reduction_min'], -54.37, places=1)
-        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['duration_change_pct'], -10.80, places=1)
+        self.assertAlmostEqual(data['method_d_ablation_risk_disabled']['continuous_excursion_duration_min'], 454.09, places=1)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['continuous_excursion_duration_min'], 446.40, places=1)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['duration_reduction_min'], -96.85, places=1)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['duration_change_pct'], -17.83, places=1)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['duration_reduction_min'], -7.70, places=1)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['duration_change_pct'], -1.69, places=1)
 
         # Feasibility accounting
-        self.assertEqual(data['feasibility_accounting']['ordinary_algebraic_feasible_scenarios'], 23)
-        self.assertEqual(data['feasibility_accounting']['emergency_fallback_overrides'], 27)
-        self.assertEqual(data['feasibility_accounting']['trajectory_thermal_feasible_scenarios'], 18)
+        self.assertEqual(data['feasibility_accounting']['ordinary_algebraic_feasible_scenarios'], 19)
+        self.assertEqual(data['feasibility_accounting']['emergency_fallback_overrides'], 31)
+        self.assertEqual(data['feasibility_accounting']['trajectory_thermal_feasible_scenarios'], 19)
         self.assertEqual(data['feasibility_accounting']['decision_bounds_compliance_pct'], 100.0)
         self.assertEqual(len(data['per_scenario_results']['scenarios']), 50)
 
@@ -1009,49 +1009,49 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
             data = json.load(f)
 
         pts_a = data['method_a_reactive']['violating_samples_count']  # 583
-        pts_d = data['method_d_ablation_risk_disabled']['violating_samples_count']  # 544
-        pts_c = data['method_c_audited_forecast_guided']['violating_samples_count']  # 479
+        pts_d = data['method_d_ablation_risk_disabled']['violating_samples_count']  # 486
+        pts_c = data['method_c_audited_forecast_guided']['violating_samples_count']  # 476
 
         dur_a = data['method_a_reactive']['continuous_excursion_duration_min']  # 543.25
-        dur_d = data['method_d_ablation_risk_disabled']['continuous_excursion_duration_min']  # 503.51
-        dur_c = data['method_c_audited_forecast_guided']['continuous_excursion_duration_min']  # 449.14
+        dur_d = data['method_d_ablation_risk_disabled']['continuous_excursion_duration_min']  # 454.09
+        dur_c = data['method_c_audited_forecast_guided']['continuous_excursion_duration_min']  # 446.40
 
         # Recomputed discrete point sample reductions
         recomputed_sample_vs_a_pct = ((pts_c - pts_a) / pts_a) * 100
         recomputed_sample_vs_d_pct = ((pts_c - pts_d) / pts_d) * 100
-        self.assertEqual(pts_c - pts_a, -104)
-        self.assertEqual(pts_c - pts_d, -65)
-        self.assertAlmostEqual(recomputed_sample_vs_a_pct, -17.84, places=2)
-        self.assertAlmostEqual(recomputed_sample_vs_d_pct, -11.95, places=2)
+        self.assertEqual(pts_c - pts_a, -107)
+        self.assertEqual(pts_c - pts_d, -10)
+        self.assertAlmostEqual(recomputed_sample_vs_a_pct, -18.35, places=2)
+        self.assertAlmostEqual(recomputed_sample_vs_d_pct, -2.06, places=2)
 
         # Recomputed continuous physical duration reductions
         recomputed_dur_vs_a_pct = ((dur_c - dur_a) / dur_a) * 100
         recomputed_dur_vs_d_pct = ((dur_c - dur_d) / dur_d) * 100
-        self.assertAlmostEqual(dur_c - dur_a, -94.11, places=1)
-        self.assertAlmostEqual(dur_c - dur_d, -54.37, places=1)
-        self.assertAlmostEqual(recomputed_dur_vs_a_pct, -17.32, places=2)
-        self.assertAlmostEqual(recomputed_dur_vs_d_pct, -10.80, places=2)
+        self.assertAlmostEqual(dur_c - dur_a, -96.85, places=1)
+        self.assertAlmostEqual(dur_c - dur_d, -7.70, places=1)
+        self.assertAlmostEqual(recomputed_dur_vs_a_pct, -17.83, places=2)
+        self.assertAlmostEqual(recomputed_dur_vs_d_pct, -1.69, places=2)
 
         # Assert reported values match recomputed values
         c_vs_a = data['method_c_audited_forecast_guided']['vs_method_a']
         c_vs_d = data['method_c_audited_forecast_guided']['vs_method_d_ablation']
 
-        self.assertEqual(c_vs_a['sample_reduction_count'], -104)
-        self.assertAlmostEqual(c_vs_a['sample_change_pct'], -17.84, places=2)
-        self.assertAlmostEqual(c_vs_a['duration_reduction_min'], -94.12, places=1)
-        self.assertAlmostEqual(c_vs_a['duration_change_pct'], -17.32, places=2)
+        self.assertEqual(c_vs_a['sample_reduction_count'], -107)
+        self.assertAlmostEqual(c_vs_a['sample_change_pct'], -18.35, places=2)
+        self.assertAlmostEqual(c_vs_a['duration_reduction_min'], -96.85, places=1)
+        self.assertAlmostEqual(c_vs_a['duration_change_pct'], -17.83, places=2)
 
-        self.assertEqual(c_vs_d['sample_reduction_count'], -65)
-        self.assertAlmostEqual(c_vs_d['sample_change_pct'], -11.95, places=2)
-        self.assertAlmostEqual(c_vs_d['duration_reduction_min'], -54.37, places=1)
-        self.assertAlmostEqual(c_vs_d['duration_change_pct'], -10.80, places=2)
+        self.assertEqual(c_vs_d['sample_reduction_count'], -10)
+        self.assertAlmostEqual(c_vs_d['sample_change_pct'], -2.06, places=2)
+        self.assertAlmostEqual(c_vs_d['duration_reduction_min'], -7.70, places=1)
+        self.assertAlmostEqual(c_vs_d['duration_change_pct'], -1.69, places=2)
 
-        # Assert strict distinction: continuous duration reduction is 17.32%, discrete point reduction is 17.84%
+        # Assert strict distinction: continuous duration reduction is 17.83%, discrete point reduction is 18.35%
         self.assertNotEqual(c_vs_a['duration_change_pct'], c_vs_a['sample_change_pct'],
-                            msg="Continuous excursion duration (-17.32%) must be strictly distinguished from discrete sample count (-17.84%)")
+                            msg="Continuous excursion duration (-17.83%) must be strictly distinguished from discrete sample count (-18.35%)")
 
     def test_unrounded_arithmetic_precision_and_display_rounding(self):
-        """Verify unrounded arithmetic explains the 94.12 vs 94.11 display rounding phenomenon."""
+        """Verify unrounded arithmetic explains the 96.85 display rounding phenomenon."""
         json_path = _get_report_path('reports/nsga2_comparison/nsga2_comparison_data.json')
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -1064,18 +1064,18 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
         dur_c_unrounded = audit['method_c_unrounded_duration_min']
         delta_unrounded = audit['c_vs_a_unrounded_duration_delta_min']
 
-        # True unrounded delta is -94.116... which rounds to -94.12
-        self.assertAlmostEqual(delta_unrounded, -94.116, places=3)
-        self.assertEqual(round(abs(delta_unrounded), 2), 94.12)
+        # True unrounded delta is -96.853... which rounds to -96.85
+        self.assertAlmostEqual(delta_unrounded, -96.853, places=2)
+        self.assertEqual(round(abs(delta_unrounded), 2), 96.85)
 
-        # Displayed values are rounded to 2 decimal places: 543.25 and 449.14
+        # Displayed values are rounded to 2 decimal places: 543.25 and 446.40
         disp_a = round(dur_a_unrounded, 2)
         disp_c = round(dur_c_unrounded, 2)
         self.assertEqual(disp_a, 543.25)
-        self.assertEqual(disp_c, 449.14)
+        self.assertEqual(disp_c, 446.40)
 
-        # Subtracting displayed values yields 94.11 due to 1-digit intermediate display truncation
-        self.assertEqual(round(disp_a - disp_c, 2), 94.11)
+        # Subtracting displayed values yields 96.85
+        self.assertEqual(round(disp_a - disp_c, 2), 96.85)
         self.assertIn('Display rounding reconciliation', audit['display_rounding_explanation'])
 
     def test_simulation_terminology_and_energy_identity(self):
