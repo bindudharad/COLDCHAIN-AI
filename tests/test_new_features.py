@@ -799,15 +799,91 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
             data = json.load(f)
 
         self.assertEqual(data['num_scenarios'], 50)
-        self.assertEqual(data['method_a_reactive']['total_violations_min'], 583)
-        self.assertEqual(data['method_c_audited_forecast_guided']['total_violations_min'], 479)
-        self.assertEqual(data['method_c_audited_forecast_guided']['vs_method_a']['violation_reduction_min'], -104)
-        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['violation_change_pct'], -17.84, places=1)
+        self.assertEqual(data['total_elapsed_minutes'], 750.0)
+        self.assertEqual(data['total_operating_hours'], 12.5)
+        self.assertEqual(data['total_discrete_samples'], 800)
+
+        # Time grid audit
+        self.assertEqual(data['time_grid_audit']['samples_per_trajectory'], 16)
+        self.assertEqual(data['time_grid_audit']['elapsed_intervals_per_trajectory'], 15)
+        self.assertEqual(data['time_grid_audit']['total_elapsed_minutes'], 750.0)
+
+        # Discrete violating sample counts (out of 800 samples)
+        self.assertEqual(data['method_a_reactive']['violating_samples_count'], 583)
+        self.assertEqual(data['method_b_legacy']['violating_samples_count'], 565)
+        self.assertEqual(data['method_d_ablation_risk_disabled']['violating_samples_count'], 544)
+        self.assertEqual(data['method_c_audited_forecast_guided']['violating_samples_count'], 479)
+        self.assertEqual(data['method_c_audited_forecast_guided']['vs_method_a']['sample_reduction_count'], -104)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['sample_change_pct'], -17.84, places=1)
+        self.assertEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['sample_reduction_count'], -65)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['sample_change_pct'], -11.95, places=1)
+
+        # Continuous physical excursion duration (out of 750.0 elapsed minutes)
+        self.assertAlmostEqual(data['method_a_reactive']['continuous_excursion_duration_min'], 543.25, places=1)
+        self.assertAlmostEqual(data['method_b_legacy']['continuous_excursion_duration_min'], 525.52, places=1)
+        self.assertAlmostEqual(data['method_d_ablation_risk_disabled']['continuous_excursion_duration_min'], 503.51, places=1)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['continuous_excursion_duration_min'], 449.14, places=1)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['duration_reduction_min'], -94.12, places=1)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['duration_change_pct'], -17.32, places=1)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['duration_reduction_min'], -54.37, places=1)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_d_ablation']['duration_change_pct'], -10.80, places=1)
+
+        # Feasibility accounting
         self.assertEqual(data['feasibility_accounting']['ordinary_algebraic_feasible_scenarios'], 23)
         self.assertEqual(data['feasibility_accounting']['emergency_fallback_overrides'], 27)
         self.assertEqual(data['feasibility_accounting']['trajectory_thermal_feasible_scenarios'], 18)
         self.assertEqual(data['feasibility_accounting']['decision_bounds_compliance_pct'], 100.0)
         self.assertEqual(len(data['per_scenario_results']['scenarios']), 50)
+
+    def test_continuous_excursion_linear_boundary_interpolation(self):
+        """Verify continuous excursion duration computes exact sub-interval crossings via linear interpolation."""
+        from scripts.compare_nsga2_methods import compute_continuous_excursion_duration
+
+        # Case 1: Trajectory never crosses limits (all safe at 3.0 °C across 16 samples)
+        hist_safe = [3.0] * 16
+        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_safe, hi_limit=5.0, lo_limit=0.0)
+        self.assertEqual(dur_hi, 0.0)
+        self.assertEqual(dur_lo, 0.0)
+        self.assertEqual(dur_tot, 0.0)
+
+        # Case 2: Trajectory completely above hi_limit (all at 6.0 °C across 16 samples)
+        hist_breached = [6.0] * 16
+        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_breached, hi_limit=5.0, lo_limit=0.0)
+        self.assertEqual(dur_hi, 15.0, "16 endpoint samples spanning 15 intervals must yield exactly 15.0 elapsed minutes")
+        self.assertEqual(dur_tot, 15.0)
+
+        # Case 3: Single crossing within interval [0, 1] from 4.0 °C to 6.0 °C
+        # Crossing at t* = (5.0 - 4.0) / (6.0 - 4.0) = 0.5. Duration above = 0.5 min.
+        hist_crossing = [4.0, 6.0] + [6.0] * 14
+        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_crossing, hi_limit=5.0, lo_limit=0.0)
+        self.assertAlmostEqual(dur_hi, 14.5, places=4, msg="0.5 min in interval 0 plus 14 full intervals = 14.5 min")
+        self.assertAlmostEqual(dur_tot, 14.5, places=4)
+
+        # Case 4: Temporary spike and recovery within 2 intervals: 4.0 -> 6.0 -> 4.0, rest 4.0
+        # Interval 0: 4.0 -> 6.0, crosses at t* = 0.5 -> 0.5 min above
+        # Interval 1: 6.0 -> 4.0, crosses at t* = 0.5 -> 0.5 min above
+        # Total time above = 1.0 min
+        hist_spike = [4.0, 6.0, 4.0] + [4.0] * 13
+        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_spike, hi_limit=5.0, lo_limit=0.0)
+        self.assertAlmostEqual(dur_hi, 1.0, places=4)
+        self.assertAlmostEqual(dur_tot, 1.0, places=4)
+
+    def test_time_grid_intervals_vs_endpoints_accounting(self):
+        """Verify that 16 endpoint samples represent exactly 15 elapsed minutes and do not double-count t=0."""
+        from scripts.compare_nsga2_methods import simulate_interval
+
+        # Simulate standard 15-minute interval
+        final_temp, hist = simulate_interval(t0=3.5, ambient=25.0, intensity=0.7, duty=0.6)
+        self.assertEqual(len(hist), 16, "Trajectory must record 16 samples for t = 0..15 minutes")
+        self.assertEqual(hist[0], 3.5, "First sample t=0 must be initial condition")
+        self.assertEqual(hist[-1], final_temp, "Last sample t=15 must match final temperature")
+
+        # Number of elapsed 1-minute intervals is len(hist) - 1
+        num_intervals = len(hist) - 1
+        self.assertEqual(num_intervals, 15, "16 point samples must span exactly 15 operational intervals")
+        total_time_50_scenarios = 50 * num_intervals
+        self.assertEqual(total_time_50_scenarios, 750, "50 scenarios must span exactly 750 elapsed operating minutes (12.5 h)")
+
 
 
 

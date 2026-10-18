@@ -230,23 +230,31 @@ To bridge the gap between sliding-window sequence recall and real-world warehous
 
 ## SECTION D — Constrained Optimization Scientific Findings
 
-Evaluated via [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/compare_nsga2_methods.py) across 50 identical operational scenarios on Sensor `CC-01`:
+Evaluated via [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/compare_nsga2_methods.py) across 50 identical operational scenarios on Sensor `CC-01` (total operating time: **750.0 elapsed minutes** / 12.5 h across 800 discrete point samples):
 
 ### 1. Comparative Results Table
 
 | Parameter / Metric | Method A (Reactive Baseline) | Method B (Unconstrained) | Method D (Risk-Disabled Ablation) | Method C (Audited Constrained NSGA-II) | Relative Impact (Method C vs Baseline A) |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Control Approach** | Fixed hysteresis band ($T_0$) | Unchecked prediction ($n_{c}=0$) | Constrained, blind ($fr=0.0$) | Constrained + Forecast Guidance + Emergency | Predictive pre-cooling + Override |
-| **Mean Energy / 15-min Cycle** | **0.1406 kWh** (0.563 kW) | 0.1643 kWh (0.657 kW) | 0.1758 kWh (0.703 kW) | **0.2097 kWh** (0.839 kW) | Controlled energy investment for safety |
+| **Total Energy (kWh / 750 min)** | **7.0321 kWh** (0.563 kW) | 8.2164 kWh (0.657 kW) | 8.7924 kWh (0.703 kW) | **10.4838 kWh** (0.839 kW) | Controlled energy investment for safety (+49.1%) |
 | **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 84.2% | 99.1% | Active cooling under heat infiltration |
-| **Total Violation Duration** | **583 minutes** | 565 minutes (-3.1%) | 544 minutes (-6.7%) | **479 minutes** (-17.8%) | **-17.8% vs Reactive (-104 min); -12.0% vs Ablation (-65 min)** |
+| **Continuous Excursion Duration** | **543.25 minutes** (72.4%) | 525.52 minutes (70.1%) | 503.51 minutes (67.1%) | **449.14 minutes (59.9%)** | **-94.12 min (-17.32% vs Reactive); -54.37 min (-10.80% vs Ablation)** |
+| **Discrete Violating Samples** | **583 samples** (72.9%) | 565 samples (70.6%) | 544 samples (68.0%) | **479 samples (59.9%)** | **-104 samples (-17.84% vs Reactive); -65 samples (-11.95% vs Ablation)** |
 | **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Breached) | 9.36 °C | **9.36 °C** (Contained via Max Cooling) | Lowest observed peak under tested policies |
 | **Trajectory Feasible ($0–5$ °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **18 / 50 (36.0%)** | Evaluated on full 16-point minute-by-minute trajectory |
 | **Ordinary Algebraic Feasible** | 50 (Unchecked) | 0 (Unchecked) | 23 Scenarios (46.0%) | **23 Scenarios (46.0%)** | Evaluated strictly against $G_1, G_2 \le 0$ |
 | **Emergency Fallback Overrides** | 0 | 0 | 27 Scenarios (54.0%) | **27 Scenarios (54.0%)** | Explicitly labeled emergency actions |
-| **Mean Optimization Runtime** | ~0.1 ms | 214.5 ms | 195.2 ms | 199.0 ms | Real-Time Industrial Feasibility |
+| **Mean Optimization Runtime** | ~0.1 ms | 223.1 ms | 220.3 ms | 204.3 ms | Real-Time Industrial Feasibility |
 
-### 2. Physical Trajectory Safety Analysis & Scenario 4 Dynamics
+### 2. Time Grid Audit & Dual Accounting Resolution
+- **Time Grid Disambiguation:** Each scenario models a 15-minute operational interval, recording 16 endpoint-inclusive samples ($t = 0, 1, \dots, 15\text{ min}$). Across 50 scenarios, total elapsed operating time is exactly **750.0 minutes** (12.5 operating hours). 800 was the total discrete sample count ($50 \times 16$), which double-counted the initial state $t=0$.
+- **Continuous Physical Duration vs Discrete Counts:**
+  - **Continuous Duration:** Linear boundary interpolation across state crossings ($t^* = \frac{T_{\text{max}} - T_a}{T_b - T_a}$) reveals actual continuous breach exposure: Method A spends **543.25 minutes** in breach, while Method C limits excursion to **449.14 minutes**, saving **94.12 elapsed minutes (-17.32%)** of exposure. Against the risk-disabled ablation (Method D, 503.51 min), Method C saves **54.37 minutes (-10.80%)**.
+  - **Discrete Point Samples:** Point-sample violation count decreases from **583 samples** (Method A) to **479 samples** (Method C), saving **104 samples (-17.84%)** (and 65 samples / -11.95% vs Method D).
+  - Previous references to "479 minutes" were counting discrete point samples. The actual continuous physical excursion duration is **449.14 minutes**.
+
+### 3. Physical Trajectory Safety Analysis & Scenario 4 Dynamics
 - **Initial Breach Dynamics:** In 27 of 50 scenarios, the chamber starts in pre-existing breach ($T_0 = 5.16\text{--}9.31\text{ }^{\circ}\text{C}$). With physical cooling capacity limited to $k_{cool} = 0.32\text{ }^{\circ}\text{C/min}$ (maximum $4.8\text{ }^{\circ}\text{C}$ drop across 15 min under zero infiltration), returning to the Food envelope ($\le 4.8\text{ }^{\circ}\text{C}$) in a single 15-minute interval is physically impossible.
 - **Physical Meaning of the 9.36 °C Peak Temperature:** The reported peak of **$9.36\text{ }^{\circ}\text{C}$** ($9.3639\text{ }^{\circ}\text{C}$) occurs in **Scenario 4** ($t_0 = 9.313\text{ }^{\circ}\text{C}$, $T_{amb} = 27.305\text{ }^{\circ}\text{C}$). Under maximum emergency cooling ($u=1.0, d=1.0$), active extraction is $-k_{cool} = -0.3200\text{ }^{\circ}\text{C/min}$, while ambient infiltration is $+k_{inf}(T_{amb} - T_0) = 0.018 \times (27.305 - 9.313) = +0.32386\text{ }^{\circ}\text{C/min}$. The net temperature derivative at $t_0$ is **positive**:
   $$\left.\frac{dT}{dt}\right|_{t=0} = +0.32386 - 0.32000 = \mathbf{+0.00386\text{ }^{\circ}\text{C/min}}$$
@@ -254,12 +262,12 @@ Evaluated via [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chai
   $$T_{ss} = T_{amb} - \frac{k_{cool}}{k_{inf}} = 27.305 - \frac{0.32}{0.018} = \mathbf{9.527\text{ }^{\circ}\text{C}}$$
   Because $T_0 = 9.313\text{ }^{\circ}\text{C} < 9.527\text{ }^{\circ}\text{C}$, the chamber was **still actively warming toward $9.53\text{ }^{\circ}\text{C}$**. At $t = 15\text{ min}$, the simulated chamber temperature reaches $9.364\text{ }^{\circ}\text{C}$ with a remaining positive slope of $+0.00294\text{ }^{\circ}\text{C/min}$. Thus, **9.36 °C is the final observation of a truncated 15-minute simulation horizon that is still actively warming**, NOT an enclosed peak or turnaround. Maximum cooling substantially mitigated the warming rate ($9.36\text{ }^{\circ}\text{C}$ at $t=15$ min vs. $10.72\text{ }^{\circ}\text{C}$ under reactive baseline Method A).
 - **Emergency Action:** The emergency override immediately applies full cooling capacity ($u=1.0, d=1.0$), arresting rapid heat intrusion and capping 15-minute temperature rise at 9.36 °C (preventing the 10.72 °C excursion seen in Method A).
-- **Proactive Cooling:** In the 23 scenarios starting within the safe envelope, prediction-guided pre-cooling prevents chamber temperature from crossing 5.0 °C, saving **104 minutes** of total breach exposure (-17.8%).
+- **Proactive Cooling:** In the 23 scenarios starting within the safe envelope, prediction-guided pre-cooling prevents chamber temperature from crossing 5.0 °C, saving **94.12 minutes** of continuous physical breach exposure (-17.32%).
 
-### 3. Thermodynamic Feasibility Derivation & Frontier Reconciliation
+### 4. Thermodynamic Feasibility Derivation & Frontier Reconciliation
 - **Steady-State Derivation:** Chamber temperature follows $\frac{dT}{dt} = k_{inf} (T_{amb} - T) - k_{cool} u d$. With $k_{inf} = 0.018\text{ min}^{-1}$ and $k_{cool} = 0.320\text{ }^{\circ}\text{C/min}$, equilibrium steady state is $T_{ss} = T_{amb} - 17.78\text{ }^{\circ}\text{C}$. For the chamber to reach or maintain $T \le 5.0\text{ }^{\circ}\text{C}$, $T_{amb}$ must not exceed $22.78\text{ }^{\circ}\text{C}$. When ambient heat waves reach $28.55\text{ }^{\circ}\text{C}$, heat intrusion at $5.0\text{ }^{\circ}\text{C}$ ($0.424\text{ }^{\circ}\text{C/min}$) physically exceeds maximum refrigeration ($0.320\text{ }^{\circ}\text{C/min}$), rendering single-interval compliance physically impossible.
 - **Reconciliation of Pareto Points (48) vs. Scenarios (23 Feasible / 27 Fallbacks):** The **48 Pareto points** reported in single-run pipeline verification ([`scripts/end_to_end.py`](file:///C:/Projects/Cold-Chain-Ai/scripts/end_to_end.py)) denote the cardinality of non-dominated setpoints on the trade-off surface for a single invocation at $T = 3.93\text{ }^{\circ}\text{C}$. The **23 feasible / 27 emergency fallback scenarios** denote the aggregate classification across 50 separate 15-minute operating regimes sampled across the multi-day dataset.
-- **Empirical Policy Comparison vs Global Optimality:** The 479-minute total violation duration represents the **experimentally observed reduction** (-17.8% relative to baseline's 583 minutes) achieved across 50 tested operational regimes by invoking emergency full cooling ($u=1.0, d=1.0$) whenever $T_0 > 5.0\text{ }^{\circ}\text{C}$. This is an empirically evaluated control policy result, not a formal mathematical proof of global trajectory-level optimality.
+- **Empirical Policy Comparison vs Global Optimality:** The continuous 449.14-minute total violation duration (and 479 discrete sample points) represents the **experimentally observed reduction** (-17.32% continuous duration / -17.84% discrete samples relative to baseline) achieved across 50 tested operational regimes by invoking emergency full cooling ($u=1.0, d=1.0$) whenever $T_0 > 5.0\text{ }^{\circ}\text{C}$. This is an empirically evaluated control policy result, not a formal mathematical proof of global trajectory-level optimality.
 - **Safety Categories Across Scenarios:**
   - **Genuine Compliance (23 Scenarios):** In scenarios initializing within the safe envelope ($T_0 \le 5.0\text{ }^{\circ}\text{C}$), proactive pre-cooling keeps the chamber continuously within the Food limit ($0.0\text{--}5.0\text{ }^{\circ}\text{C}$).
   - **Reduced Warming (Scenario 4 & Severe Heatwaves):** When ambient infiltration exceeds cooling capacity ($T_{amb} > 22.78\text{ }^{\circ}\text{C}$), maximum cooling limits the rate of temperature rise without achieving containment below $5.0\text{ }^{\circ}\text{C}$.
