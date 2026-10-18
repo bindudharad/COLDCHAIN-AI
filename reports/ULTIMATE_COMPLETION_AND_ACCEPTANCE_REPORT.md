@@ -159,6 +159,11 @@ Where $\Delta t_{\text{hours}} = 15/60 = 0.25\text{ h}$, $u \in [0.1, 1.0]$, $d 
      - **Method D (Ablation, Risk-Disabled):** Breached $5.0^\circ\text{C}$ in **49 of 50 scenarios (98.0%)**, accumulating **133.42 minutes** of continuous excursion (mean peak: $5.662^\circ\text{C}$, energy: $7.5108\text{ kWh}$).
      - **Method C (Forecast-Guided NSGA-II):** Breached in only **22 of 50 scenarios (44.0%)**, accumulating **61.49 minutes** of continuous excursion (mean peak: $4.952^\circ\text{C}$, energy: $9.6268\text{ kWh}$).
      - **Defensible Scientific Contribution:** Forecast guidance avoided **27 breach incidents (-54.0 percentage points)** and saved **71.93 minutes of continuous breach exposure (-53.9%)**, maintaining an average **$0.710^\circ\text{C}$ cooler peak**, at an energy cost of $+2.1160\text{ kWh}$ (+28.2%). This rigorously validates why proactive precooling is valuable in real cold-chain logistics.
+    - **Multi-Seed Statistical Reproducibility Benchmark (10 Seeds, 500 Scenarios, reports/multiseed_robustness_report.md):**
+      - **Method D (Ablation):** Breached in **490 / 500 scenarios (98.00% ± 1.78%)**, accumulating **1,243.26 minutes** total excursion (mean: 2.487 min / scenario, energy: 76.1312 kWh).
+      - **Method C (Guided):** Breached in **170 / 500 scenarios (34.00% ± 6.50%)**, accumulating **430.04 minutes** total excursion (mean: 0.860 min / scenario, energy: 97.6455 kWh).
+      - **Empirical Advantage:** Absolute breach reduction of **64.00 percentage points (pp)** [95% Cluster Bootstrap: 58.60, 69.00 pp], relative breach count reduction of **65.31%**, and continuous excursion duration saved of **813.21 minutes (-65.41%)** across 500 scenarios (saving 1.626 min / scenario).
+      - **Statistical Significance:** Non-parametric Wilcoxon signed-rank test on independent seed clusters: W = 55.0, p = 0.00098 (one-sided) / p = 0.00195 (two-sided). All 10 seeds independently favored Method C (2^-10).
 5. **Pre-Optimization Physical Controllability Classification:**
    All 50 operational scenarios are categorized before optimization into four physical controllability regimes based on thermodynamic plant parameters ($k_{\text{inf}}=0.018\text{ min}^{-1}, k_{\text{cool}}=0.320\text{ }^\circ\text{C/min}$, yielding maximum mechanical lift $\Delta T_{\text{lift}} = 17.78\text{ }^\circ\text{C}$ and critical ambient limit $T_{\text{amb}} \le 22.78\text{ }^\circ\text{C}$):
    - `INITIALLY_COMPLIANT_FEASIBLE`: **19 scenarios (38.0%)** (Scenarios 10–18, 29–36, 48, 49) — chamber starts safe; 19 achieve nominal compliance; 18 achieve buffered compliance.
@@ -215,9 +220,9 @@ Vectorized streaming throughput benchmarked on Windows (`reports/scalability_ben
 .\.venv\Scripts\python.exe manage.py check
 # Result: System check identified no issues (0 silenced).
 
-# 2. Automated Test Suite (87 Tests)
-.\.venv\Scripts\python.exe manage.py test --no-input
-# Result: Ran 87 tests in 10.238s — OK
+# 2. Automated Test Suite (100 Tests)
+.\.venv\Scripts\python.exe manage.py test tests --no-input
+# Result: Ran 100 tests in 13.393s — OK
 
 # 3. Real Forecasting Benchmark
 .\.venv\Scripts\python.exe scripts/evaluate_real_forecasting.py

@@ -305,6 +305,26 @@ Evaluated via [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chai
 - **The 19 vs 18 Resolution:** 19 scenarios achieve nominal feasibility ($0.0 \le T \le 5.0^\circ\text{C}$); 18 scenarios achieve buffered feasibility ($0.2 \le T \le 4.8^\circ\text{C}$). Scenario 18 starts at $4.8713^\circ\text{C}$ and ambient $23.08^\circ\text{C}$; max cooling keeps peak at $4.974^\circ\text{C} \le 5.0^\circ\text{C}$ (nominally feasible), but it starts above $4.80^\circ\text{C}$ so it cannot be buffered feasible.
 - **Scenario 14 Fix:** Scenario 14 ($T_0=3.8131^\circ\text{C}, T_{\text{amb}}=19.6426^\circ\text{C}$) selects $u=0.940, d=0.680$, with peak $4.774^\circ\text{C} \le 4.80^\circ\text{C}$, min $3.653^\circ\text{C} \ge 0.20^\circ\text{C}$, satisfying both nominal and buffered constraints with zero excursion minutes.
 - **Empirical Policy Comparison vs Global Optimality:** The continuous 446.40-minute total violation duration (and 476 discrete sample points) represents the **experimentally observed reduction** (-17.83% continuous duration / -18.35% discrete samples relative to baseline) achieved across 50 tested operational regimes by invoking emergency full cooling ($u=1.0, d=1.0$) whenever physical constraints preclude safe containment.
+
+### 6. Out-of-Sample Disturbance Robustness & Multi-Seed Empirical Verification
+While Method C and Method D achieve identical 0.0-minute excursion under undisturbed nominal conditions (because both maintain T <= 5.0 °C on controllable regimes and both command identical u=1.0, d=1.0 emergency overrides on uncontrollable regimes), they exhibit radically different resilience when unexpected operational disturbances occur:
+
+1. **Seed 101 Exploratory Disturbance Study (50 Regimes, reports/disturbance_robustness_report.md):**
+   - **Method D (Risk=0):** 49/50 breaches (98.0%), 133.42 min total excursion duration, 5.662°C mean peak, 7.5108 kWh modeled energy.
+   - **Method C (Forecast-Guided):** 22/50 breaches (44.0%), 61.49 min total excursion duration, 4.952°C mean peak, 9.6268 kWh modeled energy.
+   - **Advantage:** 27 fewer breaches (-54.0 pp), 71.93 min saved (-53.9%), 0.710°C deeper thermal margin, +2.1160 kWh (+28.2%) energy trade-off.
+
+2. **Multi-Seed Statistical Reproducibility Benchmark (10 Seeds, 500 Scenarios, reports/multiseed_robustness_report.md):**
+   - Evaluated across 10 independent seeds [201..210] with 50 matched scenarios per seed (500 matched pairs total).
+   - **Standardized Granularity Breakdown:**
+     - **Aggregate Totals (N=500):** Method D accumulated **1,243.26 min** excursion and **76.1312 kWh** modeled energy across 490 breaches (98.00%). Method C accumulated **430.04 min** excursion and **97.6455 kWh** modeled energy across 170 breaches (34.00%), saving **813.21 minutes (-65.41%)** and preventing **320 breach episodes**.
+     - **Per-Seed Totals (N=50):** Method D averaged 49.0 ± 1.2 breaches, 124.33 ± 9.47 min excursion, and 7.6131 ± 0.082 kWh energy. Method C averaged 17.0 ± 4.3 breaches, 43.00 ± 8.60 min excursion, and 9.7645 ± 0.112 kWh energy. Mean excursion saved per 50-scenario batch is **81.32 ± 5.49 min (-65.6%)**.
+     - **Per-Scenario Means (15-min):** Method D averaged **2.487 min / scenario** and **0.1523 kWh / scenario**. Method C averaged **0.860 min / scenario** and **0.1953 kWh / scenario**, saving **1.626 min / scenario** at an energy investment of **+0.0430 kWh / scenario**.
+   - **Statistical Significance & Cluster-Robust Uncertainty:**
+     - Absolute breach reduction: **64.00 percentage points (pp)** [t-95% CI: 57.67, 70.33 pp; Seed-Aware Cluster Bootstrap 95% CI: **58.60, 69.00 pp**].
+     - Relative breach count reduction: **65.31% pooled** (seed mean: **65.34% ± 6.48%**).
+     - Non-parametric Wilcoxon signed-rank test on independent seed clusters: W = 55.0, one-sided p = 0.000977 (p ≈ 0.00098), two-sided p = 0.001953 (p ≈ 0.00195).
+
 ---
 
 ## SECTION E — Energy & Thermodynamic Modeling Findings
@@ -359,7 +379,7 @@ Evaluated via [`scripts/run_scalability_benchmark.py`](file:///C:/Projects/Cold-
 
 ### 2. Comprehensive Test Suite
 - Command: `.\.venv\Scripts\python.exe manage.py test`
-- Output: `Ran 76 tests in 10.426s — OK` (39 workflow/regression + 27 feature, contract & event detection tests + 6 temporal split purging tests + 3 model architecture & provenance tests + 1 closed-loop forecast-coupling test)
+- Output: `Ran 100 tests in 13.393s — OK` (39 workflow/regression + 27 feature, contract & event detection tests + 6 temporal split purging tests + 3 model architecture & provenance tests + 1 closed-loop forecast-coupling test)
 - Coverage includes:
   - Database telemetry ingestion and sensor models (`ColdChainTelemetry`, `OptimizationRecommendation`, `SensorProfile`)
   - Feature engineering and window extraction (`core_preprocessing.py`)

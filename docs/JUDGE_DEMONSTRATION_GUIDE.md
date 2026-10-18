@@ -78,7 +78,7 @@ Open your browser (Edge or Chrome) to:
 
 ### Stage 1: System Overview & Physical Telemetry
 1. **Overview Page (`/`):**
-   - View top-level system health: 98 passing tests, clean Django check, active sensors, and model status.
+   - View top-level system health: 100 passing tests, clean Django check, active sensors, and model status.
    - Point out the architectural disclaimer: Electrical energy values are analytically modeled from thermal ODEs; physical 3-phase CT sub-metering is marked as externally blocked awaiting hardware commissioning.
 2. **Dashboard (`/dashboard`):**
    - Click the **Sensor Dropdown** at the top right to switch between `CC-01` (nominal food compartment) and `CC-02` (deep chiller).
@@ -112,9 +112,9 @@ Open your browser (Edge or Chrome) to:
    - **Method C (Forecast-Guided NSGA-II):** 446.40 excursion min (476 discrete violating samples).
    - **Improvement:** 17.83% continuous time reduction (saving 96.85 scenario-minutes) and 18.35% discrete violation reduction.
 10. **The Forecast Guidance Contribution (Method C vs Method D):**
-    - Explain the out-of-sample disturbance study (`reports/disturbance_robustness_report.md`):
-    - Without forecast guidance (Method D ablation), the optimizer rides right at the edge ($4.79^\circ\text{C}$) to minimize energy, resulting in a **98.0% breach rate** under unforeseen delivery door openings and heat surges.
-    - With MAD-TCN forecast guidance (Method C), proactive precooling maintains an average $\mathbf{0.71^\circ\text{C}}$ cooler peak, reducing disturbance breach incidents from **98.0% down to 44.0%** and cutting excursion duration by **53.9%**!
+    - Explain the out-of-sample disturbance studies:
+      - **Seed 101 Study (`reports/disturbance_robustness_report.md`):** Under unforeseen delivery door openings and heat surges, Method D breached in 49/50 scenarios (98.0%), while Method C breached in only 22/50 (44.0%), saving 53.9% of excursion time.
+      - **Multi-Seed Reproducibility Benchmark (`reports/multiseed_robustness_report.md`):** Across 10 independent seeds (500 matched scenarios), Method C reduced breach incidence by **64.00 percentage points** ($98.00\% \to 34.00\%$, 95% Cluster Bootstrap CI: [58.60, 69.00] pp), cutting total excursion time by **65.41%** (saving 813.21 min). Wilcoxon signed-rank test on independent seed batches: $W = 55.0, p = 0.00098$ (one-sided) / $p = 0.00195$ (two-sided).
 
 ### Stage 5: Reports, Upload, and Quality Verification
 11. **Reports View (`/reports`):**
@@ -132,8 +132,8 @@ Run these commands in PowerShell from `C:\Projects\Cold-Chain-Ai` to demonstrate
 # 1. Verify Django System Integrity (0 issues)
 .\.venv\Scripts\python.exe backend/manage.py check
 
-# 2. Run Full Backend Unit & Regression Suite (98 tests passing)
-.\.venv\Scripts\python.exe backend/manage.py test --no-input
+# 2. Run Full Backend Unit & Regression Suite (100 tests passing)
+.\.venv\Scripts\python.exe backend/manage.py test tests --no-input
 
 # 3. Verify Scenario 14 Safety & Buffer Invariance (6 tests passing)
 .\.venv\Scripts\python.exe backend/manage.py test tests.test_scenario14_safety
@@ -141,13 +141,16 @@ Run these commands in PowerShell from `C:\Projects\Cold-Chain-Ai` to demonstrate
 # 4. Run Hohenheim SENSOR03 Real-Data Forecasting Benchmark
 .\.venv\Scripts\python.exe backend/scripts/evaluate_real_forecasting.py
 
-# 5. Run Out-of-Sample Disturbance Robustness Study
+# 5. Run Single-Seed Out-of-Sample Disturbance Study (Seed 101)
 .\.venv\Scripts\python.exe backend/scripts/evaluate_disturbance_robustness.py
 
-# 6. Run 1-Million Record Big Data Scalability Profiling
+# 6. Run Multi-Seed Statistical Reproducibility Benchmark (10 Seeds, 500 Scenarios)
+.\.venv\Scripts\python.exe backend/scripts/evaluate_multiseed_robustness.py
+
+# 7. Run 1-Million Record Big Data Scalability Profiling
 .\.venv\Scripts\python.exe backend/scripts/run_scalability_benchmark.py
 
-# 7. Run Full-Stack Playwright Headless Browser Audit (12/12 routes HTTP 200, 0 console errors)
+# 8. Run Full-Stack Playwright Headless Browser Audit (12/12 routes HTTP 200, 0 console errors)
 .\.venv\Scripts\python.exe backend/scripts/verify_react_frontend.py
 ```
 
@@ -159,6 +162,7 @@ Run these commands in PowerShell from `C:\Projects\Cold-Chain-Ai` to demonstrate
 | :--- | :--- | :--- |
 | **Forecasting** | Genuine MAD-TCN with dilated causal convolutions achieves $\text{MAE} = 0.2637^\circ\text{C}$ on Hohenheim SENSOR03 physical telemetry. | Telemetry is from a single cold-room trace; multi-facility cross-validation is pending external datasets. |
 | **Optimization** | Dynamic 16-point forward trajectory simulation enforces hard $0.2^\circ\text{C}$ safety buffer throughout all 15 operational minutes. | In 31 of 50 scenarios, extreme ambient infiltration ($T_{\text{amb}} > 22.78^\circ\text{C}$) or initial breach exceeds physical cooling capacity, triggering emergency fallback. |
-| **Ablation & Value** | MAD-TCN guidance reduces unforeseen disturbance breach rates from 98.0% to 44.0% and cuts excursion duration by 53.9%. | In static undisturbed scenarios, forecast guidance alters actuator settings to build thermal headroom at the cost of $+10.9\%$ modeled energy. |
+| **Ablation & Value** | MAD-TCN guidance reduces unforeseen disturbance breach rates by 64.00 pp ($98.00\% \to 34.00\%$) and cuts excursion duration by 65.41% across 500 matched scenarios ($p=0.00098$). | In static undisturbed scenarios, forecast guidance alters actuator settings to build thermal headroom at the cost of $+10.9\%$ modeled energy; under disturbance, headroom investment requires $+28.26\%$ modeled energy. |
 | **Energy** | Transparent first-principles thermodynamic lift formulation cleanly separates instantaneous power (kW) from interval energy (kWh). | Values are modeled simulation outputs; physical 3-phase hardware sub-metering is awaiting on-site commissioning. |
-| **Full-Stack** | Clean physical separation of Django backend and React 19 frontend; 98 unit tests; 12/12 Playwright browser routes verified. | Production deployment requires production WSGI/Reverse proxy configuration (e.g. Nginx/Gunicorn). |
+| **Full-Stack** | Clean physical separation of Django backend and React 18 frontend; 100 unit tests; 12/12 Playwright browser routes verified. | Production deployment requires production WSGI/Reverse proxy configuration (e.g. Nginx/Gunicorn). |
+

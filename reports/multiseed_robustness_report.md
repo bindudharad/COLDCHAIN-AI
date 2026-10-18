@@ -54,17 +54,57 @@ This audit evaluates whether the observed resilience advantage of forecast-guide
 
 ---
 
-## 3. Audit of Statistical Assumptions & Independence
+## 3. Standardized Metric Granularity & Aggregation Breakdown
 
-### A. Intra-Seed Correlation vs. Cluster-Robust Inference
-- **The Assumption:** Pooled 500-scenario tests (such as standard McNemar's test) treat each operational scenario pair as a mutually independent Bernoulli trial.
-- **The Reality:** Scenarios generated under the same pseudo-random seed share generator state. If latent clustering exists within a seed batch, scenario-level standard errors can be artificially small, producing astronomically small $p$-values (e.g. McNemar's $\chi^2 = 318.00, p = 3.943e-71$).
-- **The Defensible Resolution:** We explicitly compute **seed-level cluster inference**:
-  1. Each seed ($N=10$) is treated as an independent experimental unit.
-  2. The non-parametric **Wilcoxon signed-rank test** ($W = 55.0, p = 0.00098$) confirms significant superiority across all seeds without relying on asymptotic normality or scenario i.i.d. assumptions.
-  3. **Seed-Aware Cluster Bootstrap** ($B=10,000$) resamples the 10 seed clusters with replacement, confirming that the 95% Confidence Interval for breach rate reduction is robustly bounded between **58.60 pp and 69.00 pp**.
+To ensure transparency across reporting levels, the table below provides the metrics across three explicit granularities:
+1. **Aggregate Totals across all 500 Scenarios** (cumulative impact over 7,500 simulated operating minutes).
+2. **Per-Seed Totals across 50 Scenarios** (mean and spread across the 10 evaluation batches).
+3. **Per-Scenario Means per 15-Minute Operational Interval** (normalized impact per single dispatch decision).
 
-### B. Matched Pairs Contingency Table (500 Scenarios)
+| Metric Category | Evaluation Level / Granularity | Method D (Ablation, Risk=0) | Method C (Forecast-Guided) | Delta / Observed Advantage |
+| :--- | :--- | :---: | :---: | :---: |
+| **Breach Incident Count** | Aggregate Total (N=500) | **490 / 500 (98.0%)** | **170 / 500 (34.0%)** | **-320 breach episodes avoided** |
+| | Per-Seed Total (N=50) | 49.0 ± 1.2 breaches | 17.0 ± 4.3 breaches | -32.0 ± 4.2 breaches / seed |
+| **Breach Rate** | Absolute Metric (%) | 98.00% [96.22%, 99.78%] | 34.00% [27.50%, 40.50%] | **-64.00 pp** [-70.33, -57.67 pp] |
+| | Relative Reduction (%) | Reference (0.0%) | — | **-65.31% pooled** (-65.34% ± 6.48% seed mean) |
+| **Continuous Excursion** | Aggregate Total (N=500) | **1,243.26 min** | **430.04 min** | **-813.21 min saved (-65.41%)** |
+| | Per-Seed Total (N=50) | 124.33 ± 9.47 min | 43.00 ± 8.60 min | **-81.32 ± 5.49 min saved (-65.6%)** |
+| | Per-Scenario Mean (15-min) | **2.487 min / scenario** | **0.860 min / scenario** | **-1.626 min / scenario saved** |
+| **Peak Chamber Temp** | Scenario Average (°C) | 5.605°C [5.570, 5.640°C] | 4.865°C [4.817, 4.914°C] | **-0.739°C cooler headroom** |
+| **Modeled Electrical Energy**| Aggregate Total (N=500) | **76.1312 kWh** | **97.6455 kWh** | **+21.5143 kWh (+28.26%)** |
+| | Per-Seed Total (N=50) | 7.6131 ± 0.082 kWh | 9.7645 ± 0.112 kWh | **+2.1514 ± 0.060 kWh (+28.26%)** |
+| | Per-Scenario Mean (15-min) | **0.1523 kWh / scenario** | **0.1953 kWh / scenario** | **+0.0430 kWh / scenario premium** |
+
+> **Denominators & Formulas Note**:
+> - **Percentage Points (pp)**: Absolute difference between breach proportions: $\text{Rate}_D - \text{Rate}_C = 98.00\% - 34.00\% = \mathbf{64.00\text{ pp}}$.
+> - **Relative Percentage Reduction (%)**: Proportional reduction in breach count relative to Method D baseline: $\frac{490 - 170}{490} \times 100\% = \mathbf{65.31\%}$.
+> - **Excursion Duration**: In a 15-minute operational interval, the maximum possible continuous excursion duration is 15.0 minutes. A seed total of 124.33 min reflects the cumulative sum across 50 scenarios ($124.33 / 50 = 2.487\text{ min/scenario}$ on average).
+
+---
+
+## 4. Audit of Statistical Assumptions & Hypothesis Testing
+
+### A. Formal Statistical Hypothesis & Test Specifications
+- **Unit of Analysis**: Seed-level cluster outcomes ($N=10$ independent random seed experiments `[201..210]`).
+- **Paired Variable**: $\Delta \text{Breach Rate}_s = \text{Breach Rate}_{D, s} - \text{Breach Rate}_{C, s}$ for $s \in \{1 \dots 10\}$.
+- **Hypotheses for Non-Parametric Wilcoxon Signed-Rank Test**:
+  - **Null Hypothesis ($H_0$)**: The median paired difference between Method D and Method C breach rates is $\le 0$ (Method C provides no resilience advantage or worsens breach rates).
+  - **Alternative Hypothesis ($H_1$)**: The median paired difference is $> 0$ (one-sided: Method C reduces breach rates).
+- **Test Statistic**: $W = 55.0$ (sum of ranks for positive differences; the maximum possible value for $N=10$).
+- **Significance ($p$-value)**:
+  - **One-Sided $p$-value**: $p = \left(\frac{1}{2}\right)^{10} = \frac{1}{1024} = \mathbf{0.0009766} \approx \mathbf{0.00098}$.
+  - **Two-Sided $p$-value**: $p = 2 \times 0.0009766 = \mathbf{0.001953} \approx \mathbf{0.00195}$.
+  - Both one-sided and two-sided specifications reject $H_0$ with high statistical confidence ($\alpha = 0.01$).
+
+### B. Intra-Seed Correlation vs. Cluster-Robust Bootstrap
+- **The Assumption**: Pooled 500-scenario tests (such as standard McNemar's test) treat each operational scenario pair as a mutually independent Bernoulli trial.
+- **The Reality**: Scenarios generated under the same pseudo-random seed share generator state. If latent clustering exists within a seed batch, scenario-level standard errors can be artificially small, producing astronomically small $p$-values (e.g. McNemar's $\chi^2 = 318.00, p = 3.943 \times 10^{-71}$).
+- **The Defensible Resolution**: We report **Seed-Aware Cluster Bootstrap** ($B=10,000$ resamples of the 10 independent seed units), confirming that:
+  - Absolute breach rate reduction is robustly bounded between **58.60 pp and 69.00 pp** (95% Bootstrap CI).
+  - Relative breach reduction is robustly bounded between **59.85% and 70.42%** (95% Bootstrap CI).
+  - Excursion duration saved is robustly bounded between **76.82 min and 85.78 min** per 50 scenarios.
+
+### C. Matched Pairs Contingency Table (500 Scenarios)
 
 | Condition | Method D Maintained Safety ($T \le 5.0^\circ\text{C}$) | Method D Suffered Breach ($T > 5.0^\circ\text{C}$) | Marginal Total |
 | :--- | :---: | :---: | :---: |
@@ -72,11 +112,12 @@ This audit evaluates whether the observed resilience advantage of forecast-guide
 | **Method C Suffered Breach ($T > 5.0^\circ\text{C}$)** | **0** (D Safe, C Breached: 0.0%) | **170** (Concordant Breach: 34.0%) | **170** (34.0%) |
 | **Marginal Total** | **10** (2.0%) | **490** (98.0%) | **500** (100.0%) |
 
-- **Discordant Pairs:** In **320 cases (64.0%)**, Method C prevented a breach that Method D suffered. In **0 cases (0.0%)** did Method D prevent a breach that Method C suffered.
+- **Discordant Pairs**: In **320 cases (64.0%)**, Method C prevented a breach that Method D suffered. In **0 cases (0.0%)** did Method D prevent a breach that Method C suffered.
+- **Pooled McNemar's Test**: With continuity correction, $\chi^2 = \frac{(|320 - 0| - 1)^2}{320 + 0} = 318.00$ ($p = 3.943 \times 10^{-71}$). We note that this assumes mutual scenario-level independence; the seed-level Wilcoxon test ($p = 0.00098$) serves as the primary cluster-robust test.
 
 ---
 
-## 4. Verification of Comparison Fairness & Mechanism
+## 5. Verification of Comparison Fairness & Mechanism
 
 1. **Information Isolation:**
    - At decision time $t_0$, the optimizer receives only current telemetry $(T_0, T_{\text{amb}})$ and the predicted forecast risk.
@@ -89,7 +130,7 @@ This audit evaluates whether the observed resilience advantage of forecast-guide
 
 ---
 
-## 5. Explicit Limitations & Physical Validity Boundaries
+## 6. Explicit Limitations & Physical Validity Boundaries
 
 1. **Simulated Disturbances:** All heat shocks (door events, ambient surges, condenser fouling) are simulated via ordinary differential equations ($k_{\text{inf}}=0.018, k_{\text{cool}}=0.32$). Live environmental chamber validation remains an external dependency.
 2. **Modeled Electrical Energy:** Energy demand is calculated via first-principles thermodynamic lift formulas ($P_{\text{elec}} \times 0.25\text{ h}$). It is not measured on a physical utility power meter.
