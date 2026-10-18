@@ -45,11 +45,17 @@ Both metrics are fully verified and reported side-by-side below.
 | **Duration Below 0.0 °C (Freezing)** | 0.00 minutes | 0.00 minutes | 0.00 minutes | **0.00 minutes** |
 | **Duration Reduction vs Method A** | Reference (0.0 min) | -17.73 min (-3.26%) | -39.75 min (-7.32%) | **-94.12 min (-17.32%)** |
 | **Duration Reduction vs Method D** | N/A | N/A | Reference (0.0 min) | **-54.37 min (-10.80%)** |
-| **Discrete Violating Samples (out of 800)**| **583 samples** | 565 samples | 544 samples | **479 samples (-104 samples, -17.84%)** |
-| **Total Energy (kWh / 50 cycles)** | **7.0321 kWh** | 8.2164 kWh (+16.8%) | 8.7924 kWh (+25.0%) | **10.4838 kWh (+49.1%)** |
+| **Discrete Samples Above 5.0 °C** | 583 samples | 565 samples | 544 samples | **479 samples** |
+| **Discrete Samples Below 0.0 °C** | 0 samples | 0 samples | 0 samples | **0 samples** |
+| **Total Violating Samples (out of 800)**| **583 samples** | 565 samples | 544 samples | **479 samples (-104 samples, -17.84%)** |
+| **Sample Reduction vs Method A** | Reference (0 samples) | -18 samples (-3.09%) | -39 samples (-6.69%) | **-104 samples (-17.84%)** |
+| **Sample Reduction vs Method D** | N/A | N/A | Reference (0 samples) | **-65 samples (-11.95%)** |
+| **Scenarios with Upper-Bound Breach (>5.0 °C)** | 50 / 50 | 50 / 50 | 50 / 50 | **32 / 50** |
+| **Scenarios with Lower-Bound Breach (<0.0 °C)** | 0 / 50 | 0 / 50 | 0 / 50 | **0 / 50** |
+| **Complete Trajectory Feasible (0–5 °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **18 / 50 (36%)** |
+| **Total Energy (kWh / 750 min)** | **7.0321 kWh** | 8.2164 kWh (+16.8%) | 8.7924 kWh (+25.0%) | **10.4838 kWh (+49.1%)** |
 | **Mean Electrical Power Demand (kW)** | 0.563 kW | 0.657 kW | 0.703 kW | **0.839 kW** |
 | **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 84.2% | **99.1%** |
-| **Complete Trajectory Feasible (0–5 °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **18 / 50 (36%)** |
 | **Ordinary Algebraic Feasible Scenarios** | N/A | N/A | 23 / 50 (46.0%) | **23 / 50 (46.0%)** |
 | **Emergency Fallback Overrides** | 0 | 0 | 27 / 50 (54.0%) | **27 / 50 (54.0%)** |
 | **Decision Bounds Compliance** | 100% | 100% | 100% | **100%** |

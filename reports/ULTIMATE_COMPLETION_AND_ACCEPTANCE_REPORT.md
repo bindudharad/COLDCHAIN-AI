@@ -31,7 +31,7 @@ All claims, architectures, empirical metrics, confidence intervals, and optimiza
    - Clarified **Discrete Point Sample Counts**: Across all 800 discrete sample points, Method C achieves **479 violating samples** down from **583 samples** in Method A (-104 samples / -17.84%) and **544 samples** in Method D (-65 samples / -11.95%).
    - Clarified that **100% of candidate solutions satisfy decision-variable bounds**, but strict full-trajectory thermal containment ($\max(T) \le 5.0\text{ }^\circ\text{C}$) is achieved in **18/50 scenarios (36.0%)**. In 27 scenarios (54.0%), severe pre-breached initial conditions ($T_0$ up to 9.31 °C) or extreme ambient infiltration trigger an **Emergency Fallback Override** ($u=1.0, d=1.0$). These emergency interventions arrest catastrophic warming but are strictly documented as overrides rather than ordinary feasible solutions.
    - Refuted claims of "100% trajectory feasibility": only **18/50 scenarios (36.0%)** remain within $[0.0, 5.0]$ °C over the complete simulated trajectory because 31/50 scenarios started pre-breached ($T_0 > 5.0$ °C, up to 9.31 °C). 27 scenarios engage Emergency Fallbacks ($u=1.0, d=1.0$), which mitigate warming rate but cannot achieve single-interval compliance.
-5. **System Rigor & Security:** **83/83 automated unit and regression tests passing** in 10.3s, 0 Django check issues, 12/12 frontend routes rendering with full interactivity, and authenticated per-device IoT hardware authorization with spoofing degradation.
+5. **System Rigor & Security:** **85/85 automated unit and regression tests passing** in 10.65s, 0 Django check issues, 12/12 frontend routes rendering with full interactivity, and authenticated per-device IoT hardware authorization with spoofing degradation.
 
 ---
 
@@ -127,13 +127,18 @@ Where $\Delta t_{\text{hours}} = 15/60 = 0.25\text{ h}$, $u \in [0.1, 1.0]$, $d 
 | **Total Energy (kWh / 750 min)** | **7.0321 kWh** | 8.2164 kWh (+16.8%) | 8.7924 kWh (+25.0%) | **10.4838 kWh (+49.1%)** |
 | **Mean Power Demand (kW)** | 0.563 kW | 0.657 kW | 0.703 kW | 0.839 kW |
 | **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 84.2% | 99.1% |
-| **Continuous Excursion Duration** | **543.25 minutes** (72.4%) | 525.52 minutes (70.1%) | 503.51 minutes (67.1%) | **449.14 minutes (59.9%)** |
+| **Duration Above 5.0 °C** | **543.25 min** | 525.52 min | 503.51 min | **449.14 min** |
+| **Duration Below 0.0 °C (Freezing)** | 0.00 min | 0.00 min | 0.00 min | **0.00 min** |
+| **Combined Excursion Duration** | **543.25 minutes** (72.4%) | 525.52 minutes (70.1%) | 503.51 minutes (67.1%) | **449.14 minutes (59.9%)** |
 | **Duration Reduction vs Method A** | Reference (0.0 min) | -17.73 min (-3.26%) | -39.74 min (-7.32%) | **-94.12 min (-17.32%)** |
 | **Duration Reduction vs Method D** | N/A | N/A | Reference (0.0 min) | **-54.37 min (-10.80%)** |
-| **Discrete Violating Samples (out of 800)** | **583 samples** (72.9%) | 565 samples (70.6%) | 544 samples (68.0%) | **479 samples (59.9%)** |
+| **Discrete Samples Above 5.0 °C** | 583 samples | 565 samples | 544 samples | **479 samples** |
+| **Discrete Samples Below 0.0 °C** | 0 samples | 0 samples | 0 samples | **0 samples** |
+| **Total Violating Samples (out of 800)** | **583 samples** (72.9%) | 565 samples (70.6%) | 544 samples (68.0%) | **479 samples (59.9%)** |
 | **Sample Reduction vs Method A** | Reference (0 samples) | -18 samples (-3.09%) | -39 samples (-6.69%) | **-104 samples (-17.84%)** |
 | **Sample Reduction vs Method D** | N/A | N/A | Reference (0 samples) | **-65 samples (-11.95%)** |
-| **Scenarios with Any Breach ($> 5.0$ °C)** | 50 / 50 | 50 / 50 | 50 / 50 | 32 / 50 |
+| **Scenarios with Upper-Bound Breach (>5.0 °C)** | 50 / 50 | 50 / 50 | 50 / 50 | **32 / 50** |
+| **Scenarios with Lower-Bound Breach (<0.0 °C)** | 0 / 50 | 0 / 50 | 0 / 50 | **0 / 50** |
 | **Complete Trajectory Feasible ($0–5$ °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **18 / 50 (36.0%)** |
 | **Ordinary Algebraic Feasible Scenarios** | N/A | N/A | 23 / 50 (46.0%) | **23 / 50 (46.0%)** |
 | **Emergency Fallback Overrides** | 0 | 0 | 27 / 50 (54.0%) | **27 / 50 (54.0%)** |
@@ -197,9 +202,9 @@ Vectorized streaming throughput benchmarked on Windows (`reports/scalability_ben
 .\.venv\Scripts\python.exe manage.py check
 # Result: System check identified no issues (0 silenced).
 
-# 2. Automated Test Suite (81 Tests)
+# 2. Automated Test Suite (85 Tests)
 .\.venv\Scripts\python.exe manage.py test --no-input
-# Result: Ran 81 tests in 11.542s — OK
+# Result: Ran 85 tests in 10.65s — OK
 
 # 3. Real Forecasting Benchmark
 .\.venv\Scripts\python.exe scripts/evaluate_real_forecasting.py
@@ -235,4 +240,4 @@ The following limitations are explicitly documented for scientific integrity:
 ### **VERDICT: PASS WITH LIMITATIONS**
 
 **Justification:**  
-All software modules, machine learning architectures, statistical split purges, forecast-guided multi-objective optimization algorithms, database models, IoT authorization defenses, browser control views, and automated test suites are fully implemented, verified, passing (**81/81 tests**), and reproducible in the local environment. Genuine MAD-TCN convolutional forecasting is operational and benchmarked on real physical data. The optimization feasibility contradiction has been reconciled and proven with empirical ablation evidence. The verdict is designated **PASS WITH LIMITATIONS** to truthfully reflect that live industrial hardware deployment requires physical on-site commissioning, electrical wattmeter calibration, and multi-chamber field trials.
+All software modules, machine learning architectures, statistical split purges, forecast-guided multi-objective optimization algorithms, database models, IoT authorization defenses, browser control views, and automated test suites are fully implemented, verified, passing (**85/85 tests**), and reproducible in the local environment. Genuine MAD-TCN convolutional forecasting is operational and benchmarked on real physical data. The optimization feasibility contradiction has been reconciled and proven with empirical ablation evidence. The verdict is designated **PASS WITH LIMITATIONS** to truthfully reflect that live industrial hardware deployment requires physical on-site commissioning, electrical wattmeter calibration, and multi-chamber field trials.

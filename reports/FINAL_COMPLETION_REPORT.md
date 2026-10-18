@@ -16,7 +16,7 @@ The COLDCHAIN-AI platform has reached a fully operational, scientifically audite
 ```
 COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 ├─ [IMPLEMENTED]          Django 5.2 backend, 12 browser views, SQLite DB, REST APIs
-├─ [AUTOMATED-TESTED]     83/83 passing unit/integration tests (10.30s), 0 Django check issues
+├─ [AUTOMATED-TESTED]     85/85 passing unit/integration tests (10.65s), 0 Django check issues
 ├─ [EXPERIMENTALLY-VALID] 590-sample MAD-TCN vs Persistence test split, 50-scenario NSGA-II comparison
 ├─ [SIMULATED]            Calibrated thermodynamic chamber physics (k_inf=0.018, k_cool=0.32)
 └─ [PHYSICALLY-AWAITING]  Factory-floor RS485/Modbus RTU, 3-phase CT wattmeters, industrial PLC relays
@@ -25,7 +25,7 @@ COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 | Operational Layer | System Maturity Label | Verification Evidence |
 | :--- | :--- | :--- |
 | **Backend & Web Application** | `IMPLEMENTED` | Django 5.2.18, 12 template routes, RESTful API endpoints |
-| **Automated Test Suite** | `AUTOMATED_TESTED` | 81 test cases passing in 11.54s (`manage.py test`) |
+| **Automated Test Suite** | `AUTOMATED_TESTED` | 85 test cases passing in 10.65s (`manage.py test`) |
 | **End-to-End Control Pipeline** | `AUTOMATED_TESTED` | `scripts/end_to_end.py` executes full pipeline to `PASS` |
 | **Interactive UI & Visuals** | `AUTOMATED_TESTED` | 12/12 routes return HTTP 200 with 0 console errors in Microsoft Edge Playwright |
 | **Forecasting Model (MAD-TCN)** | `EXPERIMENTALLY_VALIDATED` | Evaluated on common 590-sequence test split (15-step MAE = 0.1672 °C, t+15 MAE = 0.1597 °C) |
@@ -237,14 +237,26 @@ Evaluated via [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chai
 | Parameter / Metric | Method A (Reactive Baseline) | Method B (Unconstrained) | Method D (Risk-Disabled Ablation) | Method C (Audited Constrained NSGA-II) | Relative Impact (Method C vs Baseline A) |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Control Approach** | Fixed hysteresis band ($T_0$) | Unchecked prediction ($n_{c}=0$) | Constrained, blind ($fr=0.0$) | Constrained + Forecast Guidance + Emergency | Predictive pre-cooling + Override |
-| **Total Energy (kWh / 750 min)** | **7.0321 kWh** (0.563 kW) | 8.2164 kWh (0.657 kW) | 8.7924 kWh (0.703 kW) | **10.4838 kWh** (0.839 kW) | Controlled energy investment for safety (+49.1%) |
+| **Total Energy (kWh / 750 min)** | **7.0321 kWh** | 8.2164 kWh (+16.8%) | 8.7924 kWh (+25.0%) | **10.4838 kWh (+49.1%)** | Controlled energy investment for safety |
+| **Mean Power Demand (kW)** | 0.563 kW | 0.657 kW | 0.703 kW | 0.839 kW | Average power over 12.5 h |
 | **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 84.2% | 99.1% | Active cooling under heat infiltration |
-| **Continuous Excursion Duration** | **543.25 minutes** (72.4%) | 525.52 minutes (70.1%) | 503.51 minutes (67.1%) | **449.14 minutes (59.9%)** | **-94.12 min (-17.32% vs Reactive); -54.37 min (-10.80% vs Ablation)** |
-| **Discrete Violating Samples** | **583 samples** (72.9%) | 565 samples (70.6%) | 544 samples (68.0%) | **479 samples (59.9%)** | **-104 samples (-17.84% vs Reactive); -65 samples (-11.95% vs Ablation)** |
-| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Breached) | 9.36 °C | **9.36 °C** (Contained via Max Cooling) | Lowest observed peak under tested policies |
-| **Trajectory Feasible ($0–5$ °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **18 / 50 (36.0%)** | Evaluated on full 16-point minute-by-minute trajectory |
+| **Duration Above 5.0 °C** | **543.25 min** | 525.52 min | 503.51 min | **449.14 min** | Upper-bound continuous breach |
+| **Duration Below 0.0 °C (Freezing)** | 0.00 min | 0.00 min | 0.00 min | **0.00 min** | Zero sub-zero freezing breaches |
+| **Combined Excursion Duration** | **543.25 minutes** (72.4%) | 525.52 minutes (70.1%) | 503.51 minutes (67.1%) | **449.14 minutes (59.9%)** | **-94.12 min (-17.32% vs Reactive); -54.37 min (-10.80% vs Ablation)** |
+| **Duration Reduction vs Method A** | Reference (0.0 min) | -17.73 min (-3.26%) | -39.74 min (-7.32%) | **-94.12 min (-17.32%)** | True physical duration saved |
+| **Duration Reduction vs Method D** | N/A | N/A | Reference (0.0 min) | **-54.37 min (-10.80%)** | Impact of forecast risk guidance |
+| **Discrete Samples Above 5.0 °C** | 583 samples | 565 samples | 544 samples | **479 samples** | Point samples exceeding upper limit |
+| **Discrete Samples Below 0.0 °C** | 0 samples | 0 samples | 0 samples | **0 samples** | Point samples below freezing |
+| **Total Violating Samples (out of 800)** | **583 samples** (72.9%) | 565 samples (70.6%) | 544 samples (68.0%) | **479 samples (59.9%)** | **-104 samples (-17.84% vs Reactive); -65 samples (-11.95% vs Ablation)** |
+| **Sample Reduction vs Method A** | Reference (0 samples) | -18 samples (-3.09%) | -39 samples (-6.69%) | **-104 samples (-17.84%)** | Discrete breach observations saved |
+| **Sample Reduction vs Method D** | N/A | N/A | Reference (0 samples) | **-65 samples (-11.95%)** | Discrete breach observations saved |
+| **Scenarios Upper Breach (>5.0 °C)** | 50 / 50 | 50 / 50 | 50 / 50 | **32 / 50** | Scenarios with at least one $T > 5.0$ °C sample |
+| **Scenarios Lower Breach (<0.0 °C)** | 0 / 50 | 0 / 50 | 0 / 50 | **0 / 50** | Scenarios with at least one $T < 0.0$ °C sample |
+| **Trajectory Feasible (Entire 0–5 °C Band)**| 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **18 / 50 (36.0%)** | Evaluated on full 16-point minute-by-minute trajectory |
 | **Ordinary Algebraic Feasible** | 50 (Unchecked) | 0 (Unchecked) | 23 Scenarios (46.0%) | **23 Scenarios (46.0%)** | Evaluated strictly against $G_1, G_2 \le 0$ |
 | **Emergency Fallback Overrides** | 0 | 0 | 27 Scenarios (54.0%) | **27 Scenarios (54.0%)** | Explicitly labeled emergency actions |
+| **Decision Variable Bounds Compliance**| 100% | 100% | 100% | **100%** | Decision variables within physical ranges |
+| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Breached) | 9.36 °C | **9.36 °C** (Contained via Max Cooling) | Lowest observed peak under tested policies |
 | **Mean Optimization Runtime** | ~0.1 ms | 223.1 ms | 220.3 ms | 204.3 ms | Real-Time Industrial Feasibility |
 
 ### 2. Time Grid Audit & Dual Accounting Resolution

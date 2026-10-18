@@ -847,26 +847,78 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
         self.assertEqual(dur_tot, 0.0)
 
         # Case 2: Trajectory completely above hi_limit (all at 6.0 °C across 16 samples)
-        hist_breached = [6.0] * 16
-        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_breached, hi_limit=5.0, lo_limit=0.0)
+        hist_breached_hi = [6.0] * 16
+        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_breached_hi, hi_limit=5.0, lo_limit=0.0)
         self.assertEqual(dur_hi, 15.0, "16 endpoint samples spanning 15 intervals must yield exactly 15.0 elapsed minutes")
+        self.assertEqual(dur_lo, 0.0)
         self.assertEqual(dur_tot, 15.0)
 
-        # Case 3: Single crossing within interval [0, 1] from 4.0 °C to 6.0 °C
+        # Case 3: Trajectory completely below lo_limit (all at -2.0 °C across 16 samples)
+        hist_breached_lo = [-2.0] * 16
+        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_breached_lo, hi_limit=5.0, lo_limit=0.0)
+        self.assertEqual(dur_hi, 0.0)
+        self.assertEqual(dur_lo, 15.0, "16 endpoint samples below 0 °C must yield exactly 15.0 elapsed minutes")
+        self.assertEqual(dur_tot, 15.0)
+
+        # Case 4: Rising crossing of 5.0 °C in interval [0, 1] from 4.0 °C to 6.0 °C
         # Crossing at t* = (5.0 - 4.0) / (6.0 - 4.0) = 0.5. Duration above = 0.5 min.
-        hist_crossing = [4.0, 6.0] + [6.0] * 14
-        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_crossing, hi_limit=5.0, lo_limit=0.0)
+        hist_crossing_hi_rise = [4.0, 6.0] + [6.0] * 14
+        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_crossing_hi_rise, hi_limit=5.0, lo_limit=0.0)
         self.assertAlmostEqual(dur_hi, 14.5, places=4, msg="0.5 min in interval 0 plus 14 full intervals = 14.5 min")
+        self.assertEqual(dur_lo, 0.0)
         self.assertAlmostEqual(dur_tot, 14.5, places=4)
 
-        # Case 4: Temporary spike and recovery within 2 intervals: 4.0 -> 6.0 -> 4.0, rest 4.0
-        # Interval 0: 4.0 -> 6.0, crosses at t* = 0.5 -> 0.5 min above
-        # Interval 1: 6.0 -> 4.0, crosses at t* = 0.5 -> 0.5 min above
-        # Total time above = 1.0 min
-        hist_spike = [4.0, 6.0, 4.0] + [4.0] * 13
-        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_spike, hi_limit=5.0, lo_limit=0.0)
-        self.assertAlmostEqual(dur_hi, 1.0, places=4)
-        self.assertAlmostEqual(dur_tot, 1.0, places=4)
+        # Case 5: Falling crossing of 5.0 °C in interval [0, 1] from 6.0 °C to 4.0 °C
+        # Crossing at t* = (6.0 - 5.0) / (6.0 - 4.0) = 0.5. Duration above = 0.5 min.
+        hist_crossing_hi_fall = [6.0, 4.0] + [4.0] * 14
+        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_crossing_hi_fall, hi_limit=5.0, lo_limit=0.0)
+        self.assertAlmostEqual(dur_hi, 0.5, places=4)
+        self.assertEqual(dur_lo, 0.0)
+        self.assertAlmostEqual(dur_tot, 0.5, places=4)
+
+        # Case 6: Falling crossing of 0.0 °C in interval [0, 1] from 1.0 °C to -1.0 °C
+        # Crossing at t* = (0.0 - 1.0) / (-1.0 - 1.0) = 0.5. Duration below = 0.5 min.
+        hist_crossing_lo_fall = [1.0, -1.0] + [-1.0] * 14
+        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_crossing_lo_fall, hi_limit=5.0, lo_limit=0.0)
+        self.assertEqual(dur_hi, 0.0)
+        self.assertAlmostEqual(dur_lo, 14.5, places=4)
+        self.assertAlmostEqual(dur_tot, 14.5, places=4)
+
+        # Case 7: Rising crossing of 0.0 °C in interval [0, 1] from -1.0 °C to 1.0 °C
+        # Crossing at t* = (0.0 - (-1.0)) / (1.0 - (-1.0)) = 0.5. Duration below = 0.5 min.
+        hist_crossing_lo_rise = [-1.0, 1.0] + [1.0] * 14
+        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_crossing_lo_rise, hi_limit=5.0, lo_limit=0.0)
+        self.assertEqual(dur_hi, 0.0)
+        self.assertAlmostEqual(dur_lo, 0.5, places=4)
+        self.assertAlmostEqual(dur_tot, 0.5, places=4)
+
+        # Case 8: Starting outside boundary and later returning inside:
+        # Starts at 7.0 °C, falls to 4.0 °C in interval 0, stays at 4.0 °C.
+        # Crossing at t* = (7.0 - 5.0) / (7.0 - 4.0) = 2/3 = 0.6667 min.
+        hist_start_outside = [7.0, 4.0] + [4.0] * 14
+        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_start_outside, hi_limit=5.0, lo_limit=0.0)
+        self.assertAlmostEqual(dur_hi, 2.0 / 3.0, places=4)
+        self.assertEqual(dur_lo, 0.0)
+        self.assertAlmostEqual(dur_tot, 2.0 / 3.0, places=4)
+
+        # Case 9: Temperatures exactly equal to boundary (5.0 °C throughout and 0.0 °C throughout)
+        self.assertEqual(compute_continuous_excursion_duration([5.0] * 16), (0.0, 0.0, 0.0))
+        self.assertEqual(compute_continuous_excursion_duration([0.0] * 16), (0.0, 0.0, 0.0))
+
+        # Case 10: Combined high- and low-temperature excursion in separate intervals
+        # Interval 0: -1.0 -> 1.0 (crosses at 0.0 -> 0.5 min below)
+        # Interval 1: 1.0 -> 4.0 (safe within [0, 5])
+        # Interval 2: 4.0 -> 6.0 (crosses 5.0 at t*=0.5 -> 0.5 min above)
+        # Interval 3: 6.0 -> 3.0 (crosses 5.0 at t*=1/3 -> 1/3 min above)
+        # Total above = 0.5 + 1/3 = 5/6 min; Total below = 0.5 min; Combined = 4/3 min.
+        hist_combined = [-1.0, 1.0, 4.0, 6.0] + [3.0] * 12
+        dur_hi, dur_lo, dur_tot = compute_continuous_excursion_duration(hist_combined, hi_limit=5.0, lo_limit=0.0)
+        self.assertAlmostEqual(dur_hi, 5.0 / 6.0, places=4)
+        self.assertAlmostEqual(dur_lo, 0.5, places=4)
+        self.assertAlmostEqual(dur_tot, 4.0 / 3.0, places=4)
+
+        # Case 11: Zero elapsed time between observations (dt = 0.0)
+        self.assertEqual(compute_continuous_excursion_duration(hist_combined, dt=0.0), (0.0, 0.0, 0.0))
 
     def test_time_grid_intervals_vs_endpoints_accounting(self):
         """Verify that 16 endpoint samples represent exactly 15 elapsed minutes and do not double-count t=0."""
@@ -883,6 +935,108 @@ class OptimizationFeasibilityAndAblationTests(TestCase):
         self.assertEqual(num_intervals, 15, "16 point samples must span exactly 15 operational intervals")
         total_time_50_scenarios = 50 * num_intervals
         self.assertEqual(total_time_50_scenarios, 750, "50 scenarios must span exactly 750 elapsed operating minutes (12.5 h)")
+
+    def test_per_scenario_raw_data_and_aggregate_consistency(self):
+        """Verify perfect mathematical consistency between raw per-scenario records and aggregate summary."""
+        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        self.assertTrue(json_path.exists())
+
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        scenarios = data['per_scenario_results']['scenarios']
+        self.assertEqual(len(scenarios), 50)
+
+        # Check total operating time: 50 * 15 = 750 min = 12.5 h
+        self.assertEqual(data['total_elapsed_minutes'], 750.0)
+        self.assertEqual(data['total_operating_hours'], 12.5)
+        self.assertEqual(data['total_discrete_samples'], 800)
+
+        methods_map = [
+            ('method_a', 'method_a_reactive'),
+            ('method_b', 'method_b_legacy'),
+            ('method_d', 'method_d_ablation_risk_disabled'),
+            ('method_c', 'method_c_audited_forecast_guided'),
+        ]
+
+        for s_key, m_key in methods_map:
+            m_summary = data[m_key]
+
+            # 1. Sum of violating samples from per-scenario records matches summary
+            raw_pts = sum(s[s_key]['violating_samples_count'] for s in scenarios)
+            self.assertEqual(raw_pts, m_summary['violating_samples_count'])
+
+            # 2. Sum of upper/lower samples matches summary
+            raw_above = sum(s[s_key]['samples_above_hi_count'] for s in scenarios)
+            raw_below = sum(s[s_key]['samples_below_lo_count'] for s in scenarios)
+            self.assertEqual(raw_above, m_summary['samples_above_hi_count'])
+            self.assertEqual(raw_below, m_summary['samples_below_lo_count'])
+            self.assertEqual(raw_above + raw_below, raw_pts)
+
+            # 3. Sum of continuous durations matches summary
+            raw_dur = sum(s[s_key]['continuous_excursion_duration_min'] for s in scenarios)
+            self.assertAlmostEqual(raw_dur, m_summary['continuous_excursion_duration_min'], places=1)
+
+            # 4. Sum of energy matches summary
+            raw_energy = sum(s[s_key]['energy_kwh'] for s in scenarios)
+            self.assertAlmostEqual(raw_energy, m_summary['total_energy_kwh'], places=3)
+
+            # 5. Average electrical power demand = Total Energy / 12.5 hours
+            expected_power = round(m_summary['total_energy_kwh'] / 12.5, 3)
+            self.assertEqual(m_summary['mean_power_kw'], expected_power)
+
+            # 6. Scenarios satisfying both bounds
+            feasible_scenarios = sum(1 for s in scenarios if s[s_key]['is_trajectory_feasible'])
+            self.assertEqual(feasible_scenarios, m_summary['trajectory_feasible_count'])
+
+    def test_recomputed_percentage_reductions_agreement(self):
+        """Verify exact agreement between raw recomputed percentage reductions and reported figures."""
+        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        pts_a = data['method_a_reactive']['violating_samples_count']  # 583
+        pts_d = data['method_d_ablation_risk_disabled']['violating_samples_count']  # 544
+        pts_c = data['method_c_audited_forecast_guided']['violating_samples_count']  # 479
+
+        dur_a = data['method_a_reactive']['continuous_excursion_duration_min']  # 543.25
+        dur_d = data['method_d_ablation_risk_disabled']['continuous_excursion_duration_min']  # 503.51
+        dur_c = data['method_c_audited_forecast_guided']['continuous_excursion_duration_min']  # 449.14
+
+        # Recomputed discrete point sample reductions
+        recomputed_sample_vs_a_pct = ((pts_c - pts_a) / pts_a) * 100
+        recomputed_sample_vs_d_pct = ((pts_c - pts_d) / pts_d) * 100
+        self.assertEqual(pts_c - pts_a, -104)
+        self.assertEqual(pts_c - pts_d, -65)
+        self.assertAlmostEqual(recomputed_sample_vs_a_pct, -17.84, places=2)
+        self.assertAlmostEqual(recomputed_sample_vs_d_pct, -11.95, places=2)
+
+        # Recomputed continuous physical duration reductions
+        recomputed_dur_vs_a_pct = ((dur_c - dur_a) / dur_a) * 100
+        recomputed_dur_vs_d_pct = ((dur_c - dur_d) / dur_d) * 100
+        self.assertAlmostEqual(dur_c - dur_a, -94.11, places=1)
+        self.assertAlmostEqual(dur_c - dur_d, -54.37, places=1)
+        self.assertAlmostEqual(recomputed_dur_vs_a_pct, -17.32, places=2)
+        self.assertAlmostEqual(recomputed_dur_vs_d_pct, -10.80, places=2)
+
+        # Assert reported values match recomputed values
+        c_vs_a = data['method_c_audited_forecast_guided']['vs_method_a']
+        c_vs_d = data['method_c_audited_forecast_guided']['vs_method_d_ablation']
+
+        self.assertEqual(c_vs_a['sample_reduction_count'], -104)
+        self.assertAlmostEqual(c_vs_a['sample_change_pct'], -17.84, places=2)
+        self.assertAlmostEqual(c_vs_a['duration_reduction_min'], -94.12, places=1)
+        self.assertAlmostEqual(c_vs_a['duration_change_pct'], -17.32, places=2)
+
+        self.assertEqual(c_vs_d['sample_reduction_count'], -65)
+        self.assertAlmostEqual(c_vs_d['sample_change_pct'], -11.95, places=2)
+        self.assertAlmostEqual(c_vs_d['duration_reduction_min'], -54.37, places=1)
+        self.assertAlmostEqual(c_vs_d['duration_change_pct'], -10.80, places=2)
+
+        # Assert strict distinction: continuous duration reduction is 17.32%, discrete point reduction is 17.84%
+        self.assertNotEqual(c_vs_a['duration_change_pct'], c_vs_a['sample_change_pct'],
+                            msg="Continuous excursion duration (-17.32%) must be strictly distinguished from discrete sample count (-17.84%)")
+
 
 
 
