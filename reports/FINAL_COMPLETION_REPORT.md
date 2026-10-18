@@ -16,7 +16,7 @@ The COLDCHAIN-AI platform has reached a fully operational, scientifically audite
 ```
 COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 ├─ [IMPLEMENTED]          Django 5.2 backend, 12 browser views, SQLite DB, REST APIs
-├─ [AUTOMATED-TESTED]     76/76 passing unit/integration tests (10.43s), 0 Django check issues
+├─ [AUTOMATED-TESTED]     81/81 passing unit/integration tests (11.54s), 0 Django check issues
 ├─ [EXPERIMENTALLY-VALID] 590-sample MAD-TCN vs Persistence test split, 50-scenario NSGA-II comparison
 ├─ [SIMULATED]            Calibrated thermodynamic chamber physics (k_inf=0.018, k_cool=0.32)
 └─ [PHYSICALLY-AWAITING]  Factory-floor RS485/Modbus RTU, 3-phase CT wattmeters, industrial PLC relays
@@ -25,7 +25,7 @@ COLDCHAIN-AI SYSTEM MATURITY SPECTRUM
 | Operational Layer | System Maturity Label | Verification Evidence |
 | :--- | :--- | :--- |
 | **Backend & Web Application** | `IMPLEMENTED` | Django 5.2.18, 12 template routes, RESTful API endpoints |
-| **Automated Test Suite** | `AUTOMATED_TESTED` | 72 test cases passing in 9.69s (`manage.py test`) |
+| **Automated Test Suite** | `AUTOMATED_TESTED` | 81 test cases passing in 11.54s (`manage.py test`) |
 | **End-to-End Control Pipeline** | `AUTOMATED_TESTED` | `scripts/end_to_end.py` executes full pipeline to `PASS` |
 | **Interactive UI & Visuals** | `AUTOMATED_TESTED` | 12/12 routes return HTTP 200 with 0 console errors in Microsoft Edge Playwright |
 | **Forecasting Model (MAD-TCN)** | `EXPERIMENTALLY_VALIDATED` | Evaluated on common 590-sequence test split (15-step MAE = 0.1672 °C, t+15 MAE = 0.1597 °C) |
@@ -234,16 +234,17 @@ Evaluated via [`scripts/compare_nsga2_methods.py`](file:///C:/Projects/Cold-Chai
 
 ### 1. Comparative Results Table
 
-| Parameter / Metric | Method A (Reactive Baseline) | Method B (Unconstrained) | Method C (Audited Constrained NSGA-II) | Relative Impact (Method C vs Baseline A) |
-| :--- | :--- | :--- | :--- | :--- |
-| **Control Approach** | Fixed hysteresis band ($T_0$) | Unchecked prediction ($n_{c}=0$) | Constrained + Emergency Override | Predictive pre-cooling + Override |
-| **Mean Energy / 15-min Cycle** | **0.5625 kWh** | 0.6574 kWh (+16.9%) | **0.8387 kWh** (+49.1%) | Controlled energy investment for safety |
-| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 99.1% | Active cooling under heat infiltration |
-| **Total Violation Duration** | **583 minutes** | 565 minutes (-3.1%) | **479 minutes** (-17.8%) | **-17.8% Total Excursions (-104 min)** |
-| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Breached) | **9.36 °C** (Contained via Max Cooling) | Lowest observed peak under tested policies |
-| **Ordinary Feasible Selections** | 50 (Unchecked) | 0 (Unchecked) | **23 Scenarios (100% Feasible)** | Evaluated strictly against $G_1, G_2 \le 0$ |
-| **Emergency Fallback Overrides** | 0 | 0 | **27 Scenarios (Infeasible Override)**| Explicitly labeled emergency actions |
-| **Mean Optimization Runtime** | ~0.1 ms | 214.5 ms | 199.0 ms | Real-Time Industrial Feasibility |
+| Parameter / Metric | Method A (Reactive Baseline) | Method B (Unconstrained) | Method D (Risk-Disabled Ablation) | Method C (Audited Constrained NSGA-II) | Relative Impact (Method C vs Baseline A) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Control Approach** | Fixed hysteresis band ($T_0$) | Unchecked prediction ($n_{c}=0$) | Constrained, blind ($fr=0.0$) | Constrained + Forecast Guidance + Emergency | Predictive pre-cooling + Override |
+| **Mean Energy / 15-min Cycle** | **0.1406 kWh** (0.563 kW) | 0.1643 kWh (0.657 kW) | 0.1758 kWh (0.703 kW) | **0.2097 kWh** (0.839 kW) | Controlled energy investment for safety |
+| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 84.2% | 99.1% | Active cooling under heat infiltration |
+| **Total Violation Duration** | **583 minutes** | 565 minutes (-3.1%) | 544 minutes (-6.7%) | **479 minutes** (-17.8%) | **-17.8% vs Reactive (-104 min); -12.0% vs Ablation (-65 min)** |
+| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Breached) | 9.36 °C | **9.36 °C** (Contained via Max Cooling) | Lowest observed peak under tested policies |
+| **Trajectory Feasible ($0–5$ °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **18 / 50 (36.0%)** | Evaluated on full 16-point minute-by-minute trajectory |
+| **Ordinary Algebraic Feasible** | 50 (Unchecked) | 0 (Unchecked) | 23 Scenarios (46.0%) | **23 Scenarios (46.0%)** | Evaluated strictly against $G_1, G_2 \le 0$ |
+| **Emergency Fallback Overrides** | 0 | 0 | 27 Scenarios (54.0%) | **27 Scenarios (54.0%)** | Explicitly labeled emergency actions |
+| **Mean Optimization Runtime** | ~0.1 ms | 214.5 ms | 195.2 ms | 199.0 ms | Real-Time Industrial Feasibility |
 
 ### 2. Physical Trajectory Safety Analysis & Scenario 4 Dynamics
 - **Initial Breach Dynamics:** In 27 of 50 scenarios, the chamber starts in pre-existing breach ($T_0 = 5.16\text{--}9.31\text{ }^{\circ}\text{C}$). With physical cooling capacity limited to $k_{cool} = 0.32\text{ }^{\circ}\text{C/min}$ (maximum $4.8\text{ }^{\circ}\text{C}$ drop across 15 min under zero infiltration), returning to the Food envelope ($\le 4.8\text{ }^{\circ}\text{C}$) in a single 15-minute interval is physically impossible.

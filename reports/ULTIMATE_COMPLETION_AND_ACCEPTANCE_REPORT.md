@@ -4,8 +4,8 @@
 **Tagline:** Recover reliable forecasts, optimize refrigeration energy, protect temperature-sensitive storage, and explain every recommendation using verifiable evidence.  
 **Repository Working Directory:** `C:\Projects\Cold-Chain-Ai`  
 **Git Branch:** `completion-dev`  
-**Authoritative Acceptance Commit:** `801f7c3` (Scientific Audit: integrate genuine real-data MAD-TCN forecaster, verify forecast-guided NSGA-II coupling, expand test suite to 76 tests, and generate ultimate acceptance report)  
-**Evaluation Date:** October 16, 2026  
+**Authoritative Acceptance Commit:** `PENDING_COMMIT`  
+**Evaluation Date:** October 18, 2026  
 **Document Status:** FINAL AUTHORITATIVE RELEASE GATE REPORT  
 
 ---
@@ -20,10 +20,16 @@ All claims, architectures, empirical metrics, confidence intervals, and optimiza
 
 ### Core Verified Outcomes:
 1. **Unified MAD-TCN Architecture:** Verified both the genuine Multi-scale Adaptive Dilated Temporal Convolutional Network (`MADTCN` with multi-dilation causal convolutions $d \in \{1, 2, 4, 8\}$, adaptive gating, and residual skip connections) and the 3-layer Dense MLP baseline on the 7,037-observation physical Hohenheim SENSOR03 continuous series.
-2. **Superior Physical Forecasting Performance:** Genuine MAD-TCN achieves **$\text{MAE} = 0.2637\text{ }^\circ\text{C}$** ($R^2 = 0.3876$), outperforming both the Dense MLP baseline ($\text{MAE} = 0.2710\text{ }^\circ\text{C}$) and Naive Persistence ($\text{MAE} = 0.3048\text{ }^\circ\text{C}$) over 1,045 held-out test sequences.
+2. **Defensible Physical Forecasting Benchmark:** 
+   - **Ridge Autoregression AR(60)** achieves the lowest point-forecast error ($\text{MAE} = 0.2528\text{ }^\circ\text{C}$, $\text{RMSE} = 0.3549\text{ }^\circ\text{C}$, $R^2 = 0.4178$).
+   - **Genuine MAD-TCN** achieves $\text{MAE} = 0.2637\text{ }^\circ\text{C}$, $\text{RMSE} = 0.3639\text{ }^\circ\text{C}$, $R^2 = 0.3876$, outperforming both the Dense MLP baseline ($\text{MAE} = 0.2710\text{ }^\circ\text{C}$) and Naive Persistence ($\text{MAE} = 0.3048\text{ }^\circ\text{C}$).
+   - **False Alarm Suppression:** At the severe 6.5 °C excursion threshold, Genuine MAD-TCN triggers only **2.8 clustered false alarm episodes/day** (vs 8.3/day for Ridge AR and 4.1/day for Dense MLP), proving the benefit of dilated convolutional filtering.
 3. **Rigorous Temporal Split Boundary Purging:** 28 boundary sequences (14 train-val, 14 val-test) purged to guarantee mathematically disjoint target timestamp sets ($\mathcal{T}_{\text{train}} \cap \mathcal{T}_{\text{val}} = \emptyset$ and $\mathcal{T}_{\text{val}} \cap \mathcal{T}_{\text{test}} = \emptyset$). Target overlap is asserted to be exactly zero.
-4. **Closed-Loop Forecast-Guided NSGA-II Coupling:** Proved that predicted thermal breach trajectories directly amplify the optimizer's risk penalty objective ($F[0]$), shifting Pareto trade-offs toward active refrigeration and reducing temperature violations by **479 minutes (-17.8%)** compared to reactive thermostatic baselines.
-5. **System Rigor & Security:** 76/76 automated unit and regression tests passing in 10.4s, 0 Django check issues, 12/12 frontend routes rendering with full interactivity, and authenticated per-device IoT hardware authorization with spoofing degradation.
+4. **Reconciled Optimization Feasibility & 479-Minute Metric:** 
+   - Clarified that **479 minutes** is the *resulting total excursion duration* of Method C across 50 matched scenarios (800 simulated minutes), down from **583 minutes** in the Reactive Baseline (Method A) and **544 minutes** in the Risk-Disabled Ablation (Method D).
+   - The empirical reduction is **104 minutes (-17.84%)** against reactive control, and **65 minutes (-11.95%)** against unguided optimization.
+   - Refuted claims of "100% trajectory feasibility": only **18/50 scenarios (36.0%)** remain within $[0.0, 5.0]$ °C over the complete simulated trajectory because 31/50 scenarios started pre-breached ($T_0 > 5.0$ °C, up to 9.31 °C). 27 scenarios engage Emergency Fallbacks ($u=1.0, d=1.0$), which mitigate warming rate but cannot achieve single-interval compliance.
+5. **System Rigor & Security:** **81/81 automated unit and regression tests passing** in 11.5s, 0 Django check issues, 12/12 frontend routes rendering with full interactivity, and authenticated per-device IoT hardware authorization with spoofing degradation.
 
 ---
 
@@ -35,8 +41,8 @@ All claims, architectures, empirical metrics, confidence intervals, and optimiza
 | **Sequence Construction** | Lookback $W=60$, Horizon $H=15$, boundary purging | `scripts/evaluate_real_forecasting.py:create_purged_chronological_splits` | `TemporalSplitPurgingTestCase` | **PASS**: Zero target timestamp overlaps; 4,859 train, 1,030 val, 1,045 test | 28 boundary sequences purged (0.40%). |
 | **MAD-TCN Forecasting** | Multi-scale dilated causal Conv1d ($d=1,2,4,8$), gating, residuals | `ml/mad_tcn.py:MADTCN` | `test_mad_tcn_genuine_convolutional_architecture` | **PASS**: Genuine Conv1d layers with dilations > 1; $\text{MAE} = 0.2637\text{ }^\circ\text{C}$ on real data | Univariate model trained on temperature; ambient/equipment state unrecorded in raw physical files. |
 | **Risk Estimation** | Profile boundary evaluation, time-to-breach, exceedance magnitude | `core.py:risk` | `test_forecast_changes_alter_risk_and_optimization_decisions` | **PASS**: Risk scores scale monotonically with predicted excursion magnitude | Evaluates against configured profile (e.g. 5.0 °C); does not certify product-specific shelf-life. |
-| **NSGA-II Optimization** | Multi-objective Pareto frontier (risk vs energy), thermodynamic simulator | `optimization/nsga2_optimizer.py:run_nsga2` | `scripts/compare_nsga2_methods.py` | **PASS**: 100% feasible Pareto solutions; 479 min violation reduction (-17.8%) | Thermodynamic chamber model is calibrated simulation; physical compressor relays awaiting commissioning. |
-| **Energy Estimation** | Power in kW, energy in kWh contracts | `core.py:estimated_power_kw`, `estimated_energy_kwh` | `EnergyUnitContractTestCase` | **PASS**: Dimensionally verified contracts and unit tests | Estimated via thermodynamic formula; physical 3-phase CT power meter unattached. |
+| **NSGA-II Optimization** | Multi-objective Pareto frontier (risk vs energy), thermodynamic simulator | `optimization/nsga2_optimizer.py:run_nsga2` | `scripts/compare_nsga2_methods.py` | **PASS**: 104 min (-17.84%) reduction vs reactive; 65 min (-11.95%) reduction vs ablation | Thermodynamic chamber model is calibrated simulation; physical compressor relays awaiting commissioning. |
+| **Energy Estimation** | Power in kW, energy in kWh contracts | `core.py:estimated_power_kw`, `estimated_energy_kwh` | `EnergyUnitContractTestCase`, `test_energy_unit_consistency_in_optimizer` | **PASS**: Dimensionally verified contracts; 15-min interval energy $E = P \cdot 0.25$ | Estimated via thermodynamic formula; physical 3-phase CT power meter unattached. |
 | **IoT Authentication** | Per-device token validation, hardware key registry | `apps/monitoring/views.py`, `config/settings.py` | `PerDeviceIoTAuthTestCase` | **PASS**: Spoofing attempts degraded to `SIMULATION` provenance | Production requires external HSM/vault token storage. |
 | **Web Control Center** | 12 interactive dashboard views, dynamic sensor selection | `templates/*.html`, `apps/monitoring/views.py` | `scripts/verify_browser_pages.py` | **PASS**: 12/12 HTTP 200, zero console errors, dynamic JS dropdowns functional | Requires live network deployment behind Nginx/Gunicorn. |
 
@@ -99,39 +105,50 @@ Output Tensor: [Batch, Horizon=15]
 
 ---
 
-## 4. Future-Risk & NSGA-II Coupling
+## 4. Reconciled Optimization Feasibility & Multi-Method Benchmark
 
-### Mathematical Formulation:
-In `optimization/nsga2_optimizer.py`:
+### A. Formulation Reconciliation:
+In [`optimization/nsga2_optimizer.py`](file:///C:/Projects/Cold-Chain-Ai/optimization/nsga2_optimizer.py):
 $$\begin{aligned}
 \text{Minimize } & F_1(u, d, \delta) = \max(0, \text{FutureRisk} - 3.2 u d \cdot 8.0) + 25.0 \cdot \max(0, T_{\text{exp}} - T_{\text{max}}) + 25.0 \cdot \max(0, T_{\text{min}} - T_{\text{exp}}) \\
-\text{Minimize } & F_2(u, d, \delta) = \left(0.25 + 0.035 \max(T_{\text{amb}} - T_{\text{cur}}, 0)\right) \cdot (0.35 + 0.65 u) \cdot d \\
+\text{Minimize } & F_2(u, d, \delta) = \left(0.25 + 0.035 \max(T_{\text{amb}} - T_{\text{cur}}, 0)\right) \cdot (0.35 + 0.65 u) \cdot d \cdot \Delta t_{\text{hours}} \\
 \text{Subject to } & G_1: T_{\text{exp}} \le T_{\text{max}} - \text{buffer} \\
 & G_2: T_{\text{exp}} \ge T_{\text{min}} + \text{buffer}
 \end{aligned}$$
+Where $\Delta t_{\text{hours}} = 15/60 = 0.25\text{ h}$, $u \in [0.1, 1.0]$, $d \in [0.2, 1.0]$, $\delta \in [-0.5, 0.5]\text{ }^\circ\text{C}$, and $T_{\text{exp}} = T_{\text{cur}} + 0.18 \max(T_{\text{amb}} - T_{\text{cur}}, 0) - 3.2 u d + \delta$.
 
-Where $u \in [0.1, 1.0]$ is cooling intensity, $d \in [0.2, 1.0]$ is compressor duty cycle, $\delta \in [-0.5, 0.5]\text{ }^\circ\text{C}$ is setpoint offset, and expected stabilized temperature is:
-$$T_{\text{exp}} = T_{\text{cur}} + 0.18 \max(T_{\text{amb}} - T_{\text{cur}}, 0) - 3.2 u d + \delta$$
+### B. Controlled 50-Scenario Comparative Benchmark (800 Simulated Minutes):
 
-### Controlled 50-Scenario Ablation Results:
+| Metric | Method A: Reactive Baseline | Method B: Legacy Unconstrained | Method D: Risk-Disabled Ablation | Method C: Forecast-Guided NSGA-II |
+| :--- | :---: | :---: | :---: | :---: |
+| **Lookahead Foresight** | None ($T_0$ only) | MAD-TCN Risk (Unconstrained) | None ($fr = 0.0$, Constrained) | **Genuine MAD-TCN Risk (Constrained)** |
+| **Total Energy (kWh / 50 cycles)** | **7.0321 kWh** | 8.2164 kWh (+16.8%) | 8.7924 kWh (+25.0%) | **10.4838 kWh (+49.1%)** |
+| **Mean Power Demand (kW)** | 0.563 kW | 0.657 kW | 0.703 kW | 0.839 kW |
+| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 84.2% | 99.1% |
+| **Total Temperature Violations** | **583 minutes** | 565 minutes | 544 minutes | **479 minutes (-17.84%)** |
+| **Violation Reduction vs Method A** | Reference (0 min) | -18 min (-3.09%) | -39 min (-6.69%) | **-104 min (-17.84%)** |
+| **Violation Reduction vs Method D** | N/A | N/A | Reference (0 min) | **-65 min (-11.95%)** |
+| **Scenarios with Any Breach ($> 5.0$ °C)** | 50 / 50 | 50 / 50 | 50 / 50 | 32 / 50 |
+| **Complete Trajectory Feasible ($0–5$ °C)** | 0 / 50 (0.0%) | 0 / 50 (0.0%) | 0 / 50 (0.0%) | **18 / 50 (36.0%)** |
+| **Ordinary Algebraic Feasible Scenarios** | N/A | N/A | 23 / 50 (46.0%) | **23 / 50 (46.0%)** |
+| **Emergency Fallback Overrides** | 0 | 0 | 27 / 50 (54.0%) | **27 / 50 (54.0%)** |
+| **Decision Variable Bounds Compliance** | 100% | 100% | 100% | **100%** |
+| **Maximum Trajectory Temperature** | 10.72 °C | 9.36 °C | 9.36 °C | **9.36 °C** |
 
-| Optimization Strategy | Mean Energy (kWh) | Mean Duty Cycle (%) | Total Violation (min) | Feasible Pareto Count | Maximum Temp (°C) |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Method A (Reactive Thermostatic Baseline)** | 0.5625 kWh | 77.6% | 583 min | 1 (Fixed Setpoint) | 10.72 °C |
-| **Method B (Unconstrained Legacy Formulation)** | 0.6574 kWh (+16.9%) | 77.3% | 565 min (-3.1%) | 48.0 (Unchecked) | 9.36 °C |
-| **Method C (Audited Constrained NSGA-II)** | **0.8387 kWh (+49.1%)** | **99.1%** | **479 min (-17.8%)** | **21.7 (100% Feasible)** | **9.36 °C** |
-
-**Empirical Coupling Evidence:**
-Under controlled test conditions (`test_forecast_changes_alter_risk_and_optimization_decisions`), changing a flat safe forecast (3.0 °C to 3.7 °C) to a rising breach forecast (3.5 °C to 7.0 °C) increases the calculated risk score from 0.00 to 86.42, forcing NSGA-II to increase cooling power ($u \cdot d$) to counteract impending heat infiltration.
+### C. Resolution of the Feasibility & 479-Minute Contradictions:
+1. **The 479-Minute Metric Explained:** The value **479 minutes** is the *total cumulative excursion time* across all 50 scenarios for Method C. The baseline violation duration is **583 minutes**. The true reduction is **104 minutes** ($583 - 479 = 104$, or **-17.84%**). Previous summaries that quoted "2,693 minutes vs 2,214 minutes" were derived from an erroneous backward projection $(479 / 0.178 \approx 2,693)$.
+2. **True Trajectory Feasibility:** Strict trajectory thermal compliance ($T(t) \le 5.0\text{ }^\circ\text{C} \quad \forall t$) is achieved in **18 out of 50 scenarios (36.0%)**. In 31 scenarios, the chamber started pre-breached ($T_0 > 5.0\text{ }^\circ\text{C}$). In 27 scenarios, ambient heat gain exceeded maximum refrigeration capacity, triggering an Emergency Fallback Override ($u=1.0, d=1.0$). Emergency actions arrest warming but are **NOT ordinary feasible solutions**.
+3. **Forecast Guidance Proof (Coupling):** In **22 out of 50 scenarios (44.0%)**, injecting MAD-TCN risk directly altered optimizer setpoints compared to the blind ablation (Method D), saving **65 minutes (-11.95%)** of thermal violation time.
 
 ---
 
 ## 5. Energy Estimation & Physical Modeling
 
-1. **Dimensional Contracts:**
+1. **Dimensional Consistency:**
    - Power: `estimated_power_kw(intensity, duty, current, ambient)` $\rightarrow \text{kW}$
-   - Energy: `estimated_energy_kwh(intensity, duty, current, ambient, duration_hours)` $\rightarrow \text{kWh}$
+   - Energy: `estimated_energy_kwh(intensity, duty, current, ambient, duration_hours=0.25)` $\rightarrow \text{kWh}$
    - Identity: `estimated_energy_kwh(..., duration_hours=1.0) == estimated_power_kw(...)`
+   - Verified that ColdProblem objective $F_2$ represents energy in kWh ($P \cdot 0.25$ h).
 2. **Regression Baseline vs Physical Formula:**
    - Trained `GradientBoostingRegressor` and `LinearRegression` on simulated operational features (`reports/energy_training_report.json`).
    - GBR achieves $R^2 = 0.9998$ on synthetic labels.
@@ -171,15 +188,15 @@ Vectorized streaming throughput benchmarked on Windows (`reports/scalability_ben
 .\.venv\Scripts\python.exe manage.py check
 # Result: System check identified no issues (0 silenced).
 
-# 2. Automated Test Suite (76 Tests)
+# 2. Automated Test Suite (81 Tests)
 .\.venv\Scripts\python.exe manage.py test --no-input
-# Result: Ran 76 tests in 10.426s — OK
+# Result: Ran 81 tests in 11.542s — OK
 
 # 3. Real Forecasting Benchmark
 .\.venv\Scripts\python.exe scripts/evaluate_real_forecasting.py
 # Result: Saved to reports/real_forecasting_benchmark.json
 
-# 4. NSGA-II Comparison
+# 4. NSGA-II Comparison & Feasibility Audit
 .\.venv\Scripts\python.exe scripts/compare_nsga2_methods.py
 # Result: Saved to reports/nsga2_comparison/nsga2_comparison_data.json
 
@@ -209,4 +226,4 @@ The following limitations are explicitly documented for scientific integrity:
 ### **VERDICT: PASS WITH LIMITATIONS**
 
 **Justification:**  
-All software modules, machine learning architectures, statistical split purges, forecast-guided multi-objective optimization algorithms, database models, IoT authorization defenses, browser control views, and automated test suites are fully implemented, verified, passing (76/76 tests), and reproducible in the local environment. Genuine MAD-TCN convolutional forecasting is operational and benchmarked on real physical data. The verdict is designated **PASS WITH LIMITATIONS** to truthfully reflect that live industrial hardware deployment requires physical on-site commissioning, electrical wattmeter calibration, and multi-chamber field trials.
+All software modules, machine learning architectures, statistical split purges, forecast-guided multi-objective optimization algorithms, database models, IoT authorization defenses, browser control views, and automated test suites are fully implemented, verified, passing (**81/81 tests**), and reproducible in the local environment. Genuine MAD-TCN convolutional forecasting is operational and benchmarked on real physical data. The optimization feasibility contradiction has been reconciled and proven with empirical ablation evidence. The verdict is designated **PASS WITH LIMITATIONS** to truthfully reflect that live industrial hardware deployment requires physical on-site commissioning, electrical wattmeter calibration, and multi-chamber field trials.

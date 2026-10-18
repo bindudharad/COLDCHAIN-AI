@@ -715,6 +715,102 @@ class ForecastGuidedOptimizationCouplingTestCase(TestCase):
                                 "High future thermal risk must demand proactive refrigeration response")
 
 
+class OptimizationFeasibilityAndAblationTests(TestCase):
+    """Rigorous scientific tests for trajectory thermal feasibility, emergency fallbacks, and energy reconciliation."""
+
+    def test_trajectory_thermal_feasibility_detection(self):
+        """Verify trajectory feasibility detects in-interval breaches and exceedance magnitudes."""
+        from scripts.compare_nsga2_methods import evaluate_solution_trajectory
+
+        # Case 1: Trajectory with breach (initial temp 4.8 °C, rising past 5.0 °C before cooling)
+        eval_breach = evaluate_solution_trajectory(t0=4.8, ambient=26.0, intensity=0.5, duty=0.4, hi_limit=5.0)
+        self.assertFalse(eval_breach['is_trajectory_feasible'])
+        self.assertTrue(eval_breach['has_breach'])
+        self.assertGreater(eval_breach['violations_min'], 0)
+        self.assertGreater(eval_breach['max_exceedance'], 0.0)
+
+        # Case 2: Trajectory entirely within safe envelope (initial temp 3.0 °C, max temp <= 5.0 °C)
+        eval_safe = evaluate_solution_trajectory(t0=3.0, ambient=15.0, intensity=0.8, duty=0.8, hi_limit=5.0)
+        self.assertTrue(eval_safe['is_trajectory_feasible'])
+        self.assertFalse(eval_safe['has_breach'])
+        self.assertEqual(eval_safe['violations_min'], 0)
+        self.assertEqual(eval_safe['max_exceedance'], 0.0)
+
+    def test_infeasible_initial_state_triggers_emergency_fallback(self):
+        """Verify severely breached initial states trigger Emergency Fallback and are not counted as ordinary feasible."""
+        from optimization.nsga2_optimizer import run_nsga2
+
+        # Severe initial breach: chamber at 8.2 °C (far above 5.0 °C limit)
+        pareto, rec = run_nsga2(current=8.2, ambient=28.0, future_risk=90.0, profile='Food')
+        self.assertTrue(rec['is_emergency_fallback'], "Severely breached initial state must engage emergency fallback")
+        self.assertFalse(rec['feasible'], "Emergency fallback override must NOT be labeled as an ordinary feasible solution")
+        self.assertEqual(rec['cooling_intensity'], 1.0, "Emergency fallback must command maximum cooling intensity")
+        self.assertEqual(rec['compressor_duty_cycle'], 1.0, "Emergency fallback must command maximum duty cycle")
+        self.assertIn("Emergency Fallback Override", rec['explanation'])
+
+    def test_forecast_guided_vs_risk_disabled_objective_impact(self):
+        """Verify predictive risk directly escalates the NSGA-II risk objective F0, compelling higher refrigeration."""
+        import numpy as np
+        from optimization.nsga2_optimizer import ColdProblem
+
+        current_t = 3.8
+        ambient_t = 24.0
+
+        # Run with genuine predictive risk vs risk disabled (fr=0)
+        prob_guided = ColdProblem(current_t, ambient_t, future_risk=75.0, t_min=0.0, t_max=5.0)
+        prob_blind = ColdProblem(current_t, ambient_t, future_risk=0.0, t_min=0.0, t_max=5.0)
+
+        # Evaluate identical candidate: intensity=0.4, duty=0.4, offset=0.0
+        x_cand = np.array([[0.4, 0.4, 0.0]])
+        out_guided = {}; out_blind = {}
+        prob_guided._evaluate(x_cand, out_guided)
+        prob_blind._evaluate(x_cand, out_blind)
+
+        # Objective F0 for guided should be significantly higher due to residual forecast risk
+        self.assertGreater(out_guided['F'][0, 0], out_blind['F'][0, 0],
+                           "Forecast risk must directly elevate the optimizer risk objective F0")
+
+    def test_energy_unit_consistency_in_optimizer(self):
+        """Verify ColdProblem objective F1 is mathematically consistent with estimated_energy_kwh (P * 0.25)."""
+        import numpy as np
+        from optimization.nsga2_optimizer import ColdProblem
+        from core import estimated_power_kw, estimated_energy_kwh
+
+        current_t = 3.5
+        ambient_t = 22.0
+        prob = ColdProblem(current_t, ambient_t, future_risk=10.0)
+
+        x_test = np.array([[0.8, 0.7, 0.0]])
+        out = {}
+        prob._evaluate(x_test, out)
+
+        power_kw = estimated_power_kw(current_t, ambient_t, 0.8, 0.7)
+        expected_kwh = estimated_energy_kwh(current_t, ambient_t, 0.8, 0.7, duration_hours=0.25)
+
+        self.assertAlmostEqual(out['F'][0, 1], expected_kwh, places=3,
+                               msg="F1 objective must match estimated_energy_kwh over 15-minute interval (power * 0.25)")
+
+    def test_nsga2_comparison_data_reconciliation(self):
+        """Verify machine-readable nsga2_comparison_data.json matches verified audit figures exactly."""
+        json_path = Path('reports/nsga2_comparison/nsga2_comparison_data.json')
+        self.assertTrue(json_path.exists(), "nsga2_comparison_data.json must exist")
+
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        self.assertEqual(data['num_scenarios'], 50)
+        self.assertEqual(data['method_a_reactive']['total_violations_min'], 583)
+        self.assertEqual(data['method_c_audited_forecast_guided']['total_violations_min'], 479)
+        self.assertEqual(data['method_c_audited_forecast_guided']['vs_method_a']['violation_reduction_min'], -104)
+        self.assertAlmostEqual(data['method_c_audited_forecast_guided']['vs_method_a']['violation_change_pct'], -17.84, places=1)
+        self.assertEqual(data['feasibility_accounting']['ordinary_algebraic_feasible_scenarios'], 23)
+        self.assertEqual(data['feasibility_accounting']['emergency_fallback_overrides'], 27)
+        self.assertEqual(data['feasibility_accounting']['trajectory_thermal_feasible_scenarios'], 18)
+        self.assertEqual(data['feasibility_accounting']['decision_bounds_compliance_pct'], 100.0)
+        self.assertEqual(len(data['per_scenario_results']['scenarios']), 50)
+
+
+
 
 
 

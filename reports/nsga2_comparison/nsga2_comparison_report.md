@@ -1,55 +1,69 @@
-# NSGA-II Scientific Comparative Audit Report
+# NSGA-II Scientific Comparative Audit & Feasibility Reconciliation Report
 
-**Date:** 2026-10-09  
-**Evaluation Scope:** 50 Identical Operational Scenarios across Cold Chain Telemetry  
-**Product Profile:** Food ($0.0$ to $5.0$ °C limits)  
-**Simulation Baseline:** Calibrated thermodynamic room model ($k_{inf}=0.018$, $k_{cool}=0.32$, ambient $19$–$27$ °C)
-
----
-
-## 1. Executive Summary & Root Cause Confirmation
-
-The reported anomaly (**~19.6% energy reduction accompanied by +182.6% temperature violations**) in earlier benchmarks has been scientifically reproduced, diagnosed, and resolved.
-
-### Root Cause Diagnosis of Legacy Method B:
-1. **Unconstrained Formulation ($n_{constr}=0$):** The legacy optimizer lacked inequality constraints ($G \le 0$) to penalize boundary breaches during Pareto non-dominated sorting.
-2. **Missing Thermal Infiltration Dynamics:** The objective assumed chamber temperature changed purely by $T_{current} - 3.2 \cdot u \cdot d$, completely ignoring ambient heat gain ($0.18 \cdot (T_{ambient} - T_{current})$).
-3. **Severe Under-Cooling:** Because residual risk was easily cancelled by minimal cooling bounds ($0.10$ intensity, $0.20$ duty), the legacy optimizer chose the minimal energy point on the frontier, shutting off refrigeration 80% of the time and letting ambient infiltration drive temperatures past $5.0$ °C.
-
-### Solution Provided by Audited Method C:
-- Formulated explicit **Deb's constrained dominance** inequality constraints ($G_1$: $T_{exp} \le 4.8$ °C, $G_2$: $T_{exp} \ge 0.2$ °C).
-- Incorporated active ambient heat gain into expected temperature dynamics.
-- Weighted risk score based on peak and mean excursion.
-- Ensured zero feasible solutions are selected if they violate safety limits.
+**Date:** 2026-10-18  
+**Evaluation Scope:** 50 Identical Matched Operational Scenarios from Cold Chain Telemetry  
+**Product Profile:** Food ($0.0$ to $5.0$ °C safe limits)  
+**Simulation Baseline:** Calibrated thermodynamic room model ($k_{inf}=0.018$, $k_{cool}=0.32$, ambient $18.8$–$27.3$ °C)  
+**Total Simulated Operating Horizon:** 50 scenarios $\times$ 16 minutes = 800 minutes  
 
 ---
 
-## 2. Quantitative Comparative Evaluation
+## 1. Executive Reconciliation: The Feasibility and Violation Contradiction
 
-| Evaluation Metric | Method A (Current-State Reactive) | Method B (Legacy Defective Unconstrained) | Method C (Audited Constrained NSGA-II) |
-| :--- | :--- | :--- | :--- |
-| **Control Philosophy** | Reactive thermostatic ($T_0$ only) | Prediction-guided (Unconstrained) | Prediction-guided (Constrained NSGA-II) |
-| **Mean Energy / 15-min Cycle** | **0.5625 kWh** | **0.6574 kWh** (+16.9%) | **0.8387 kWh** (+49.1%) |
-| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 99.1% |
-| **Total Temperature Violations** | **583 min** | **565 min** (-3.1%) | **479 min** (-17.8%) |
-| **Maximum Chamber Temperature** | 10.72 °C | 9.36 °C (Severe Breach) | 9.36 °C (Within Safe Envelope) |
-| **Feasible Pareto Solutions** | 1 (Fixed Setpoint) | 1–48 (Unchecked Feasibility) | **21.1 (100% Feasible)** |
-| **Average Optimization Runtime** | ~0.1 ms | 229.2 ms | 283.2 ms |
+### A. Clarification of the 479-Minute Violation Metric:
+In previous drafts, a phrasing ambiguity ("reduced violations by 479 minutes (-17.8%)") led to an erroneous backward calculation assuming a 2,693-minute baseline and 2,214-minute outcome. 
 
----
+**The definitive, reproduced empirical numbers across the 50 matched scenarios are:**
+- **Reactive Thermostatic Baseline (Method A):** **583 minutes** of temperature excursion ($> 5.0$ °C).
+- **Legacy Unconstrained Optimization (Method B):** **565 minutes** of temperature excursion.
+- **Constrained NSGA-II with Predictive Risk Disabled (Method D Ablation):** **544 minutes** of temperature excursion.
+- **Forecast-Guided Constrained NSGA-II with Emergency Fallback (Method C):** **479 minutes** of temperature excursion.
+- **Empirical Violation Reduction:** Exactly **104 minutes** ($583 - 479 = 104$ min), representing a **-17.84% reduction** against reactive control, and a **65 minute (-11.95%) reduction** against unguided optimization.
+- The value **479 minutes** is the **resulting total excursion time** of Method C, not the subtracted difference.
 
-## 3. Machine Learning & Risk Engine Metrics
-
-- **MAD-TCN Forecast Error (MAE):** `0.8524 °C` across 15 future steps.
-- **Risk Detection Precision:** `0.6327`
-- **Risk Detection Recall:** `1.0000`
-- **Risk Detection F1-Score:** `0.7750`
-- **Evaluation Set:** Ground truth future breach events vs. prediction-guided early warnings.
+### B. Reconciliation of the "100% Feasibility" Claim:
+Claims that "100% of Pareto solutions satisfy physical temperature constraints" were scientifically invalid and conflated decision-variable bounds with trajectory thermal feasibility:
+1. **Decision Variable Bounds ($100\%$ Feasible):** All solutions strictly satisfy $u \in [0.1, 1.0]$ and $d \in [0.2, 1.0]$.
+2. **Algebraic End-State Constraints ($g_1 \le 0, g_2 \le 0$):** Exactly **23 out of 50 scenarios (46.0%)** admit ordinary feasible Pareto solutions.
+3. **Emergency Fallback Overrides:** Exactly **27 out of 50 scenarios (54.0%)** begin in an initial state ($T_0 > 5.0$ °C, reaching up to $9.31$ °C) or encounter ambient heat gain ($0.18 \cdot (T_{amb} - T_0) > 3.20$ °C) where no mathematical solution can bring expected temperature below $4.8$ °C within 15 minutes. In these cases, NSGA-II is algebraically infeasible and triggers an Emergency Fallback Override ($u=1.0, d=1.0$), which is **NOT an ordinary feasible solution**.
+4. **Full 15-Minute Trajectory Thermal Feasibility:** Across the complete minute-by-minute simulation, exactly **18 out of 50 scenarios (36.0%)** remain within $[0.0, 5.0]$ °C across all 16 time steps. 32 scenarios experience temperature excursion because cooling takes finite physical time to arrest and reverse pre-existing thermal spikes.
 
 ---
 
-## 4. Scientific Honesty & Trade-Off Disclosure
+## 2. Multi-Method Quantitative Benchmark Table
 
-1. **Energy vs Safety Trade-Off:** In a cold-chain environment with ambient infiltration, energy cannot be saved by blindly reducing compressor duty below the thermal maintenance threshold. Method B's 19.6% "savings" was an artifact of cargo neglect.
-2. **True Benefit of Prediction Guidance:** Method C achieves proactive pre-cooling prior to excursions, **eliminating temperature violations (-17.8% vs. reactive control)** while operating at optimal compressor modulation.
-3. **Data Provenance:** Results evaluated on calibrated physical simulation data; energy figures are **ESTIMATED / SIMULATED**, not physically metered with a hardware power analyzer.
+| Metric | Method A: Reactive Baseline | Method B: Legacy Unconstrained | Method D: Risk-Disabled Ablation | Method C: Forecast-Guided NSGA-II |
+| :--- | :---: | :---: | :---: | :---: |
+| **Lookahead Foresight** | None ($T_0$ only) | MAD-TCN Risk (Unconstrained) | None ($fr = 0.0$, Constrained) | **Genuine MAD-TCN Risk (Constrained)** |
+| **Total Energy (kWh / 50 cycles)** | **7.0321 kWh** | 8.2164 kWh (+16.8%) | 8.7924 kWh (+25.0%) | 10.4838 kWh (+49.1%) |
+| **Mean Power Demand (kW)** | 0.563 kW | 0.657 kW | 0.703 kW | 0.839 kW |
+| **Mean Compressor Duty Cycle** | 77.6% | 77.3% | 84.2% | 99.1% |
+| **Total Temperature Violations** | **583 min** | 565 min | 544 min | **479 min (-17.84%)** |
+| **Violation Reduction vs Method A** | Reference (0 min) | -18 min (-3.09%) | -39 min (-6.69%) | **-104 min (-17.84%)** |
+| **Violation Reduction vs Method D** | N/A | N/A | Reference (0 min) | **-65 min (-11.95%)** |
+| **Scenarios with Any Breach ($> 5.0$ °C)** | 50 / 50 | 50 / 50 | 50 / 50 | 32 / 50 |
+| **Complete Trajectory Feasible ($0–5$ °C)** | 0 / 50 (0%) | 0 / 50 (0%) | 0 / 50 (0%) | **18 / 50 (36%)** |
+| **Ordinary Algebraic Feasible Scenarios** | N/A | N/A | 23 / 50 (46.0%) | **23 / 50 (46.0%)** |
+| **Emergency Fallback Overrides** | 0 | 0 | 27 / 50 (54.0%) | **27 / 50 (54.0%)** |
+| **Maximum Trajectory Temperature** | 10.72 °C | 9.36 °C | 9.36 °C | 9.36 °C |
+| **Maximum Threshold Exceedance** | 5.72 °C | 4.36 °C | 4.36 °C | 4.36 °C |
+| **Average Solve Time** | ~0.1 ms | 247.9 ms | 264.4 ms | 260.6 ms |
+
+---
+
+## 3. Proof of Forecast-to-Optimizer Coupling
+
+1. **Direct Decision Sensitivity:** In **22 out of 50 scenarios (44.0%)**, injecting the MAD-TCN future risk directly shifted the Pareto selection compared to Method D (risk-disabled), compelling earlier and stronger compressor activation.
+2. **Excursion Reduction via Lookahead:** Forecast foresight reduced total excursion duration by **65 minutes (-11.95%)** relative to the identical constrained optimizer operating blind to future trends.
+3. **Data Flow Verification:** 
+   $$\text{Input Window (60x12)} \xrightarrow{\text{ml.inference:forecast}} \hat{y}_{t+1..15} \xrightarrow{\text{core:risk}} \text{Risk Score} \xrightarrow{\text{ColdProblem}} F_0 \xrightarrow{\text{NSGA-II}} \text{Pareto Set} \xrightarrow{\text{Recommendation}} (u, d)$$
+4. **Counterfactual Note:** The forecast predicts status-quo trajectory under baseline conditions. In NSGA-II, the forward thermodynamic simulator $dT/dt = k_{inf}(T_{amb} - T) - k_{cool} u \cdot d$ evaluates alternative candidate schedules.
+
+---
+
+## 4. Energy Model & Units Verification
+
+- **Power demand (kW):** $P = \max(0.05, 0.25 + 0.035 \max(T_{amb} - T_{cur}, 0)) \cdot (0.35 + 0.65 u) \cdot d$
+- **Energy consumption (kWh):** For 15-minute intervals, $E = P \times (15 / 60) = P \times 0.25$.
+- Total electrical energy consumed across 50 15-minute cycles (12.5 operating hours) is **10.4838 kWh** for Method C, corresponding to an average electrical demand of **0.839 kW**.
+- **Data Notice:** Energy figures are analytically simulated from thermodynamic models, not metered on physical 3-phase hardware analyzers.

@@ -61,10 +61,12 @@ class ColdProblem(Problem):
         # Objective 1: Safety risk minimization (penalty-weighted)
         total_risk = residual_risk + upper_viol * 25.0 + lower_viol * 25.0
         
-        # Objective 2: Energy consumption estimation (kWh)
-        energy = (0.25 + 0.035 * np.maximum(self.ambient - self.current, 0.0)) * (0.35 + 0.65 * x[:, 0]) * x[:, 1]
+        # Objective 2: Electrical energy consumption in kWh over 15-minute interval (0.25 h)
+        # Power demand (kW) = P_base + P_lift, scaled by cooling intensity and duty cycle
+        power_kw = (0.25 + 0.035 * np.maximum(self.ambient - self.current, 0.0)) * (0.35 + 0.65 * x[:, 0]) * x[:, 1]
+        energy_kwh = power_kw * 0.25
         
-        out['F'] = np.column_stack([total_risk, energy])
+        out['F'] = np.column_stack([total_risk, energy_kwh])
         
         # Constraints (G <= 0 represents feasible operation):
         # G1: Upper temperature boundary constraint
@@ -109,7 +111,8 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
         def_lower = max(0.0, lo - t_exp)
         res_risk = max(0.0, future_risk - cooling * 8.0)
         tot_risk = res_risk + def_upper * 25.0 + def_lower * 25.0
-        def_energy = (0.25 + 0.035 * max(ambient - current, 0.0)) * (0.35 + 0.65 * default_intensity) * default_duty
+        def_power = (0.25 + 0.035 * max(ambient - current, 0.0)) * (0.35 + 0.65 * default_intensity) * default_duty
+        def_energy = def_power * 0.25
         X = np.array([[default_intensity, default_duty, default_offset]])
         F = np.array([[tot_risk, def_energy]])
         G = np.array([[t_exp - (hi - buffer), (lo + buffer) - t_exp]])
@@ -132,6 +135,7 @@ def run_nsga2(current: float, ambient: float, future_risk: float,
             'target_temperature_offset': round(float(x_val[2]), 3),
             'safety_risk': round(float(f_val[0]), 3),
             'estimated_energy_kwh': round(float(f_val[1]), 4),
+            'estimated_power_kw': round(float(f_val[1]) / 0.25, 3),
             'expected_temperature': t_exp,
             'feasible': is_feasible,
             'is_emergency_fallback': is_fallback

@@ -5,7 +5,7 @@
   "data_provenance": "DEMONSTRATION / SIMULATION DATA",
   "energy_notice": "ENERGY VALUES ARE ESTIMATED/SIMULATED",
   "sensor": "TEST-01",
-  "timestamp": "2026-10-16T15:09:44.419649+00:00",
+  "timestamp": "2026-10-18T03:42:12.847902+00:00",
   "current_temperature": 3.4942607593108406,
   "forecast": [
     4.14397668838501,
@@ -36,7 +36,8 @@
       "compressor_duty_cycle": 1.0,
       "target_temperature_offset": -0.481,
       "safety_risk": 0.653,
-      "estimated_energy_kwh": 0.8276,
+      "estimated_energy_kwh": 0.2069,
+      "estimated_power_kw": 0.828,
       "expected_temperature": 2.78,
       "feasible": true,
       "is_emergency_fallback": false
@@ -46,7 +47,8 @@
       "compressor_duty_cycle": 0.373,
       "target_temperature_offset": -0.493,
       "safety_risk": 16.736,
-      "estimated_energy_kwh": 0.3079,
+      "estimated_energy_kwh": 0.077,
+      "estimated_power_kw": 0.308,
       "expected_temperature": 4.78,
       "feasible": true,
       "is_emergency_fallback": false
@@ -56,7 +58,8 @@
       "compressor_duty_cycle": 0.903,
       "target_temperature_offset": -0.286,
       "safety_risk": 3.123,
-      "estimated_energy_kwh": 0.7477,
+      "estimated_energy_kwh": 0.1869,
+      "estimated_power_kw": 0.748,
       "expected_temperature": 3.29,
       "feasible": true,
       "is_emergency_fallback": false
@@ -66,7 +69,8 @@
       "compressor_duty_cycle": 0.879,
       "target_temperature_offset": -0.373,
       "safety_risk": 4.15,
-      "estimated_energy_kwh": 0.7192,
+      "estimated_energy_kwh": 0.1798,
+      "estimated_power_kw": 0.719,
       "expected_temperature": 3.33,
       "feasible": true,
       "is_emergency_fallback": false
@@ -76,7 +80,8 @@
       "compressor_duty_cycle": 0.742,
       "target_temperature_offset": -0.104,
       "safety_risk": 7.258,
-      "estimated_energy_kwh": 0.6141,
+      "estimated_energy_kwh": 0.1535,
+      "estimated_power_kw": 0.614,
       "expected_temperature": 3.99,
       "feasible": true,
       "is_emergency_fallback": false
@@ -86,7 +91,8 @@
       "compressor_duty_cycle": 0.478,
       "target_temperature_offset": -0.424,
       "safety_risk": 14.058,
-      "estimated_energy_kwh": 0.3946,
+      "estimated_energy_kwh": 0.0987,
+      "estimated_power_kw": 0.395,
       "expected_temperature": 4.52,
       "feasible": true,
       "is_emergency_fallback": false
@@ -96,7 +102,8 @@
       "compressor_duty_cycle": 0.664,
       "target_temperature_offset": -0.459,
       "safety_risk": 9.261,
-      "estimated_energy_kwh": 0.5493,
+      "estimated_energy_kwh": 0.1373,
+      "estimated_power_kw": 0.549,
       "expected_temperature": 3.88,
       "feasible": true,
       "is_emergency_fallback": false
@@ -106,7 +113,8 @@
       "compressor_duty_cycle": 0.56,
       "target_temperature_offset": -0.066,
       "safety_risk": 11.903,
-      "estimated_energy_kwh": 0.4639,
+      "estimated_energy_kwh": 0.116,
+      "estimated_power_kw": 0.464,
       "expected_temperature": 4.61,
       "feasible": true,
       "is_emergency_fallback": false
@@ -116,7 +124,8 @@
       "compressor_duty_cycle": 0.535,
       "target_temperature_offset": -0.067,
       "safety_risk": 12.607,
-      "estimated_energy_kwh": 0.4416,
+      "estimated_energy_kwh": 0.1104,
+      "estimated_power_kw": 0.442,
       "expected_temperature": 4.69,
       "feasible": true,
       "is_emergency_fallback": false
@@ -126,7 +135,8 @@
       "compressor_duty_cycle": 0.783,
       "target_temperature_offset": -0.409,
       "safety_risk": 6.201,
-      "estimated_energy_kwh": 0.6483,
+      "estimated_energy_kwh": 0.1621,
+      "estimated_power_kw": 0.648,
       "expected_temperature": 3.55,
       "feasible": true,
       "is_emergency_fallback": false
@@ -136,7 +146,8 @@
       "compressor_duty_cycle": 0.758,
       "target_temperature_offset": 0.258,
       "safety_risk": 6.845,
-      "estimated_energy_kwh": 0.6275,
+      "estimated_energy_kwh": 0.1569,
+      "estimated_power_kw": 0.628,
       "expected_temperature": 4.3,
       "feasible": true,
       "is_emergency_fallback": false
@@ -146,7 +157,8 @@
       "compressor_duty_cycle": 0.626,
       "target_temperature_offset": -0.373,
       "safety_risk": 11.211,
-      "estimated_energy_kwh": 0.4975,
+      "estimated_energy_kwh": 0.1244,
+      "estimated_power_kw": 0.497,
       "expected_temperature": 4.21,
       "feasible": true,
       "is_emergency_fallback": false
@@ -156,7 +168,8 @@
       "compressor_duty_cycle": 0.632,
       "target_temperature_offset": -0.058,
       "safety_risk": 10.076,
-      "estimated_energy_kwh": 0.5229,
+      "estimated_energy_kwh": 0.1307,
+      "estimated_power_kw": 0.523,
       "expected_temperature": 4.39,
       "feasible": true,
       "is_emergency_fallback": false
@@ -166,7 +179,8 @@
       "compressor_duty_cycle": 0.655,
       "target_temperature_offset": -0.067,
       "safety_risk": 9.537,
-      "estimated_energy_kwh": 0.541,
+      "estimated_energy_kwh": 0.1352,
+      "estimated_power_kw": 0.541,
       "expected_temperature": 4.31,
       "feasible": true,
       "is_emergency_fallback": false
@@ -176,7 +190,8 @@
       "compressor_duty_cycle": 0.935,
       "target_temperature_offset": 0.201,
       "safety_risk": 2.675,
-      "estimated_energy_kwh": 0.7664,
+      "estimated_energy_kwh": 0.1916,
+      "estimated_power_kw": 0.766,
       "expected_temperature": 3.72,
       "feasible": true,
       "is_emergency_fallback": false
@@ -186,7 +201,8 @@
       "compressor_duty_cycle": 0.725,
       "target_temperature_offset": -0.117,
       "safety_risk": 7.687,
-      "estimated_energy_kwh": 0.6002,
+      "estimated_energy_kwh": 0.1501,
+      "estimated_power_kw": 0.6,
       "expected_temperature": 4.03,
       "feasible": true,
       "is_emergency_fallback": false
@@ -196,7 +212,8 @@
       "compressor_duty_cycle": 0.992,
       "target_temperature_offset": -0.441,
       "safety_risk": 0.872,
-      "estimated_energy_kwh": 0.8206,
+      "estimated_energy_kwh": 0.2051,
+      "estimated_power_kw": 0.821,
       "expected_temperature": 2.85,
       "feasible": true,
       "is_emergency_fallback": false
@@ -206,7 +223,8 @@
       "compressor_duty_cycle": 0.856,
       "target_temperature_offset": 0.175,
       "safety_risk": 4.352,
-      "estimated_energy_kwh": 0.7083,
+      "estimated_energy_kwh": 0.1771,
+      "estimated_power_kw": 0.708,
       "expected_temperature": 3.9,
       "feasible": true,
       "is_emergency_fallback": false
@@ -216,7 +234,8 @@
       "compressor_duty_cycle": 0.935,
       "target_temperature_offset": 0.201,
       "safety_risk": 2.404,
-      "estimated_energy_kwh": 0.7721,
+      "estimated_energy_kwh": 0.193,
+      "estimated_power_kw": 0.772,
       "expected_temperature": 3.69,
       "feasible": true,
       "is_emergency_fallback": false
@@ -226,7 +245,8 @@
       "compressor_duty_cycle": 0.499,
       "target_temperature_offset": -0.477,
       "safety_risk": 13.546,
-      "estimated_energy_kwh": 0.4115,
+      "estimated_energy_kwh": 0.1029,
+      "estimated_power_kw": 0.411,
       "expected_temperature": 4.4,
       "feasible": true,
       "is_emergency_fallback": false
@@ -236,7 +256,8 @@
       "compressor_duty_cycle": 0.984,
       "target_temperature_offset": -0.395,
       "safety_risk": 1.264,
-      "estimated_energy_kwh": 0.8102,
+      "estimated_energy_kwh": 0.2025,
+      "estimated_power_kw": 0.81,
       "expected_temperature": 2.95,
       "feasible": true,
       "is_emergency_fallback": false
@@ -246,7 +267,8 @@
       "compressor_duty_cycle": 0.709,
       "target_temperature_offset": -0.496,
       "safety_risk": 8.802,
-      "estimated_energy_kwh": 0.5719,
+      "estimated_energy_kwh": 0.143,
+      "estimated_power_kw": 0.572,
       "expected_temperature": 3.79,
       "feasible": true,
       "is_emergency_fallback": false
@@ -256,7 +278,8 @@
       "compressor_duty_cycle": 0.447,
       "target_temperature_offset": -0.43,
       "safety_risk": 14.83,
-      "estimated_energy_kwh": 0.3696,
+      "estimated_energy_kwh": 0.0924,
+      "estimated_power_kw": 0.37,
       "expected_temperature": 4.61,
       "feasible": true,
       "is_emergency_fallback": false
@@ -266,7 +289,8 @@
       "compressor_duty_cycle": 0.58,
       "target_temperature_offset": -0.373,
       "safety_risk": 11.499,
-      "estimated_energy_kwh": 0.4781,
+      "estimated_energy_kwh": 0.1195,
+      "estimated_power_kw": 0.478,
       "expected_temperature": 4.25,
       "feasible": true,
       "is_emergency_fallback": false
@@ -276,7 +300,8 @@
       "compressor_duty_cycle": 0.424,
       "target_temperature_offset": -0.496,
       "safety_risk": 15.808,
-      "estimated_energy_kwh": 0.3423,
+      "estimated_energy_kwh": 0.0856,
+      "estimated_power_kw": 0.342,
       "expected_temperature": 4.66,
       "feasible": true,
       "is_emergency_fallback": false
@@ -286,7 +311,8 @@
       "compressor_duty_cycle": 0.535,
       "target_temperature_offset": -0.486,
       "safety_risk": 13.082,
-      "estimated_energy_kwh": 0.4316,
+      "estimated_energy_kwh": 0.1079,
+      "estimated_power_kw": 0.432,
       "expected_temperature": 4.33,
       "feasible": true,
       "is_emergency_fallback": false
@@ -296,7 +322,8 @@
       "compressor_duty_cycle": 0.966,
       "target_temperature_offset": -0.498,
       "safety_risk": 1.598,
-      "estimated_energy_kwh": 0.7978,
+      "estimated_energy_kwh": 0.1995,
+      "estimated_power_kw": 0.798,
       "expected_temperature": 2.89,
       "feasible": true,
       "is_emergency_fallback": false
@@ -306,7 +333,8 @@
       "compressor_duty_cycle": 0.465,
       "target_temperature_offset": -0.279,
       "safety_risk": 14.375,
-      "estimated_energy_kwh": 0.3843,
+      "estimated_energy_kwh": 0.0961,
+      "estimated_power_kw": 0.384,
       "expected_temperature": 4.7,
       "feasible": true,
       "is_emergency_fallback": false
@@ -316,7 +344,8 @@
       "compressor_duty_cycle": 0.461,
       "target_temperature_offset": -0.335,
       "safety_risk": 14.481,
-      "estimated_energy_kwh": 0.381,
+      "estimated_energy_kwh": 0.0953,
+      "estimated_power_kw": 0.381,
       "expected_temperature": 4.66,
       "feasible": true,
       "is_emergency_fallback": false
@@ -326,7 +355,8 @@
       "compressor_duty_cycle": 0.845,
       "target_temperature_offset": -0.071,
       "safety_risk": 4.63,
-      "estimated_energy_kwh": 0.6991,
+      "estimated_energy_kwh": 0.1748,
+      "estimated_power_kw": 0.699,
       "expected_temperature": 3.69,
       "feasible": true,
       "is_emergency_fallback": false
@@ -336,7 +366,8 @@
       "compressor_duty_cycle": 0.382,
       "target_temperature_offset": -0.474,
       "safety_risk": 16.465,
-      "estimated_energy_kwh": 0.3164,
+      "estimated_energy_kwh": 0.0791,
+      "estimated_power_kw": 0.316,
       "expected_temperature": 4.77,
       "feasible": true,
       "is_emergency_fallback": false
@@ -346,7 +377,8 @@
       "compressor_duty_cycle": 0.638,
       "target_temperature_offset": -0.373,
       "safety_risk": 10.59,
-      "estimated_energy_kwh": 0.5138,
+      "estimated_energy_kwh": 0.1285,
+      "estimated_power_kw": 0.514,
       "expected_temperature": 4.13,
       "feasible": true,
       "is_emergency_fallback": false
@@ -356,7 +388,8 @@
       "compressor_duty_cycle": 0.948,
       "target_temperature_offset": -0.447,
       "safety_risk": 1.982,
-      "estimated_energy_kwh": 0.7847,
+      "estimated_energy_kwh": 0.1962,
+      "estimated_power_kw": 0.785,
       "expected_temperature": 2.98,
       "feasible": true,
       "is_emergency_fallback": false
@@ -366,7 +399,8 @@
       "compressor_duty_cycle": 0.799,
       "target_temperature_offset": -0.494,
       "safety_risk": 5.82,
-      "estimated_energy_kwh": 0.6608,
+      "estimated_energy_kwh": 0.1652,
+      "estimated_power_kw": 0.661,
       "expected_temperature": 3.42,
       "feasible": true,
       "is_emergency_fallback": false
@@ -376,7 +410,8 @@
       "compressor_duty_cycle": 0.389,
       "target_temperature_offset": -0.49,
       "safety_risk": 16.317,
-      "estimated_energy_kwh": 0.3215,
+      "estimated_energy_kwh": 0.0804,
+      "estimated_power_kw": 0.321,
       "expected_temperature": 4.73,
       "feasible": true,
       "is_emergency_fallback": false
@@ -386,7 +421,8 @@
       "compressor_duty_cycle": 0.726,
       "target_temperature_offset": -0.058,
       "safety_risk": 8.432,
-      "estimated_energy_kwh": 0.5849,
+      "estimated_energy_kwh": 0.1462,
+      "estimated_power_kw": 0.585,
       "expected_temperature": 4.18,
       "feasible": true,
       "is_emergency_fallback": false
@@ -396,7 +432,8 @@
       "compressor_duty_cycle": 0.646,
       "target_temperature_offset": -0.355,
       "safety_risk": 10.344,
-      "estimated_energy_kwh": 0.5216,
+      "estimated_energy_kwh": 0.1304,
+      "estimated_power_kw": 0.522,
       "expected_temperature": 4.12,
       "feasible": true,
       "is_emergency_fallback": false
@@ -406,7 +443,8 @@
       "compressor_duty_cycle": 0.635,
       "target_temperature_offset": -0.459,
       "safety_risk": 10.934,
-      "estimated_energy_kwh": 0.5057,
+      "estimated_energy_kwh": 0.1264,
+      "estimated_power_kw": 0.506,
       "expected_temperature": 4.09,
       "feasible": true,
       "is_emergency_fallback": false
@@ -416,7 +454,8 @@
       "compressor_duty_cycle": 0.949,
       "target_temperature_offset": -0.441,
       "safety_risk": 1.97,
-      "estimated_energy_kwh": 0.7851,
+      "estimated_energy_kwh": 0.1963,
+      "estimated_power_kw": 0.785,
       "expected_temperature": 2.99,
       "feasible": true,
       "is_emergency_fallback": false
@@ -426,7 +465,8 @@
       "compressor_duty_cycle": 0.535,
       "target_temperature_offset": -0.073,
       "safety_risk": 12.661,
-      "estimated_energy_kwh": 0.4407,
+      "estimated_energy_kwh": 0.1102,
+      "estimated_power_kw": 0.441,
       "expected_temperature": 4.69,
       "feasible": true,
       "is_emergency_fallback": false
@@ -436,7 +476,8 @@
       "compressor_duty_cycle": 0.693,
       "target_temperature_offset": -0.443,
       "safety_risk": 8.524,
-      "estimated_energy_kwh": 0.5731,
+      "estimated_energy_kwh": 0.1433,
+      "estimated_power_kw": 0.573,
       "expected_temperature": 3.81,
       "feasible": true,
       "is_emergency_fallback": false
@@ -446,7 +487,8 @@
       "compressor_duty_cycle": 0.563,
       "target_temperature_offset": -0.43,
       "safety_risk": 11.849,
-      "estimated_energy_kwh": 0.4657,
+      "estimated_energy_kwh": 0.1164,
+      "estimated_power_kw": 0.466,
       "expected_temperature": 4.24,
       "feasible": true,
       "is_emergency_fallback": false
@@ -456,7 +498,8 @@
       "compressor_duty_cycle": 0.51,
       "target_temperature_offset": -0.355,
       "safety_risk": 13.257,
-      "estimated_energy_kwh": 0.4208,
+      "estimated_energy_kwh": 0.1052,
+      "estimated_power_kw": 0.421,
       "expected_temperature": 4.49,
       "feasible": true,
       "is_emergency_fallback": false
@@ -466,7 +509,8 @@
       "compressor_duty_cycle": 0.577,
       "target_temperature_offset": -0.355,
       "safety_risk": 11.538,
-      "estimated_energy_kwh": 0.4765,
+      "estimated_energy_kwh": 0.1191,
+      "estimated_power_kw": 0.476,
       "expected_temperature": 4.27,
       "feasible": true,
       "is_emergency_fallback": false
@@ -476,7 +520,8 @@
       "compressor_duty_cycle": 0.448,
       "target_temperature_offset": -0.281,
       "safety_risk": 14.791,
-      "estimated_energy_kwh": 0.3705,
+      "estimated_energy_kwh": 0.0926,
+      "estimated_power_kw": 0.371,
       "expected_temperature": 4.75,
       "feasible": true,
       "is_emergency_fallback": false
@@ -486,7 +531,8 @@
       "compressor_duty_cycle": 0.719,
       "target_temperature_offset": -0.44,
       "safety_risk": 7.84,
-      "estimated_energy_kwh": 0.5953,
+      "estimated_energy_kwh": 0.1488,
+      "estimated_power_kw": 0.595,
       "expected_temperature": 3.72,
       "feasible": true,
       "is_emergency_fallback": false
@@ -496,7 +542,8 @@
       "compressor_duty_cycle": 0.78,
       "target_temperature_offset": -0.444,
       "safety_risk": 6.591,
-      "estimated_energy_kwh": 0.639,
+      "estimated_energy_kwh": 0.1598,
+      "estimated_power_kw": 0.639,
       "expected_temperature": 3.56,
       "feasible": true,
       "is_emergency_fallback": false
@@ -506,7 +553,8 @@
       "compressor_duty_cycle": 0.821,
       "target_temperature_offset": -0.031,
       "safety_risk": 5.285,
-      "estimated_energy_kwh": 0.6785,
+      "estimated_energy_kwh": 0.1696,
+      "estimated_power_kw": 0.678,
       "expected_temperature": 3.81,
       "feasible": true,
       "is_emergency_fallback": false
@@ -517,7 +565,8 @@
     "compressor_duty_cycle": 1.0,
     "target_temperature_offset": -0.481,
     "safety_risk": 0.653,
-    "estimated_energy_kwh": 0.8276,
+    "estimated_energy_kwh": 0.2069,
+    "estimated_power_kw": 0.828,
     "expected_temperature": 2.78,
     "feasible": true,
     "is_emergency_fallback": false,
