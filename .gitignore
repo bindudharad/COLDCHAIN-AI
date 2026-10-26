@@ -18,15 +18,15 @@
 # .env.local
 # *.local
 
-# Database & logs
-*.log
-*.sqlite3-journal
-dependency-repair.*
+# # Database & logs
+# *.log
+# *.sqlite3-journal
+# dependency-repair.*
 
-# Temporary / OS files
-.DS_Store
-Thumbs.db
-*.tmp
+# # Temporary / OS files
+# .DS_Store
+# Thumbs.db
+# *.tmp
 
 # Python virtual environments and cache
 .venv/
