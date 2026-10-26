@@ -1,22 +1,22 @@
-# Virtual Environment
-.venv/
-env/
-venv/
-ENV/
+# # Virtual Environment
+# .venv/
+# env/
+# venv/
+# ENV/
 
-# Python cache & artifacts
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.pytest_cache/
-.coverage
-htmlcov/
+# # Python cache & artifacts
+# __pycache__/
+# *.py[cod]
+# *$py.class
+# *.so
+# .pytest_cache/
+# .coverage
+# htmlcov/
 
-# Local configuration & secrets
-.env
-.env.local
-*.local
+# # Local configuration & secrets
+# .env
+# .env.local
+# *.local
 
 # Database & logs
 *.log
@@ -34,7 +34,7 @@ venv/
 __pycache__/
 *.py[cod]
 
-# Secrets — do not upload real credentials
+# Secrets ï¿½ do not upload real credentials
 .env
 .env.*
 !.env.example
